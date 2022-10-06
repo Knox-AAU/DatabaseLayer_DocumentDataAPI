@@ -372,3 +372,6 @@ MigrationBackup/
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
 .idea/
+
+# Visual Studio Code
+.vscode/
