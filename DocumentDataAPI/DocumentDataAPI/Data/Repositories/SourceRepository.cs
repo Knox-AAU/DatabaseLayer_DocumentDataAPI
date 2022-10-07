@@ -9,7 +9,7 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public class SourceRepository : IRepository<SourceModel>
 {
-    DatabaseOptions _options;
+    private readonly DatabaseOptions _options;
     public SourceRepository(IConfiguration config)
     {
         _options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
