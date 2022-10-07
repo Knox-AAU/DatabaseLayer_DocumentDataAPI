@@ -8,7 +8,7 @@ public class DatabaseOptions
 {
     public const string Key = "Database";
     public string Host { get; set; } = string.Empty;
-    public int Port { get; set; } = 0;
+    public int Port { get; set; }
     public string Database { get; set; } = string.Empty;
     public string Schema { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
