@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Data;
 using Dapper;
+using DocumentDataAPI.Models;
 
-namespace WordCount.Data.Repositories;
+
+namespace DocumentDataAPI.Data.Repositories;
 
 public class SourceRepository : IRepository<SourceModel>
 {
@@ -19,11 +21,11 @@ public class SourceRepository : IRepository<SourceModel>
         SourceModel res = new();
         using (con)
         {
-            res = con.Query<SourceModel>("select * from sources where id=@Id",
+            res = con.QuerySingle<SourceModel>("select * from sources where id=@Id",
                 new
                 {
                     id
-                });   
+                });
         }
         return res;
     }
@@ -31,10 +33,10 @@ public class SourceRepository : IRepository<SourceModel>
     public IEnumerable<SourceModel> GetAll()
     {
         IDbConnection con = _applicationProvider.GetService<IDbConnection>();
-        IEnumerable<SourceModel> res = new();
+        List<SourceModel> res = new();
         using (con)
         {
-            res = con.Query<SourceModel>($"select * from sources");
+            res = con.Query<SourceModel>($"select * from sources").ToList();
         }
         return res;
     }
@@ -50,14 +52,14 @@ public class SourceRepository : IRepository<SourceModel>
                 new
                 {
                     entity.Name
-                });           
+                });
         }
     }
 
     public void Delete(SourceModel entity)
     {
         IDbConnection con = _applicationProvider.GetService<IDbConnection>();
-        using (con) 
+        using (con)
         {
             con.Execute("delete from sources where id=@Id", new { entity.Id });
         }
@@ -72,7 +74,8 @@ public class SourceRepository : IRepository<SourceModel>
                 "update sources set name = @Name where id = @Id",
                 new
                 {
-                    entity.Name, entity.Id
+                    entity.Name,
+                    entity.Id
                 });
         }
     }

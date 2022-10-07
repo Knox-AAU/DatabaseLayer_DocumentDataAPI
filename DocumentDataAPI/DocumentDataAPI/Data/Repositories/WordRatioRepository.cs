@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Data;
 using Dapper;
+using DocumentDataAPI.Models;
 
-namespace WordCount.Data.Repositories;
+
+namespace DocumentDataAPI.Data.Repositories;
 
 public class WordRatioRepository : IRepository<WordRatioModel>
 {
@@ -19,11 +21,11 @@ public class WordRatioRepository : IRepository<WordRatioModel>
         WordRatioModel res = new();
         using (con)
         {
-            res = con.Query<WordRatioModel>("select * from word_ratios where id=@Id",
+            res = con.QuerySingle<WordRatioModel>("select * from word_ratios where id=@Id",
                 new
                 {
                     id
-                });   
+                });
         }
         return res;
     }
@@ -31,10 +33,10 @@ public class WordRatioRepository : IRepository<WordRatioModel>
     public IEnumerable<WordRatioModel> GetAll()
     {
         IDbConnection con = _applicationProvider.GetService<IDbConnection>();
-        IEnumerable<WordRatioModel> res = new();
+        List<WordRatioModel> res = new();
         using (con)
         {
-            res = con.Query<WordRatioModel>($"select * from word_ratios");
+            res = con.Query<WordRatioModel>($"select * from word_ratios").ToList();
         }
         return res;
     }
@@ -49,15 +51,19 @@ public class WordRatioRepository : IRepository<WordRatioModel>
                     " values (@DocumentId, @Word, @Amount, @Percent, @Rank)",
                 new
                 {
-                    entity.DocumentId, entity.Word, entity.Amount, entity.Percent, entity.Rank
-                });           
+                    entity.DocumentId,
+                    entity.Word,
+                    entity.Amount,
+                    entity.Percent,
+                    entity.Rank
+                });
         }
     }
 
     public void Delete(WordRatioModel entity)
     {
         IDbConnection con = _applicationProvider.GetService<IDbConnection>();
-        using (con) 
+        using (con)
         {
             con.Execute("delete from word_ratios where documents_id=@DocumentId", new { entity.DocumentId });
         }
@@ -72,7 +78,11 @@ public class WordRatioRepository : IRepository<WordRatioModel>
                 "update word_ratios set word = @Word, amount = @Amount, percent = @Percent, rank = @Rank where documents_id = @DocumentId",
                 new
                 {
-                    entity.Word, entity.Amount, entity.Percent, entity.Rank, entity.DocumentId
+                    entity.Word,
+                    entity.Amount,
+                    entity.Percent,
+                    entity.Rank,
+                    entity.DocumentId
                 });
         }
     }

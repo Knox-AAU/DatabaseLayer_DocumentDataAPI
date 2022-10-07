@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WordCount.Data.Repositories;
+namespace DocumentDataAPI.Data.Repositories;
 
 public interface IRepository<TEntity>
     where TEntity : class

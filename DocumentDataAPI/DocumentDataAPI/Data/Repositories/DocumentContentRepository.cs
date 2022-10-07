@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Data;
 using Dapper;
+using DocumentDataAPI.Models;
 
-namespace WordCount.Data.Repositories;
+
+namespace DocumentDataAPI.Data.Repositories;
 
 public class DocumentContentRepository : IRepository<DocumentContentModel>
 {
@@ -19,11 +21,11 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
         DocumentContentModel res = new();
         using (con)
         {
-            res = con.Query<DocumentContentModel>("select * from document_contents where documents_id=@Id",
+            res = con.QuerySingle<DocumentContentModel>("select * from document_contents where documents_id=@Id",
                 new
                 {
                     id
-                });   
+                });
         }
         return res;
     }
@@ -31,10 +33,10 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
     public IEnumerable<DocumentContentModel> GetAll()
     {
         IDbConnection con = _applicationProvider.GetService<IDbConnection>();
-        IEnumerable<DocumentContentModel> res = new();
+        List<DocumentContentModel> res = new();
         using (con)
         {
-            res = con.Query<DocumentContentModel>($"select * from document_contents");
+            res = con.Query<DocumentContentModel>($"select * from document_contents").ToList();
         }
         return res;
     }
@@ -49,15 +51,16 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
                     " values (@DocumentId, @Content)",
                 new
                 {
-                    entity.DocumentId, entity.Content
-                });           
+                    entity.DocumentId,
+                    entity.Content
+                });
         }
     }
 
     public void Delete(DocumentContentModel entity)
     {
         IDbConnection con = _applicationProvider.GetService<IDbConnection>();
-        using (con) 
+        using (con)
         {
             con.Execute("delete from document_contents where documents_id=@DocumentId", new { entity.DocumentId });
         }
@@ -72,7 +75,8 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
                 "update document_contents set content = @Content where id = @DocumentId",
                 new
                 {
-                    entity.Content, entity.DocumentId
+                    entity.Content,
+                    entity.DocumentId
                 });
         }
     }

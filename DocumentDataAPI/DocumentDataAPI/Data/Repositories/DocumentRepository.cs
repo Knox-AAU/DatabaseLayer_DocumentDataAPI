@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Data;
 using Dapper;
+using DocumentDataAPI.Models;
 
-namespace WordCount.Data.Repositories;
+namespace DocumentDataAPI.Data.Repositories;
 
 public class DocumentRepository : IRepository<DocumentModel>
 {
@@ -19,11 +20,11 @@ public class DocumentRepository : IRepository<DocumentModel>
         DocumentModel res = new();
         using (con)
         {
-            res = con.Query<DocumentModel>("select * from documents where id=@Id",
+            res = con.QuerySingle<DocumentModel>("select * from documents where id=@Id",
                 new
                 {
                     id
-                });   
+                });
         }
         return res;
     }
@@ -31,10 +32,10 @@ public class DocumentRepository : IRepository<DocumentModel>
     public IEnumerable<DocumentModel> GetAll()
     {
         IDbConnection con = _applicationProvider.GetService<IDbConnection>();
-        IEnumerable<DocumentModel> res = new();
+        List<DocumentModel> res = new();
         using (con)
         {
-            res = con.Query<DocumentModel>($"select * from documents");
+            res = con.Query<DocumentModel>($"select * from documents").ToList();
         }
         return res;
     }
@@ -49,15 +50,22 @@ public class DocumentRepository : IRepository<DocumentModel>
                     " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @Source_Id)",
                 new
                 {
-                    entity.Id, entity.Title, entity.Author, entity.Date, entity.Summary, entity.Path, entity.TotalWords, entity.Source_Id
-                });           
+                    entity.Id,
+                    entity.Title,
+                    entity.Author,
+                    entity.Date,
+                    entity.Summary,
+                    entity.Path,
+                    entity.TotalWords,
+                    entity.Source_Id
+                });
         }
     }
 
     public void Delete(DocumentModel entity)
     {
         IDbConnection con = _applicationProvider.GetService<IDbConnection>();
-        using (con) 
+        using (con)
         {
             con.Execute("delete from documents where id=@Id", new { entity.Id });
         }
@@ -72,7 +80,14 @@ public class DocumentRepository : IRepository<DocumentModel>
                 "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, path = @Path, total_words = @TotalWords, sources_id = @Source_Id where id = @Id",
                 new
                 {
-                    entity.Title, entity.Author, entity.Date, entity.Summary, entity.Path, entity.TotalWords, entity.Source_Id, entity.Id
+                    entity.Title,
+                    entity.Author,
+                    entity.Date,
+                    entity.Summary,
+                    entity.Path,
+                    entity.TotalWords,
+                    entity.Source_Id,
+                    entity.Id
                 });
         }
     }
