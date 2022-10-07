@@ -9,15 +9,15 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public class DocumentRepository : IRepository<DocumentModel>
 {
-    DatabaseOptions options;
+    private readonly DatabaseOptions _options;
     public DocumentRepository(IConfiguration config)
     {
-        options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
+        _options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
     }
 
     public DocumentModel Get(int id)
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         DocumentModel res = new();
         using (con)
         {
@@ -32,7 +32,7 @@ public class DocumentRepository : IRepository<DocumentModel>
 
     public IEnumerable<DocumentModel> GetAll()
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         List<DocumentModel> res = new();
         using (con)
         {
@@ -43,7 +43,7 @@ public class DocumentRepository : IRepository<DocumentModel>
 
     public void Add(DocumentModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
             con.Execute(
@@ -65,7 +65,7 @@ public class DocumentRepository : IRepository<DocumentModel>
 
     public void Delete(DocumentModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
             con.Execute("delete from documents where id=@Id", new { entity.Id });
@@ -74,7 +74,7 @@ public class DocumentRepository : IRepository<DocumentModel>
 
     public void Update(DocumentModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
             con.Execute(

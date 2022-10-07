@@ -9,15 +9,15 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public class SourceRepository : IRepository<SourceModel>
 {
-    DatabaseOptions options;
+    DatabaseOptions _options;
     public SourceRepository(IConfiguration config)
     {
-        options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
+        _options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
     }
 
     public SourceModel Get(int id)
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         SourceModel res = new();
         using (con)
         {
@@ -32,7 +32,7 @@ public class SourceRepository : IRepository<SourceModel>
 
     public IEnumerable<SourceModel> GetAll()
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         List<SourceModel> res = new();
         using (con)
         {
@@ -43,7 +43,7 @@ public class SourceRepository : IRepository<SourceModel>
 
     public void Add(SourceModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
             con.Execute(
@@ -58,7 +58,7 @@ public class SourceRepository : IRepository<SourceModel>
 
     public void Delete(SourceModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
             con.Execute("delete from sources where id=@Id", new { entity.Id });
@@ -67,7 +67,7 @@ public class SourceRepository : IRepository<SourceModel>
 
     public void Update(SourceModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
             con.Execute(
