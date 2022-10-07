@@ -2,22 +2,23 @@ using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Models;
-
+using DocumentDataAPI.Options;
+using Npgsql;
 
 namespace DocumentDataAPI.Data.Repositories;
 
 public class WordRatioRepository : IRepository<WordRatioModel>
 {
-    private IApplicationProvider _applicationProvider;
+    private DatabaseOptions options;
 
-    public WordRatioRepository(IApplicationProvider applicationProvider)
+    public WordRatioRepository(IConfiguration config)
     {
-        _applicationProvider = applicationProvider;
+        options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
     }
 
     public WordRatioModel Get(int id)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         WordRatioModel res = new();
         using (con)
         {
@@ -32,7 +33,7 @@ public class WordRatioRepository : IRepository<WordRatioModel>
 
     public IEnumerable<WordRatioModel> GetAll()
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         List<WordRatioModel> res = new();
         using (con)
         {
@@ -43,7 +44,7 @@ public class WordRatioRepository : IRepository<WordRatioModel>
 
     public void Add(WordRatioModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute(
@@ -62,7 +63,7 @@ public class WordRatioRepository : IRepository<WordRatioModel>
 
     public void Delete(WordRatioModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute("delete from word_ratios where documents_id=@DocumentId", new { entity.DocumentId });
@@ -71,7 +72,7 @@ public class WordRatioRepository : IRepository<WordRatioModel>
 
     public void Update(WordRatioModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute(

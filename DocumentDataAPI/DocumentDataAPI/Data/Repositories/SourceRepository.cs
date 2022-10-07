@@ -2,22 +2,22 @@ using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Models;
-
+using DocumentDataAPI.Options;
+using Npgsql;
 
 namespace DocumentDataAPI.Data.Repositories;
 
 public class SourceRepository : IRepository<SourceModel>
 {
-    private IApplicationProvider _applicationProvider;
-
-    public SourceRepository(IApplicationProvider applicationProvider)
+    DatabaseOptions options;
+    public SourceRepository(IConfiguration config)
     {
-        _applicationProvider = applicationProvider;
+        options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
     }
 
     public SourceModel Get(int id)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         SourceModel res = new();
         using (con)
         {
@@ -32,7 +32,7 @@ public class SourceRepository : IRepository<SourceModel>
 
     public IEnumerable<SourceModel> GetAll()
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         List<SourceModel> res = new();
         using (con)
         {
@@ -43,7 +43,7 @@ public class SourceRepository : IRepository<SourceModel>
 
     public void Add(SourceModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute(
@@ -58,7 +58,7 @@ public class SourceRepository : IRepository<SourceModel>
 
     public void Delete(SourceModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute("delete from sources where id=@Id", new { entity.Id });
@@ -67,7 +67,7 @@ public class SourceRepository : IRepository<SourceModel>
 
     public void Update(SourceModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute(

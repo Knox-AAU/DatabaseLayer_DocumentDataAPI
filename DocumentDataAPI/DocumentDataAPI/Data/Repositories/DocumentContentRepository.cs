@@ -2,22 +2,22 @@ using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Models;
-
+using DocumentDataAPI.Options;
+using Npgsql;
 
 namespace DocumentDataAPI.Data.Repositories;
 
 public class DocumentContentRepository : IRepository<DocumentContentModel>
 {
-    private IApplicationProvider _applicationProvider;
-
-    public DocumentContentRepository(IApplicationProvider applicationProvider)
+    DatabaseOptions options;
+    public DocumentContentRepository(IConfiguration config)
     {
-        _applicationProvider = applicationProvider;
+        options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
     }
 
     public DocumentContentModel Get(int id)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         DocumentContentModel res = new();
         using (con)
         {
@@ -32,7 +32,7 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
 
     public IEnumerable<DocumentContentModel> GetAll()
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         List<DocumentContentModel> res = new();
         using (con)
         {
@@ -43,7 +43,7 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
 
     public void Add(DocumentContentModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute(
@@ -59,7 +59,7 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
 
     public void Delete(DocumentContentModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute("delete from document_contents where documents_id=@DocumentId", new { entity.DocumentId });
@@ -68,7 +68,7 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
 
     public void Update(DocumentContentModel entity)
     {
-        IDbConnection con = _applicationProvider.GetService<IDbConnection>();
+        IDbConnection con = new NpgsqlConnection(options.ConnectionString);
         using (con)
         {
             con.Execute(
