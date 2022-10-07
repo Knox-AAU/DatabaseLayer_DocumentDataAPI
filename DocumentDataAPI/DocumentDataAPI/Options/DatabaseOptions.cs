@@ -13,7 +13,7 @@ public class DatabaseOptions
     public string Schema { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    
+
     /// <summary>
     /// Builds a connection string from the database options.
     /// For example: "UserID=postgres;Password=postgres;Host=localhost;Port=5432;Database=myDatabase;SearchPath=mySchema"
@@ -23,7 +23,7 @@ public class DatabaseOptions
     /// This is specific to PostgreSQL, and may be different with other database providers.
     /// See https://www.connectionstrings.com/db2-net-data-provider-db2connection/specifying-schema/ for more information.
     /// </remarks>
-    public string ConnectionString => 
+    public string ConnectionString =>
         "UserID=" + Username + ";" +
         "Password=" + Password + ";" +
         "Host=" + Host + ";" +
