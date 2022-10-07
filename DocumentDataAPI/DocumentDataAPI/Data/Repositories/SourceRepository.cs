@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Models;
@@ -7,7 +6,7 @@ using Npgsql;
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public class SourceRepository : IRepository<SourceModel>
+public class SourceRepository : IRepository<SourceModel>, ISourceRepository
 {
     private readonly DatabaseOptions _options;
     public SourceRepository(IConfiguration config)
@@ -18,7 +17,7 @@ public class SourceRepository : IRepository<SourceModel>
     public SourceModel Get(int id)
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        SourceModel res = new();
+        SourceModel res;
         using (con)
         {
             res = con.QuerySingle<SourceModel>("select * from sources where id=@Id",
@@ -33,7 +32,7 @@ public class SourceRepository : IRepository<SourceModel>
     public IEnumerable<SourceModel> GetAll()
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        List<SourceModel> res = new();
+        List<SourceModel> res;
         using (con)
         {
             res = con.Query<SourceModel>($"select * from sources").ToList();
@@ -78,5 +77,20 @@ public class SourceRepository : IRepository<SourceModel>
                     entity.Id
                 });
         }
+    }
+
+    public int GetCountFromId(int id)
+    {
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
+        int res;
+        using (con)
+        {
+            res = con.QuerySingle<int>("select COUNT(*) as document_count from documents where sources_id=@Id",
+                new
+                {
+                    id
+                });
+        }
+        return res;
     }
 }
