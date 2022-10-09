@@ -1,39 +1,58 @@
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Options;
-using Npgsql;
 
 namespace DocumentDataAPI.Data.Deployment;
 
 public class DatabaseDeployHelper
 {
+    private readonly ILogger<DatabaseDeployHelper> _logger;
+    private readonly IServiceProvider _provider;
     private readonly DatabaseOptions _databaseOptions;
 
-    public DatabaseDeployHelper(DatabaseOptions databaseOptions)
+    public DatabaseDeployHelper(IServiceProvider provider)
     {
-        _databaseOptions = databaseOptions;
-    }
-
-    public void Deploy()
-    {
-        string scriptPath = Path.Combine(Environment.CurrentDirectory, @"Data/Deployment/deploy_schema.sql");
-        Console.WriteLine("Executing script: " + scriptPath);
-        string[] parameters = { _databaseOptions.Database, _databaseOptions.Schema };
-        string script = ParseScript(scriptPath, parameters);
-
-        using IDbConnection db = new NpgsqlConnection(_databaseOptions.ConnectionString);
-        db.Execute(script);
+        _provider = provider;
+        _logger = provider.GetRequiredService<ILogger<DatabaseDeployHelper>>();
+        _databaseOptions = provider.GetRequiredService<IConfiguration>()
+            .GetSection(DatabaseOptions.Key)
+            .Get<DatabaseOptions>();
     }
 
     /// <summary>
-    /// Reads a SQL script file and inserts docker database- and schema name parameters into correct locations for deployment.
+    /// Reads and executes a SQL script file and replaces the schema placeholder with the schema provided in the application settings.
     /// </summary>
-    /// <param name="scriptPath">File path to SQL script.</param>
-    /// <param name="parameters">Array of docker database- and schema name parameters.</param>
-    /// <returns>The parsed file as a string, containing the SQL script with replaced parameters.</returns>
-    private string ParseScript(string scriptPath, string[] parameters)
+    /// <param name="fileName">File path to SQL script.</param>
+    public void ExecuteSqlFromFile(string fileName)
     {
-        string script = File.ReadAllText(scriptPath);
-        return script.Replace("${db}", parameters[0]).Replace("${schema}", parameters[1]);
+        string path = Path.Join(Environment.CurrentDirectory, @"Data\Deployment", fileName);
+        string script = File.ReadAllText(path)
+            .Replace("${schema}", _databaseOptions.Schema);
+        ExecuteScript(path, script);
+    }
+
+    /// <summary>
+    /// Executes the provided SQL script.
+    /// </summary>
+    /// <param name="path">The path to the script file.</param>
+    /// <param name="script">The parsed contents of the file.</param>
+    private void ExecuteScript(string path, string script)
+    {
+        _logger.LogInformation("Executing script: {path}", path);
+        IDbConnection connection = _provider.GetRequiredService<IDbConnection>();
+        try
+        {
+            connection.Open();
+            connection.Execute(script);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Failed to execute script:");
+            throw;
+        }
+        finally
+        {
+            connection.Close();
+        }
     }
 }
