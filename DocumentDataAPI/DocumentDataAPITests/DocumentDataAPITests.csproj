@@ -21,4 +21,14 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DocumentDataAPI\DocumentDataAPI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.local.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

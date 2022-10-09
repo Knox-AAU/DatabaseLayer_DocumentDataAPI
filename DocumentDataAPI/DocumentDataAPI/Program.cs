@@ -1,15 +1,15 @@
-using System.Data;
+using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Options;
-using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
 var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
 
 // Add services to the container.
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
-    .AddTransient<IDbConnection>(_ => new NpgsqlConnection(databaseOptions.ConnectionString))
+    .AddSingleton<IDbConnectionFactory>(_ => new PostgresDbConnectionFactory(databaseOptions.ConnectionString))
     ;
 
 builder.Services.AddControllers();
@@ -23,16 +23,14 @@ var app = builder.Build();
 if (app.Configuration.GetValue<bool>("deploy"))
 {
     app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database, databaseOptions.Schema);
-    
     var deployHelper = app.Services.GetRequiredService<DatabaseDeployHelper>();
     try
     {
         deployHelper.ExecuteSqlFromFile("deploy_schema.sql");
         if (app.Configuration.GetValue<bool>("populate"))
         {
-            deployHelper.ExecuteSqlFromFile("populate_schema.sql");
+            deployHelper.ExecuteSqlFromFile("populate_tables.sql");
         }
-
         app.Logger.LogInformation("Finished!");
     }
     catch (Exception)
