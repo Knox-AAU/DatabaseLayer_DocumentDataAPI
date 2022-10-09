@@ -1,6 +1,6 @@
 -- Creates a copy of the document_data schema (see https://wiki.knox.cs.aau.dk/en/Database/DocumentDataAPI/document_data).
 -- The actual name of the schema is provided though the ${schema} placeholder.
- 
+
 drop schema if exists ${schema} cascade;
 
 create schema ${schema};

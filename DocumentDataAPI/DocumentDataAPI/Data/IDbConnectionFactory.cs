@@ -12,7 +12,7 @@ public interface IDbConnectionFactory
     /// </summary>
     /// <returns>The connection.</returns>
     IDbConnection CreateConnection();
-    
+
     /// <summary>
     /// Creates a database connection using the given <paramref name="connectionString"/>.
     /// </summary>

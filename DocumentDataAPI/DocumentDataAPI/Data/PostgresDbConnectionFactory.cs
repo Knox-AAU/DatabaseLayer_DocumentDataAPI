@@ -9,7 +9,7 @@ namespace DocumentDataAPI.Data;
 public class PostgresDbConnectionFactory : IDbConnectionFactory
 {
     private readonly string _connectionString;
-    
+
     public PostgresDbConnectionFactory(string connectionString)
     {
         _connectionString = connectionString;
@@ -19,7 +19,7 @@ public class PostgresDbConnectionFactory : IDbConnectionFactory
     {
         return CreateConnection(_connectionString);
     }
-    
+
     public IDbConnection CreateConnection(string connectionString)
     {
         return new NpgsqlConnection(connectionString);
