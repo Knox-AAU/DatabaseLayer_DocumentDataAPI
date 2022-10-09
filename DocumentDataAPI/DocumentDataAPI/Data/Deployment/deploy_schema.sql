@@ -15,7 +15,7 @@ create table ${schema}.documents (
     sources_id  integer      not null,
     title       varchar(400) not null,
     path        varchar(400) not null,
-    summary     text         not null,
+    summary     text,
     date        timestamp    not null,
     author      varchar(200) not null,
     total_words integer      not null,
