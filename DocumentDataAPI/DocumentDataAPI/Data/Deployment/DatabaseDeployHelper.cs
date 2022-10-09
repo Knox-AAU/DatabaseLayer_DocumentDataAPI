@@ -39,7 +39,8 @@ public class DatabaseDeployHelper
     private void ExecuteScript(string path, string script)
     {
         _logger.LogInformation("Executing script: {path}", path);
-        try {
+        try
+        {
             using IDbConnection connection = _provider.GetRequiredService<IDbConnection>();
             connection.Execute(script);
         }
