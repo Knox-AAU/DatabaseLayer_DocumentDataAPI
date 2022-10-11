@@ -68,7 +68,7 @@ public class WordRatioRepository : IRepository<WordRatioModel>
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute("delete from word_ratios where documents_id=@DocumentId", new {entity.DocumentId});
+            con.Execute("delete from word_ratios where documents_id=@DocumentId", new { entity.DocumentId });
         }
     }
 
