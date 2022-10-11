@@ -375,3 +375,7 @@ MigrationBackup/
 
 # Visual Studio Code
 .vscode/
+
+# Local settings
+**/appsettings.local.json
+**/appsettings.Tests.local.json
