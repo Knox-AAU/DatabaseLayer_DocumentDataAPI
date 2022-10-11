@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,25 +21,17 @@ public class DocumentContentController : ControllerBase
     }
 
     [HttpGet]
-    [Route("")]
-    public IActionResult Get(long? documentId)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<IEnumerable<DocumentContentModel>> Get()
     {
         try
         {
-            if (documentId.HasValue)
-            {
-                DocumentContentModel? result = _repository.Get(documentId.Value);
-                return result == null
-                    ? NotFound()
-                    : Ok(result);
-            }
-            else
-            {
-                IEnumerable<DocumentContentModel> result = _repository.GetAll();
-                return result.Any()
-                    ? Ok(result)
-                    : NoContent();
-            }
+            IEnumerable<DocumentContentModel> result = _repository.GetAll();
+            return result.Any()
+                ? Ok(result)
+                : NoContent();
         }
         catch (Exception e)
         {
@@ -47,8 +40,31 @@ public class DocumentContentController : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Route("{documentId:long}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<DocumentContentModel?> GetByDocumentId(long documentId)
+    {
+        try
+        {
+            DocumentContentModel? result = _repository.Get(documentId);
+            return result == null
+                ? NotFound()
+                : Ok(result);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to fetch document content with documents_id: {id}", documentId);
+            return Problem(e.Message);
+        }
+    }
+
     [HttpPut]
-    [Route("")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult PutDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
@@ -66,7 +82,10 @@ public class DocumentContentController : ControllerBase
     }
 
     [HttpPost]
-    [Route("")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult UpdateDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
