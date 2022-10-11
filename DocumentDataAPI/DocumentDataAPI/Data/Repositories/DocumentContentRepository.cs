@@ -9,44 +9,32 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public class DocumentContentRepository : IRepository<DocumentContentModel>
 {
-    private readonly DatabaseOptions _options;
-    public DocumentContentRepository(IConfiguration config)
+    private readonly IDbConnectionFactory _connectionFactory;
+    public DocumentContentRepository(IDbConnectionFactory connectionFactory)
     {
-        _options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
+        _connectionFactory = connectionFactory;
     }
 
     public DocumentContentModel Get(int id)
     {
-        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        DocumentContentModel res = new();
-        using (con)
-        {
-            res = con.QuerySingle<DocumentContentModel>("select * from document_contents where documents_id=@Id",
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.QuerySingle<DocumentContentModel>("select * from document_contents where documents_id=@Id",
                 new
                 {
                     id
                 });
-        }
-        return res;
     }
 
     public IEnumerable<DocumentContentModel> GetAll()
     {
-        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        List<DocumentContentModel> res = new();
-        using (con)
-        {
-            res = con.Query<DocumentContentModel>($"select * from document_contents").ToList();
-        }
-        return res;
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<DocumentContentModel>($"select * from document_contents");
     }
 
-    public void Add(DocumentContentModel entity)
+    public int Add(DocumentContentModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        using (con)
-        {
-            con.Execute(
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Execute(
             "insert into document_contents(documents_id, content)" +
                     " values (@DocumentId, @Content)",
                 new
@@ -54,30 +42,23 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
                     entity.DocumentId,
                     entity.Content
                 });
-        }
     }
 
-    public void Delete(DocumentContentModel entity)
+    public int Delete(DocumentContentModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        using (con)
-        {
-            con.Execute("delete from document_contents where documents_id=@DocumentId", new { entity.DocumentId });
-        }
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Execute("delete from document_contents where documents_id=@DocumentId", new { entity.DocumentId });
     }
 
-    public void Update(DocumentContentModel entity)
+    public int Update(DocumentContentModel entity)
     {
-        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        using (con)
-        {
-            con.Execute(
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Execute(
                 "update document_contents set content = @Content where id = @DocumentId",
                 new
                 {
                     entity.Content,
                     entity.DocumentId
                 });
-        }
     }
 }
