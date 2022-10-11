@@ -1,6 +1,7 @@
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Models;
 using DocumentDataAPI.Options;
 using Serilog;
 

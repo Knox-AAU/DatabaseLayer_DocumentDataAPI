@@ -55,4 +55,12 @@ public class NpgSourceRepository : ISourceRepository
         return con.Execute("update sources set name = @Name "+
                            "where id = @Id", new { entity.Name, entity.Id });
     }
+
+    public int GetCountFromId(int id)
+    {
+        _logger.LogDebug("Retrieving Document count with sources_id {id}", id);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.QuerySingle<int>("select COUNT(*) as document_count from documents "+
+                                    "where sources_id=@Id", new { id });
+    }
 }

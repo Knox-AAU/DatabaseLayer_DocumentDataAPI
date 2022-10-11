@@ -33,7 +33,7 @@ create table ${schema}.word_ratios (
 );
 
 create table ${schema}.document_contents (
-    documents_id    bigint not null,
+    documents_id    bigint primary key,
     content         text not null,
     constraint fk_documents foreign key (documents_id) references ${schema}.documents(id)
 );
