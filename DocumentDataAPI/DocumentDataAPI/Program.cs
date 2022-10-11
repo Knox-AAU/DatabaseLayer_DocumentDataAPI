@@ -28,6 +28,9 @@ var app = builder.Build();
 FluentMapper.Initialize(config =>
 {
     config.AddMap(new DocumentContentMap());
+    config.AddMap(new DocumentMap());
+    config.AddMap(new WordRatioMap());
+    config.AddMap(new SourceMap());
 });
 
 // Check for "deploy=true" command-line argument
