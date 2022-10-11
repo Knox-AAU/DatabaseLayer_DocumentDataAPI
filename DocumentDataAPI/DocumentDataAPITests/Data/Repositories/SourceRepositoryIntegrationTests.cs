@@ -6,11 +6,11 @@ namespace DocumentDataAPITests.Data.Repositories;
 
 public class SourceRepositoryIntegrationTests
 {
-    private readonly PostgresDbConnectionFactory _connectionFactory;
+    private readonly NpgDbConnectionFactory _connectionFactory;
 
     public SourceRepositoryIntegrationTests()
     {
-        _connectionFactory = new PostgresDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
         TestHelper.DeployDatabaseWithTestData();
     }
 

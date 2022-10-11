@@ -1,6 +1,9 @@
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
+using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Models;
 using DocumentDataAPI.Options;
+using Microsoft.CodeAnalysis;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
@@ -9,7 +12,8 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 // Add services to the container.
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
-    .AddSingleton<IDbConnectionFactory>(_ => new PostgresDbConnectionFactory(databaseOptions.ConnectionString))
+    .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
+    .AddScoped<IRepository<DocumentContentModel>, DocumentContentRepository>()
     ;
 
 builder.Services.AddControllers();
