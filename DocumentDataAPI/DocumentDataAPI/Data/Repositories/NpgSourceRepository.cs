@@ -4,11 +4,11 @@ using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public class SourceRepository : IRepository<SourceModel>
+public class NpgSourceRepository : ISourceRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
 
-    public SourceRepository(IDbConnectionFactory connectionFactory)
+    public NpgSourceRepository(IDbConnectionFactory connectionFactory)
     {
         _connectionFactory = connectionFactory;
     }

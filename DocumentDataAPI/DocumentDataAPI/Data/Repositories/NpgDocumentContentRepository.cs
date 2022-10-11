@@ -7,12 +7,14 @@ using Npgsql;
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public class DocumentContentRepository : IRepository<DocumentContentModel>
+public class NpgDocumentContentRepository : IDocumentContentRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
-    public DocumentContentRepository(IDbConnectionFactory connectionFactory)
-    {
+    private readonly ILogger<NpgDocumentContentRepository> _logger;
+
+    public NpgDocumentContentRepository(IDbConnectionFactory connectionFactory, ILogger<NpgDocumentContentRepository> logger) {
         _connectionFactory = connectionFactory;
+        _logger = logger;
     }
 
     public DocumentContentModel Get(int id)

@@ -2,6 +2,7 @@ using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Options;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
@@ -11,16 +12,16 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
     .AddSingleton<IDbConnectionFactory>(_ => new PostgresDbConnectionFactory(databaseOptions.ConnectionString))
-    .AddScoped(typeof(IRepository<DocumentContentRepository>), typeof(DocumentContentRepository))
-    .AddScoped(typeof(IRepository<DocumentRepository>), typeof(DocumentRepository))
-    .AddScoped(typeof(IRepository<SourceRepository>), typeof(SourceRepository))
-    .AddScoped(typeof(IRepository<WordRatioRepository>), typeof(WordRatioRepository))
     ;
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Host.UseSerilog((context, config) => {
+    config.WriteTo.Console();
+});
+
 
 var app = builder.Build();
 

@@ -18,7 +18,7 @@ public class SourceRepositoryIntegrationTests
     public void GetAll_ReturnsAllSources()
     {
         // Arrange
-        SourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory);
 
         // Act
         List<SourceModel> result = repository.GetAll().ToList();
@@ -35,7 +35,7 @@ public class SourceRepositoryIntegrationTests
     public void Update_UpdatesRow()
     {
         // Arrange
-        SourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory);
         const string expected = "Test Source";
 
         // Act
@@ -50,7 +50,7 @@ public class SourceRepositoryIntegrationTests
     public void DeleteWithNoForeignKeyVoilation_DeletesRow()
     {
         // Arrange
-        SourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory);
         SourceModel expected = new(3, "Test");
         repository.Add(expected);
 

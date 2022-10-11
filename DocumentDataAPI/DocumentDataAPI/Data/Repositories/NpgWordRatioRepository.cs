@@ -7,11 +7,11 @@ using Npgsql;
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public class WordRatioRepository : IRepository<WordRatioModel>
+public class NpgWordRatioRepository : IWordRatioRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
 
-    public WordRatioRepository(IDbConnectionFactory connectionFactory)
+    public NpgWordRatioRepository(IDbConnectionFactory connectionFactory)
     {
         _connectionFactory = connectionFactory;
     }
