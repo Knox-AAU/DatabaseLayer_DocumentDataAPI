@@ -4,7 +4,7 @@ using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public class SourceRepository : IRepository<SourceModel>, ISourceRepository
+public class SourceRepository : ISourceRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
 
