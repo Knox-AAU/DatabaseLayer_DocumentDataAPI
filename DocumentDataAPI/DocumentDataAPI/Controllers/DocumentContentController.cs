@@ -20,6 +20,7 @@ public class DocumentContentController : ControllerBase
     }
 
     [HttpGet]
+    [Route("")]
     public IActionResult GetAll()
     {
         try
@@ -35,8 +36,8 @@ public class DocumentContentController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{documentId:int}")]
-    public IActionResult GetById(int documentId)
+    [Route("{documentId:long}")]
+    public IActionResult GetById(long documentId)
     {
         try
         {
@@ -52,19 +53,39 @@ public class DocumentContentController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public IActionResult PostDocumentContent([FromBody] DocumentContentModel documentContentModel)
+    [HttpPut]
+    [Route("")]
+    public IActionResult PutDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
-            return _repository.Add(documentContentModel) == 1
+            return _repository.Add(documentContent) == 1
                 ? Ok()
                 : Problem("No rows were added");
         }
         catch (Exception e)
         {
-            _logger.LogError("Unable to insert document content with document_id: {id}: {message}", documentContentModel.DocumentId, e.Message);
-            return Problem("Unable to insert document content with document_id " + documentContentModel.DocumentId);
+            _logger.LogError("Unable to insert document content with document_id: {id}: {message}",
+                documentContent.DocumentId, e.Message);
+            return Problem("Unable to insert document content with document_id " + documentContent.DocumentId);
+        }
+    }
+
+    [HttpPost]
+    [Route("{documentId:long}")]
+    public IActionResult UpdateDocumentContent(long documentId, [FromBody] DocumentContentModel documentContent)
+    {
+        try
+        {
+            return _repository.Update(documentContent) == 1
+                ? Ok(_repository.Get(documentId))
+                : NotFound();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Unable to update document content with document_id: {id}: {message}",
+                documentContent.DocumentId, e.Message);
+            return Problem("Unable to update document content with document_id " + documentContent.DocumentId);
         }
     }
 }
