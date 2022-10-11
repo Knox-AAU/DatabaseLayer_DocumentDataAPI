@@ -15,12 +15,12 @@ public class NpgWordRatioRepository : IWordRatioRepository
         _logger = logger;
     }
 
-    public WordRatioModel Get(long id)
+    public WordRatioModel? Get(long id)
     {
         _logger.LogDebug("Retrieving WordRatio with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<WordRatioModel>("select * from word_ratios " +
-                                               "where id=@Id", new { id });
+        return con.Query<WordRatioModel>("select * from word_ratios where id=@Id", new {id})
+            .SingleOrDefault();
     }
 
     public IEnumerable<WordRatioModel> GetAll()

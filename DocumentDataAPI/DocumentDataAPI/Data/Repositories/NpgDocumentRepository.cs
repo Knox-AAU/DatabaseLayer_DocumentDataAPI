@@ -15,12 +15,12 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger = logger;
     }
 
-    public DocumentModel Get(long id)
+    public DocumentModel? Get(long id)
     {
         _logger.LogDebug("Retrieving Document with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<DocumentModel>("select * from documents " +
-                                              "where id=@Id", new { id });
+        return con.Query<DocumentModel>("select * from documents where id=@Id", new { id })
+            .SingleOrDefault();
     }
 
     public IEnumerable<DocumentModel> GetAll()

@@ -15,12 +15,12 @@ public class NpgSourceRepository : ISourceRepository
         _logger = logger;
     }
 
-    public SourceModel Get(long id)
+    public SourceModel? Get(long id)
     {
         _logger.LogDebug("Retrieving Source with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<SourceModel>("select * from sources " +
-                                            "where id=@Id", new { id });
+        return con.Query<SourceModel>("select * from sources where id=@Id", new { id })
+            .SingleOrDefault();
     }
 
     public IEnumerable<SourceModel> GetAll()

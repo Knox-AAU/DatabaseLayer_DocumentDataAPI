@@ -40,8 +40,10 @@ public class DocumentContentController : ControllerBase
     {
         try
         {
-            DocumentContentModel result = _repository.Get(documentId);
-            return Ok(result);
+            DocumentContentModel? result = _repository.Get(documentId);
+            return result == null
+                ? NotFound()
+                : Ok(result);
         }
         catch (Exception e)
         {
@@ -55,8 +57,9 @@ public class DocumentContentController : ControllerBase
     {
         try
         {
-            _repository.Add(documentContentModel);
-            return Ok();
+            return _repository.Add(documentContentModel) == 1
+                ? Ok()
+                : Problem("No rows were added");
         }
         catch (Exception e)
         {
