@@ -2,7 +2,6 @@ using System.Data.Common;
 using DocumentDataAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using DocumentDataAPI.Data.Repositories;
-using Npgsql;
 
 namespace DocumentDataAPI.Controllers;
 
@@ -10,20 +9,20 @@ namespace DocumentDataAPI.Controllers;
 [Route("[controller]")]
 public class SourceController : ControllerBase
 {
-    private readonly SourceRepository _sourceRepo;
+    private readonly ISourceRepository _repository;
 
-    public SourceController(IConfiguration configuration)
+    public SourceController(ISourceRepository repository)
     {
-        _sourceRepo = new SourceRepository(configuration);
+        _repository = repository;
     }
 
-    [HttpGet(Name = "SourceGetAll")]
-    [Route("GetAll")]
+    [HttpGet]
+    [Route("GetAll/")]
     public ActionResult<IEnumerable<SourceModel>> GetAll()
     {
         try
         {
-            return Ok(_sourceRepo.GetAll());
+            return Ok(_repository.GetAll());
         }
         catch (DbException e)
         {
@@ -31,13 +30,13 @@ public class SourceController : ControllerBase
         }
     }
 
-    [HttpGet(Name = "SourceGetById")]
+    [HttpGet]
     [Route("GetById/{id:int?}")]
     public ActionResult<SourceModel> GetById(int id)
     {
         try
         {
-            return Ok(_sourceRepo.Get(id));
+            return Ok(_repository.Get(id));
         }
         catch (DbException e)
         {
@@ -45,13 +44,13 @@ public class SourceController : ControllerBase
         }
     }
 
-    [HttpGet(Name = "SourceGetDocumentCount")]
+    [HttpGet]
     [Route("GetDocumentCount/{id:int?}")]
     public ActionResult<int> GetDocumentCount(int id)
     {
         try
         {
-            return Ok(_sourceRepo.GetCountFromId(id));
+            return Ok(_repository.GetCountFromId(id));
         }
         catch (DbException e)
         {
@@ -59,13 +58,13 @@ public class SourceController : ControllerBase
         }
     }
 
-    [HttpPost(Name = "SourcePostSource")]
+    [HttpPost]
     [Route("PostSource/{name}")]
     public ActionResult PostSource(string name)
     {
         try
         {
-            int status = _sourceRepo.Add(new SourceModel() { Name = name });
+            int status = _repository.Add(new SourceModel() { Name = name });
             if (status == 0)
             {
                 return BadRequest($"Rows affected: {status}");
