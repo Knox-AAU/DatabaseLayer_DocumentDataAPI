@@ -3,11 +3,10 @@ using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace DocumentDataAPITests;
 
-public class TestHelper
+public static class TestHelper
 {
     private static bool _isInitialized;
     private static IConfiguration? _configuration;
