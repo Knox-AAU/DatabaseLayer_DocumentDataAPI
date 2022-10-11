@@ -29,19 +29,23 @@ builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
 var app = builder.Build();
 
 // Check for "deploy=true" command-line argument
-if (app.Configuration.GetValue<bool>("deploy")) {
+if (app.Configuration.GetValue<bool>("deploy"))
+{
     app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database,
         databaseOptions.Schema);
     var deployHelper = app.Services.GetRequiredService<DatabaseDeployHelper>();
-    try {
+    try
+    {
         deployHelper.ExecuteSqlFromFile("deploy_schema.sql");
-        if (app.Configuration.GetValue<bool>("populate")) {
+        if (app.Configuration.GetValue<bool>("populate"))
+        {
             deployHelper.ExecuteSqlFromFile("populate_tables.sql");
         }
 
         app.Logger.LogInformation("Finished!");
     }
-    catch (Exception) {
+    catch (Exception)
+    {
         app.Logger.LogError("Deploy was aborted due to errors.");
     }
 
@@ -49,7 +53,8 @@ if (app.Configuration.GetValue<bool>("deploy")) {
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }
