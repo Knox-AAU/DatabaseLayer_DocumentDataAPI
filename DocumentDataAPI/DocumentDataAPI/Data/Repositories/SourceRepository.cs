@@ -16,7 +16,7 @@ public class SourceRepository : ISourceRepository
     public SourceModel Get(int id)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<SourceModel>("select * from sources where id=@Id", new {id});
+        return con.QuerySingle<SourceModel>("select * from sources where id=@Id", new { id });
     }
 
     public IEnumerable<SourceModel> GetAll()
@@ -28,25 +28,25 @@ public class SourceRepository : ISourceRepository
     public int Add(SourceModel entity)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("insert into sources(name) values (@Name)", new {entity.Name});
+        return con.Execute("insert into sources(name) values (@Name)", new { entity.Name });
     }
 
     public void Delete(SourceModel entity)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        con.Execute("delete from sources where id=@Id", new {entity.Id});
+        con.Execute("delete from sources where id=@Id", new { entity.Id });
     }
 
     public void Update(SourceModel entity)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        con.Execute("update sources set name = @Name where id = @Id", new {entity.Name, entity.Id});
+        con.Execute("update sources set name = @Name where id = @Id", new { entity.Name, entity.Id });
     }
 
     public int GetCountFromId(int id)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.QuerySingle<int>("select COUNT(*) as document_count from documents where sources_id=@Id",
-            new {id});
+            new { id });
     }
 }
