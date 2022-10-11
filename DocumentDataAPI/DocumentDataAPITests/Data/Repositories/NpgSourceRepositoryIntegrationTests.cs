@@ -6,12 +6,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DocumentDataAPITests.Data.Repositories;
 
-public class SourceRepositoryIntegrationTests
+public class NpgSourceRepositoryIntegrationTests
 {
     private readonly PostgresDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgSourceRepository> _logger;
 
-    public SourceRepositoryIntegrationTests()
+    public NpgSourceRepositoryIntegrationTests()
     {
         _connectionFactory = new PostgresDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgSourceRepository>(new NullLoggerFactory());
