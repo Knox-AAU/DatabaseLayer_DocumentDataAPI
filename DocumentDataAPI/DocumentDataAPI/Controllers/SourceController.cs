@@ -1,48 +1,81 @@
+using System.Data.Common;
 using DocumentDataAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using DocumentDataAPI.Options;
 using DocumentDataAPI.Data.Repositories;
+using Npgsql;
 
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class SourceController
+public class SourceController : ControllerBase
 {
-    private readonly DatabaseOptions _databaseOptions;
     private readonly SourceRepository _sourceRepo;
 
     public SourceController(IConfiguration configuration)
     {
-        _databaseOptions = configuration.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
         _sourceRepo = new SourceRepository(configuration);
     }
 
     [HttpGet(Name = "SourceGetAll")]
     [Route("GetAll")]
-    public IEnumerable<SourceModel> GetAll()
+    public ActionResult<IEnumerable<SourceModel>> GetAll()
     {
-        return _sourceRepo.GetAll();
+        try
+        {
+            return Ok(_sourceRepo.GetAll());
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
     }
 
     [HttpGet(Name = "SourceGetById")]
     [Route("GetById/{id:int?}")]
-    public SourceModel GetById(int id)
+    public ActionResult<SourceModel> GetById(int id)
     {
-        return _sourceRepo.Get(id);
+        try
+        {
+            return Ok(_sourceRepo.Get(id));
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
     }
 
     [HttpGet(Name = "SourceGetDocumentCount")]
     [Route("GetDocumentCount/{id:int?}")]
-    public int GetDocumentCount(int id)
+    public ActionResult<int> GetDocumentCount(int id)
     {
-        return _sourceRepo.GetCountFromId(id);
+        try
+        {
+            return Ok(_sourceRepo.GetCountFromId(id));
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
     }
 
     [HttpPost(Name = "SourcePostSource")]
-    [Route("PostSource/{name:string?}")]
-    public void PostSource(string name)
+    [Route("PostSource/{name}")]
+    public ActionResult PostSource(string name)
     {
-        _sourceRepo.Add(new SourceModel() { Name = name });
+        try
+        {
+            int status = _sourceRepo.Add(new SourceModel() { Name = name });
+            if (status == 0)
+            {
+                return BadRequest($"Rows affected: {status}");
+            }
+
+            return Ok($"Rows affected: {status}");
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
     }
 }

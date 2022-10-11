@@ -41,12 +41,12 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
         return res;
     }
 
-    public void Add(DocumentContentModel entity)
+    public int Add(DocumentContentModel entity)
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute(
+            return con.Execute(
             "insert into document_contents(documents_id, content)" +
                     " values (@DocumentId, @Content)",
                 new

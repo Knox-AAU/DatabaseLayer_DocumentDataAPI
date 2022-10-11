@@ -9,6 +9,7 @@ namespace DocumentDataAPI.Data.Repositories;
 public class SourceRepository : IRepository<SourceModel>, ISourceRepository
 {
     private readonly DatabaseOptions _options;
+
     public SourceRepository(IConfiguration config)
     {
         _options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
@@ -26,6 +27,7 @@ public class SourceRepository : IRepository<SourceModel>, ISourceRepository
                     id
                 });
         }
+
         return res;
     }
 
@@ -37,17 +39,18 @@ public class SourceRepository : IRepository<SourceModel>, ISourceRepository
         {
             res = con.Query<SourceModel>($"select * from sources").ToList();
         }
+
         return res;
     }
 
-    public void Add(SourceModel entity)
+    public int Add(SourceModel entity)
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute(
-            "insert into sources(name)" +
-                    " values (@@Name)",
+            return con.Execute(
+                "insert into sources(name)" +
+                " values (@@Name)",
                 new
                 {
                     entity.Name
@@ -60,7 +63,7 @@ public class SourceRepository : IRepository<SourceModel>, ISourceRepository
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute("delete from sources where id=@Id", new { entity.Id });
+            con.Execute("delete from sources where id=@Id", new {entity.Id});
         }
     }
 
@@ -91,6 +94,7 @@ public class SourceRepository : IRepository<SourceModel>, ISourceRepository
                     id
                 });
         }
+
         return res;
     }
 }

@@ -19,7 +19,7 @@ public class WordRatioRepository : IRepository<WordRatioModel>
     public WordRatioModel Get(int id)
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        WordRatioModel res = new();
+        WordRatioModel res;
         using (con)
         {
             res = con.QuerySingle<WordRatioModel>("select * from word_ratios where id=@Id",
@@ -28,28 +28,30 @@ public class WordRatioRepository : IRepository<WordRatioModel>
                     id
                 });
         }
+
         return res;
     }
 
     public IEnumerable<WordRatioModel> GetAll()
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
-        List<WordRatioModel> res = new();
+        List<WordRatioModel> res;
         using (con)
         {
             res = con.Query<WordRatioModel>($"select * from word_ratios").ToList();
         }
+
         return res;
     }
 
-    public void Add(WordRatioModel entity)
+    public int Add(WordRatioModel entity)
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute(
-            "insert into word_ratios(documents_id, word, amount, percent, rank)" +
-                    " values (@DocumentId, @Word, @Amount, @Percent, @Rank)",
+            return con.Execute(
+                "insert into word_ratios(documents_id, word, amount, percent, rank)" +
+                " values (@DocumentId, @Word, @Amount, @Percent, @Rank)",
                 new
                 {
                     entity.DocumentId,
@@ -66,7 +68,7 @@ public class WordRatioRepository : IRepository<WordRatioModel>
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute("delete from word_ratios where documents_id=@DocumentId", new { entity.DocumentId });
+            con.Execute("delete from word_ratios where documents_id=@DocumentId", new {entity.DocumentId});
         }
     }
 
