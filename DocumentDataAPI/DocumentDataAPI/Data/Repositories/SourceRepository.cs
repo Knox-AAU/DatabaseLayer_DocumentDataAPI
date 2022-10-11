@@ -7,7 +7,7 @@ namespace DocumentDataAPI.Data.Repositories;
 public class SourceRepository : IRepository<SourceModel>
 {
     private readonly IDbConnectionFactory _connectionFactory;
-    
+
     public SourceRepository(IDbConnectionFactory connectionFactory)
     {
         _connectionFactory = connectionFactory;
