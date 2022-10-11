@@ -30,16 +30,6 @@ public class DatabaseDeployHelper
         string path = Path.Join(Environment.CurrentDirectory, @"Data\Deployment\Scripts", fileName);
         string script = File.ReadAllText(path)
             .Replace("${schema}", _databaseOptions.Schema);
-        ExecuteScript(path, script);
-    }
-
-    /// <summary>
-    /// Executes the provided SQL script.
-    /// </summary>
-    /// <param name="path">The path to the script file.</param>
-    /// <param name="script">The parsed contents of the file.</param>
-    private void ExecuteScript(string path, string script)
-    {
         _logger.LogInformation("Executing script: {path}", path);
         try
         {

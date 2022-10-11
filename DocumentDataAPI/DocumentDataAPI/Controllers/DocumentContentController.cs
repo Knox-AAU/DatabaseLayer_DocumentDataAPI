@@ -21,35 +21,29 @@ public class DocumentContentController : ControllerBase
 
     [HttpGet]
     [Route("")]
-    public IActionResult GetAll()
+    public IActionResult Get(long? documentId)
     {
         try
         {
-            IEnumerable<DocumentContentModel> result = _repository.GetAll().ToList();
-            return result.Any() ? Ok(result) : NoContent();
+            if (documentId.HasValue)
+            {
+                DocumentContentModel? result = _repository.Get(documentId.Value);
+                return result == null
+                    ? NotFound()
+                    : Ok(result);
+            }
+            else
+            {
+                IEnumerable<DocumentContentModel> result = _repository.GetAll();
+                return result.Any()
+                    ? Ok(result)
+                    : NoContent();
+            }
         }
         catch (Exception e)
         {
-            _logger.LogError("Unable to fetch document contents: {message}", e.Message);
-            return Problem("Unable to fetch document contents");
-        }
-    }
-
-    [HttpGet]
-    [Route("{documentId:long}")]
-    public IActionResult GetById(long documentId)
-    {
-        try
-        {
-            DocumentContentModel? result = _repository.Get(documentId);
-            return result == null
-                ? NotFound()
-                : Ok(result);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Unable to get document content with document_id {id}: {message}", documentId, e.Message);
-            return Problem("Unable to fetch document content with document_id " + documentId);
+            _logger.LogError(e, "Unable to fetch document contents");
+            return Problem(e.Message);
         }
     }
 
@@ -60,32 +54,31 @@ public class DocumentContentController : ControllerBase
         try
         {
             return _repository.Add(documentContent) == 1
-                ? Ok()
+                ? Ok(_repository.Get(documentContent.DocumentId))
                 : Problem("No rows were added");
         }
         catch (Exception e)
         {
-            _logger.LogError("Unable to insert document content with document_id: {id}: {message}",
+            _logger.LogError("Unable to insert document content with documents_id: {id}: {message}",
                 documentContent.DocumentId, e.Message);
-            return Problem("Unable to insert document content with document_id " + documentContent.DocumentId);
+            return Problem(e.Message);
         }
     }
 
     [HttpPost]
-    [Route("{documentId:long}")]
-    public IActionResult UpdateDocumentContent(long documentId, [FromBody] DocumentContentModel documentContent)
+    [Route("")]
+    public IActionResult UpdateDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
             return _repository.Update(documentContent) == 1
-                ? Ok(_repository.Get(documentId))
+                ? Ok(_repository.Get(documentContent.DocumentId))
                 : NotFound();
         }
         catch (Exception e)
         {
-            _logger.LogError("Unable to update document content with document_id: {id}: {message}",
-                documentContent.DocumentId, e.Message);
-            return Problem("Unable to update document content with document_id " + documentContent.DocumentId);
+            _logger.LogError(e, "Unable to update document content with documents_id: {id}", documentContent.DocumentId);
+            return Problem(e.Message);
         }
     }
 }

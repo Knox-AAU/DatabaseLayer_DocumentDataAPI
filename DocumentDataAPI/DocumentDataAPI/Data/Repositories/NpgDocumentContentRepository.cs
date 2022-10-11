@@ -62,7 +62,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
             "update document_contents set content = @Content " +
-            "where id = @DocumentId",
+            "where documents_id = @DocumentId",
             new
             {
                 entity.Content,
