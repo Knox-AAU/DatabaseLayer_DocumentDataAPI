@@ -31,16 +31,16 @@ public class SourceRepository : ISourceRepository
         return con.Execute("insert into sources(name) values (@Name)", new { entity.Name });
     }
 
-    public void Delete(SourceModel entity)
+    public int Delete(SourceModel entity)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        con.Execute("delete from sources where id=@Id", new { entity.Id });
+        return con.Execute("delete from sources where id=@Id", new { entity.Id });
     }
 
-    public void Update(SourceModel entity)
+    public int Update(SourceModel entity)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        con.Execute("update sources set name = @Name where id = @Id", new { entity.Name, entity.Id });
+        return con.Execute("update sources set name = @Name where id = @Id", new { entity.Name, entity.Id });
     }
 
     public int GetCountFromId(int id)

@@ -57,21 +57,21 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
         }
     }
 
-    public void Delete(DocumentContentModel entity)
+    public int Delete(DocumentContentModel entity)
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute("delete from document_contents where documents_id=@DocumentId", new { entity.DocumentId });
+            return con.Execute("delete from document_contents where documents_id=@DocumentId", new { entity.DocumentId });
         }
     }
 
-    public void Update(DocumentContentModel entity)
+    public int Update(DocumentContentModel entity)
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute(
+            return con.Execute(
                 "update document_contents set content = @Content where id = @DocumentId",
                 new
                 {

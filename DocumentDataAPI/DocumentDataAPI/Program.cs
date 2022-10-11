@@ -13,6 +13,7 @@ builder.Services
     .AddSingleton<DatabaseDeployHelper>()
     .AddSingleton<IDbConnectionFactory>(_ => new PostgresDbConnectionFactory(databaseOptions.ConnectionString))
     .AddScoped<ISourceRepository, SourceRepository>()
+    .AddScoped<IWordRatioRepository, WordRatioRepository>()
     ;
 
 builder.Services.AddControllers();
