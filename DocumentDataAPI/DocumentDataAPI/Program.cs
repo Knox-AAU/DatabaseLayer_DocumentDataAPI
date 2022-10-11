@@ -1,9 +1,10 @@
+using Dapper.FluentMap;
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
+using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Models;
 using DocumentDataAPI.Options;
-using Microsoft.CodeAnalysis;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
@@ -22,6 +23,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Set up Dapper mappers
+FluentMapper.Initialize(config =>
+{
+    config.AddMap(new DocumentContentMap());
+});
 
 // Check for "deploy=true" command-line argument
 if (app.Configuration.GetValue<bool>("deploy"))

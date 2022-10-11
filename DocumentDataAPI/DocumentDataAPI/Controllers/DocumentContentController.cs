@@ -28,31 +28,39 @@ public class DocumentContentController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError("Unable to get document contents: {message}", e.Message);
+            _logger.LogError("Unable to fetch document contents: {message}", e.Message);
             return Problem("Unable to fetch document contents");
         }
     }
 
     [HttpGet]
-    [Route("{id:int}")]
-    public IActionResult GetById(int id)
+    [Route("{documentId:int}")]
+    public IActionResult GetById(int documentId)
     {
         try
         {
-            DocumentContentModel result = _repository.Get(id);
+            DocumentContentModel result = _repository.Get(documentId);
             return Ok(result);
         }
         catch (Exception e)
         {
-            _logger.LogError("Unable to get document content with id {id}: {message}", id, e.Message);
-            return Problem("Unable to fetch document content with id " + id);
+            _logger.LogError("Unable to get document content with document_id {id}: {message}", documentId, e.Message);
+            return Problem("Unable to fetch document content with document_id " + documentId);
         }
     }
 
     [HttpPost]
     public IActionResult PostDocumentContent([FromBody] DocumentContentModel documentContentModel)
     {
-        _repository.Add(documentContentModel);
-        return Ok();
+        try
+        {
+            _repository.Add(documentContentModel);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Unable to insert document content with document_id: {id}: {message}", documentContentModel.DocumentId, e.Message);
+            return Problem("Unable to insert document content with document_id " + documentContentModel.DocumentId);
+        }
     }
 }
