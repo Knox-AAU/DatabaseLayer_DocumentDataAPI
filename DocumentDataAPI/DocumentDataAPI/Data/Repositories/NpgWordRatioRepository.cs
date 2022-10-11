@@ -7,9 +7,9 @@ namespace DocumentDataAPI.Data.Repositories;
 public class NpgWordRatioRepository : IWordRatioRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
-    private readonly ILogger<NpgDocumentRepository> _logger;
+    private readonly ILogger<NpgWordRatioRepository> _logger;
 
-    public NpgWordRatioRepository(IDbConnectionFactory connectionFactory, ILogger<NpgDocumentRepository> logger) {
+    public NpgWordRatioRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRatioRepository> logger) {
         _connectionFactory = connectionFactory;
         _logger = logger;
     }

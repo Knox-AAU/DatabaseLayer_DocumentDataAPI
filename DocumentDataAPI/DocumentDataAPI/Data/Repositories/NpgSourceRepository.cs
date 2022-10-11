@@ -7,9 +7,9 @@ namespace DocumentDataAPI.Data.Repositories;
 public class NpgSourceRepository : ISourceRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
-    private readonly ILogger<NpgDocumentRepository> _logger;
+    private readonly ILogger<NpgSourceRepository> _logger;
 
-    public NpgSourceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgDocumentRepository> logger) {
+    public NpgSourceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgSourceRepository> logger) {
         _connectionFactory = connectionFactory;
         _logger = logger;
     }

@@ -1,16 +1,20 @@
 ﻿using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DocumentDataAPITests.Data.Repositories;
 
 public class SourceRepositoryIntegrationTests
 {
     private readonly PostgresDbConnectionFactory _connectionFactory;
+    private readonly ILogger<NpgSourceRepository> _logger;
 
     public SourceRepositoryIntegrationTests()
     {
         _connectionFactory = new PostgresDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _logger = new Logger<NpgSourceRepository>(new NullLoggerFactory());
         TestHelper.DeployDatabaseWithTestData();
     }
 
@@ -18,7 +22,7 @@ public class SourceRepositoryIntegrationTests
     public void GetAll_ReturnsAllSources()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
 
         // Act
         List<SourceModel> result = repository.GetAll().ToList();
@@ -35,7 +39,7 @@ public class SourceRepositoryIntegrationTests
     public void Update_UpdatesRow()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
         const string expected = "Test Source";
 
         // Act
@@ -50,7 +54,7 @@ public class SourceRepositoryIntegrationTests
     public void DeleteWithNoForeignKeyVoilation_DeletesRow()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
         SourceModel expected = new(3, "Test");
         repository.Add(expected);
 
