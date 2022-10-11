@@ -10,6 +10,7 @@ namespace DocumentDataAPI.Data.Repositories;
 public class DocumentRepository : IRepository<DocumentModel>
 {
     private readonly DatabaseOptions _options;
+
     public DocumentRepository(IConfiguration config)
     {
         _options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
@@ -27,6 +28,7 @@ public class DocumentRepository : IRepository<DocumentModel>
                     id
                 });
         }
+
         return res;
     }
 
@@ -38,6 +40,7 @@ public class DocumentRepository : IRepository<DocumentModel>
         {
             res = con.Query<DocumentModel>($"select * from documents").ToList();
         }
+
         return res;
     }
 
@@ -47,8 +50,8 @@ public class DocumentRepository : IRepository<DocumentModel>
         using (con)
         {
             return con.Execute(
-            "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
-                    " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @Source_Id)",
+                "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+                " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @Source_Id)",
                 new
                 {
                     entity.Id,

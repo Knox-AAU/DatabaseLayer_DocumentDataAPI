@@ -29,16 +29,16 @@ public class WordRatioRepository : IWordRatioRepository
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-                "insert into word_ratios(documents_id, word, amount, percent, rank)" +
-                " values (@DocumentId, @Word, @Amount, @Percent, @Rank)",
-                new
-                {
-                    entity.DocumentId,
-                    entity.Word,
-                    entity.Amount,
-                    entity.Percent,
-                    entity.Rank
-                });
+            "insert into word_ratios(documents_id, word, amount, percent, rank)" +
+            " values (@DocumentId, @Word, @Amount, @Percent, @Rank)",
+            new
+            {
+                entity.DocumentId,
+                entity.Word,
+                entity.Amount,
+                entity.Percent,
+                entity.Rank
+            });
     }
 
     public int Delete(WordRatioModel entity)
@@ -51,15 +51,15 @@ public class WordRatioRepository : IWordRatioRepository
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-                "update word_ratios set word = @Word, amount = @Amount, percent = @Percent, rank = @Rank where documents_id = @DocumentId",
-                new
-                {
-                    entity.Word,
-                    entity.Amount,
-                    entity.Percent,
-                    entity.Rank,
-                    entity.DocumentId
-                });
+            "update word_ratios set word = @Word, amount = @Amount, percent = @Percent, rank = @Rank where documents_id = @DocumentId",
+            new
+            {
+                entity.Word,
+                entity.Amount,
+                entity.Percent,
+                entity.Rank,
+                entity.DocumentId
+            });
     }
 
     public IEnumerable<WordRatioModel> GetByWord(string word)
@@ -71,7 +71,8 @@ public class WordRatioRepository : IWordRatioRepository
     public WordRatioModel GetByDocumentIDAndWord(int documentid, string word)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<WordRatioModel>("select * from word_ratios where word = @Word and documents_id = @Documentid",
+        return con.QuerySingle<WordRatioModel>(
+            "select * from word_ratios where word = @Word and documents_id = @Documentid",
             new { DocumentId = documentid, Word = word });
     }
 
@@ -85,5 +86,4 @@ public class WordRatioRepository : IWordRatioRepository
     {
         throw new NotImplementedException();
     }
-
 }

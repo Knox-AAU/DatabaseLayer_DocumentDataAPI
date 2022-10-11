@@ -66,5 +66,4 @@ public class WordRatioController : ControllerBase
         //TODO: Split word ratios by semicolon
         throw new NotImplementedException();
     }
-
 }

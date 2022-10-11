@@ -10,6 +10,7 @@ namespace DocumentDataAPI.Data.Repositories;
 public class DocumentContentRepository : IRepository<DocumentContentModel>
 {
     private readonly DatabaseOptions _options;
+
     public DocumentContentRepository(IConfiguration config)
     {
         _options = config.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
@@ -27,6 +28,7 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
                     id
                 });
         }
+
         return res;
     }
 
@@ -38,6 +40,7 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
         {
             res = con.Query<DocumentContentModel>($"select * from document_contents").ToList();
         }
+
         return res;
     }
 
@@ -47,8 +50,8 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
         using (con)
         {
             return con.Execute(
-            "insert into document_contents(documents_id, content)" +
-                    " values (@DocumentId, @Content)",
+                "insert into document_contents(documents_id, content)" +
+                " values (@DocumentId, @Content)",
                 new
                 {
                     entity.DocumentId,
@@ -62,7 +65,8 @@ public class DocumentContentRepository : IRepository<DocumentContentModel>
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            return con.Execute("delete from document_contents where documents_id=@DocumentId", new { entity.DocumentId });
+            return con.Execute("delete from document_contents where documents_id=@DocumentId",
+                new { entity.DocumentId });
         }
     }
 
