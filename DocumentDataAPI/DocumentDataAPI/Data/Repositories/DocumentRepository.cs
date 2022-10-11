@@ -41,12 +41,12 @@ public class DocumentRepository : IRepository<DocumentModel>
         return res;
     }
 
-    public void Add(DocumentModel entity)
+    public int Add(DocumentModel entity)
     {
         IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
         using (con)
         {
-            con.Execute(
+            return con.Execute(
             "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
                     " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @Source_Id)",
                 new

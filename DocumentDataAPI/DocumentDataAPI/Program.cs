@@ -1,5 +1,7 @@
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
+using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Models;
 using DocumentDataAPI.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,7 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
     .AddSingleton<IDbConnectionFactory>(_ => new PostgresDbConnectionFactory(databaseOptions.ConnectionString))
+    .AddScoped<ISourceRepository, SourceRepository>()
     ;
 
 builder.Services.AddControllers();

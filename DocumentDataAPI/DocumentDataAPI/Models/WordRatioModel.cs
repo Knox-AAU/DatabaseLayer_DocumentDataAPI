@@ -30,5 +30,8 @@ public class WordRatioModel
 
 public enum Ranks
 {
-    Body, Synopsis, Subtitle, Title
+    Body,
+    Synopsis,
+    Subtitle,
+    Title
 }
