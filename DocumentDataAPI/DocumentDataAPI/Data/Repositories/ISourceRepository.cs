@@ -2,7 +2,7 @@ using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public interface ISourceRepository
+public interface ISourceRepository : IRepository<SourceModel>
 {
     SourceModel Get(int id);
     IEnumerable<SourceModel> GetAll();
