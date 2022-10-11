@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Models;
@@ -37,6 +36,64 @@ public class DocumentRepository : IRepository<DocumentModel>
         using (con)
         {
             res = con.Query<DocumentModel>($"select * from documents").ToList();
+        }
+        return res;
+    }
+
+    public IEnumerable<DocumentModel> GetBySource(int sources_id)
+    {
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
+        List<DocumentModel> res = new();
+        using (con)
+        {
+            res = con.Query<DocumentModel>($"select * from documents where sources_id=@sources_id",
+                new 
+                { 
+                    sources_id 
+                }).ToList();
+        }
+        return res;
+    }
+
+
+    public int GetTotalDocumentCount()
+    {
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
+        int res;
+        using (con)
+        {
+            res = con.QuerySingle<Int32>($"select COUNT(Id) from documents");
+        }
+
+        return res;
+    }
+
+    public IEnumerable<DocumentModel> GetByAuthor(string author)
+    {
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
+        List<DocumentModel> res = new();
+        using (con)
+        {
+            res = con.Query<DocumentModel>("select * from documents where author=@Author",
+                new
+                {
+                    author
+                }).ToList();
+        }
+        return res;
+    }
+
+    public IEnumerable<DocumentModel> GetByDate(DateTime date)
+    {
+        IDbConnection con = new NpgsqlConnection(_options.ConnectionString);
+        List<DocumentModel> res = new();
+        using (con)
+        {
+            res = con.Query<DocumentModel>("select * from documents where date=@Date",
+                new
+                {
+                    date
+                }).ToList();
         }
         return res;
     }
