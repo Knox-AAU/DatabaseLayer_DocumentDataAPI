@@ -378,3 +378,4 @@ MigrationBackup/
 
 # Local settings
 **/appsettings.local.json
+**/appsettings.Tests.local.json
