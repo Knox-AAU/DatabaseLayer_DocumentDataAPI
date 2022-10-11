@@ -10,11 +10,12 @@ namespace DocumentDataAPI.Controllers;
 public class DocumentContentController : ControllerBase
 {
     private readonly ILogger<DocumentContentController> _logger;
-    private readonly IRepository<DocumentContentModel> _repository;
+    private readonly IDocumentContentRepository _repository;
 
-    public DocumentContentController(ILogger<DocumentContentController> logger, IRepository<DocumentContentModel> repository)
+    public DocumentContentController(ILogger<DocumentContentController> logger, IDocumentContentRepository repository)
     {
         _logger = logger;
+        _repository = repository;
         _repository = repository;
     }
 

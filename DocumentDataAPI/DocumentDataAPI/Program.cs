@@ -1,10 +1,10 @@
 using Dapper.FluentMap;
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
-using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories;
-using DocumentDataAPI.Models;
+using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Options;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
@@ -14,13 +14,18 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
     .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
-    .AddScoped<IRepository<DocumentContentModel>, DocumentContentRepository>()
+    .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
+    .AddScoped<IDocumentRepository, NpgDocumentRepository>()
+    .AddScoped<ISourceRepository, NpgSourceRepository>()
+    .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
     ;
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
+
 
 var app = builder.Build();
 
@@ -36,7 +41,8 @@ FluentMapper.Initialize(config =>
 // Check for "deploy=true" command-line argument
 if (app.Configuration.GetValue<bool>("deploy"))
 {
-    app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database, databaseOptions.Schema);
+    app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database,
+        databaseOptions.Schema);
     var deployHelper = app.Services.GetRequiredService<DatabaseDeployHelper>();
     try
     {
@@ -45,12 +51,14 @@ if (app.Configuration.GetValue<bool>("deploy"))
         {
             deployHelper.ExecuteSqlFromFile("populate_tables.sql");
         }
+
         app.Logger.LogInformation("Finished!");
     }
     catch (Exception)
     {
         app.Logger.LogError("Deploy was aborted due to errors.");
     }
+
     return;
 }
 
