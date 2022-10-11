@@ -12,7 +12,11 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
     .AddSingleton<IDbConnectionFactory>(_ => new PostgresDbConnectionFactory(databaseOptions.ConnectionString))
-    ;
+    .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
+    .AddScoped<IDocumentRepository, NpgDocumentRepository>()
+    .AddScoped<ISourceRepository, NpgSourceRepository>()
+    .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
+;
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
