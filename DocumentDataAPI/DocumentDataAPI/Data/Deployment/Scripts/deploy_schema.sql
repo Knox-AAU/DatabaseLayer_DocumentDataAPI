@@ -1,3 +1,6 @@
+-- Creates a copy of the document_data schema (see https://wiki.knox.cs.aau.dk/en/Database/DocumentDataAPI/document_data).
+-- The actual name of the schema is provided though the ${schema} placeholder.
+
 drop schema if exists ${schema} cascade;
 
 create schema ${schema};
@@ -12,7 +15,7 @@ create table ${schema}.documents (
     sources_id  integer      not null,
     title       varchar(400) not null,
     path        varchar(400) not null,
-    summary     text         not null,
+    summary     text,
     date        timestamp    not null,
     author      varchar(200) not null,
     total_words integer      not null,
