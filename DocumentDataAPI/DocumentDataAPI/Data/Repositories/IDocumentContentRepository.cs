@@ -2,5 +2,6 @@
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public interface IDocumentContentRepository : IRepository<DocumentContentModel> {
+public interface IDocumentContentRepository : IRepository<DocumentContentModel>
+{
 }

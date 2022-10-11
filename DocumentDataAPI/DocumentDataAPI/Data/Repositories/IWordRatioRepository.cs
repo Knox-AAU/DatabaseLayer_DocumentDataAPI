@@ -2,5 +2,6 @@
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public interface IWordRatioRepository : IRepository<WordRatioModel> {
+public interface IWordRatioRepository : IRepository<WordRatioModel>
+{
 }
