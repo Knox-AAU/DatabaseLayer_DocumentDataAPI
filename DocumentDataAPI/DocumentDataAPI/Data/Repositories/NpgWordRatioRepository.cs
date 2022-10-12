@@ -19,7 +19,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
     {
         _logger.LogDebug("Retrieving WordRatio with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<WordRatioModel>("select * from word_ratios where id=@Id", new {id})
+        return con.Query<WordRatioModel>("select * from word_ratios where id=@Id", new { id })
             .SingleOrDefault();
     }
 
