@@ -37,7 +37,7 @@ public class NpgDocumentRepositoryIntegrationTests
             new DocumentModel("Maja Lærke Maach", DateTime.Parse("2022-10-07 13:33:00.000"), 2, "https://www.dr.dk/nyheder/seneste/kongehuset-dronningen-har-talt-med-prins-joachim-paa-fredensborg-slot", 1, "", "Kongehuset: Dronningen har talt med prins Joachim på Fredensborg Slot", 0),
         }, "because the test database contains only those articles by given author");
     }
-    
+
     [Fact]
     public void GetAll_SearchParametersByAuthorAndDateReturnsCorrectRows()
     {
@@ -46,7 +46,7 @@ public class NpgDocumentRepositoryIntegrationTests
         SearchParameters parameters = new();
         parameters.AddAuthor("Maja Lærke Maach")
             .AddAfterDate(DateTime.Parse("2022-10-07 13:34:00.000"));
-        
+
         // Act
         List<DocumentModel> result = repository.GetAll(parameters).ToList();
 
