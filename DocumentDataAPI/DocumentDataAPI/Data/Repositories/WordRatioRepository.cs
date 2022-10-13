@@ -68,12 +68,12 @@ public class WordRatioRepository : IWordRatioRepository
         return con.Query<WordRatioModel>("select * from word_ratios where word = @Word", new { Word = word });
     }
 
-    public WordRatioModel GetByDocumentIDAndWord(int documentid, string word)
+    public WordRatioModel GetByDocumentIdAndWord(int documentId, string word)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.QuerySingle<WordRatioModel>(
             "select * from word_ratios where word = @Word and documents_id = @Documentid",
-            new { DocumentId = documentid, Word = word });
+            new { DocumentId = documentId, Word = word });
     }
 
     public IEnumerable<WordRatioModel> GetByWords(IEnumerable<string> wordlist)
