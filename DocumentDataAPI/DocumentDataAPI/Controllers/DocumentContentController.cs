@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("document-contents")]
 [Produces(MediaTypeNames.Application.Json)]
 public class DocumentContentController : ControllerBase
 {
@@ -23,7 +23,7 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<DocumentContentModel>> Get()
+    public ActionResult<IEnumerable<DocumentContentModel>> GetAll()
     {
         try
         {
