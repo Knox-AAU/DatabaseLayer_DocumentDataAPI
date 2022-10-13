@@ -3,12 +3,14 @@ using DocumentDataAPI.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
+using System.Net.Mime;
 using System.Text.Json;
 
 namespace DocumentDataAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("document")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class DocumentsController : ControllerBase
     {
         private readonly ILogger<DocumentsController> _logger;
@@ -20,27 +22,17 @@ namespace DocumentDataAPI.Controllers
             _repository = repository;
         }
 
-        /*TODO
-         * Use ActionResult instead of IActionResult
-         * Documentation
-         * Unit tests
-        */
-
         [HttpPut]
         [Route("PutDocument")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult PutDocument(string document)
+        public ActionResult<DocumentModel> PutDocument([FromBody] DocumentModel document)
         {
             try
             {
-                var model = JsonSerializer.Deserialize<DocumentModel>(document);
-
-                _repository.Add(model!);
-                return model == null?
-                    NotFound() :
-                    Ok(model);
+                return _repository.Add(document) == 0?
+                    Problem("No rows were added") :
+                    Ok(_repository.Get(document.Id));
             }
             catch (Exception e)
             {
@@ -162,12 +154,6 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                /*bool isDate = DateTime.TryParse(date, out DateTime dateTime);
-                if (!isDate)
-                {
-                    return BadRequest($"Wrong date format: {date}\nUse format: DD:MM:YYYY HH:MM:SS");
-                }*/
-
                 List<DocumentModel> result = _repository.GetByDate(date).ToList();
                 return result == null ?
                     NotFound() :
