@@ -7,7 +7,7 @@ namespace DocumentDataAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Produces("application/json")]
+[Produces(MediaTypeNames.Application.Json)]
 public class DocumentContentController : ControllerBase
 {
     private readonly ILogger<DocumentContentController> _logger;
@@ -16,7 +16,6 @@ public class DocumentContentController : ControllerBase
     public DocumentContentController(ILogger<DocumentContentController> logger, IDocumentContentRepository repository)
     {
         _logger = logger;
-        _repository = repository;
         _repository = repository;
     }
 
@@ -65,7 +64,7 @@ public class DocumentContentController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult PutDocumentContent([FromBody] DocumentContentModel documentContent)
+    public ActionResult<DocumentContentModel?> PutDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
@@ -86,7 +85,7 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult UpdateDocumentContent([FromBody] DocumentContentModel documentContent)
+    public ActionResult<DocumentContentModel?> UpdateDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
