@@ -100,30 +100,28 @@ public class NpgDocumentRepository : IDocumentRepository
     {
         _logger.LogDebug("Retrieving Documents by {dateTime} from database", dateTime);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents where date = @Date",
+        return con.Query<DocumentModel>($"select * from documents where date::date = @DateTime::date",
             new
             {
                 dateTime
             });
     }
 
-    public IEnumerable<DocumentModel> GetBySource(int id)
+    public IEnumerable<DocumentModel> GetBySource(int sourceId)
     {
-        _logger.LogDebug("Retrieving Documents by {source} from database", id);
+        _logger.LogDebug("Retrieving Documents by {sourceId} from database", sourceId);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Query<DocumentModel>($"select * from documents where sources_id = @SourceId",
             new
             {
-                id
+                sourceId
             });
     }
 
     public int GetTotalDocumentCount()
     {
-        /*_logger.LogDebug("Retrieving Documents by {source} from database", id);
+        _logger.LogDebug("Retrieving Document count from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>("select count(id) from documents");*/
-
-        return 0;
+        return con.QuerySingle<Int32>("select count(id) from documents");
     }
 }

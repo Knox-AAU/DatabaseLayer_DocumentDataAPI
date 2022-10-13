@@ -158,17 +158,17 @@ namespace DocumentDataAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<IEnumerable<DocumentModel>> GetByDate(string date)
+        public ActionResult<IEnumerable<DocumentModel>> GetByDate(DateTime date)
         {
             try
             {
-                bool isDate = DateTime.TryParse(date, out DateTime dateTime);
+                /*bool isDate = DateTime.TryParse(date, out DateTime dateTime);
                 if (!isDate)
                 {
                     return BadRequest($"Wrong date format: {date}\nUse format: DD:MM:YYYY HH:MM:SS");
-                }
+                }*/
 
-                List<DocumentModel> result = _repository.GetByDate(dateTime).ToList();
+                List<DocumentModel> result = _repository.GetByDate(date).ToList();
                 return result == null ?
                     NotFound() :
                     Ok(result);
