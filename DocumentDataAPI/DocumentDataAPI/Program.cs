@@ -1,9 +1,11 @@
+using System.Reflection;
 using Dapper.FluentMap;
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Options;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +25,11 @@ builder.Services
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(config =>
+{
+    string xmlDocFilePath = Path.Combine(AppContext.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml");
+    config.IncludeXmlComments(xmlDocFilePath);
+});
 builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
 
 var app = builder.Build();

@@ -19,6 +19,12 @@ public class SourceController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Retrieves all sources.
+    /// </summary>
+    /// <response code="200">Success: A list of all sources.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -36,6 +42,12 @@ public class SourceController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves the source with the given id.
+    /// </summary>
+    /// <response code="200">Success: The source.</response>
+    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{id:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -57,6 +69,12 @@ public class SourceController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves all sources with the given name.
+    /// </summary>
+    /// <response code="200">Success: A list of sources with the given name.</response>
+    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{name}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -78,10 +96,14 @@ public class SourceController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves the total number of documents for the given source id.
+    /// </summary>
+    /// <response code="200">Success: The total number of documents for the given source.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{id:long}/document-count")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<int> GetDocumentCount(long id)
     {
@@ -96,6 +118,12 @@ public class SourceController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Inserts a new source with the given name in the database.
+    /// </summary>
+    /// <response code="200">Success: The source that was inserted.</response>
+    /// <response code="400">Bad Request: A message.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -116,9 +144,16 @@ public class SourceController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Updates the source given in the request body in the database.
+    /// </summary>
+    /// <response code="200">Success: The source that was updated.</response>
+    /// <response code="404">Not Found: A message.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<SourceModel?> UpdateSource([FromBody] SourceModel source)
     {
