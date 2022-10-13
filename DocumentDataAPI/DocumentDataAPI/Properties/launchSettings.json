@@ -33,6 +33,13 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Deploy with test data": {
+      "commandName": "Project",
+      "commandLineArgs": "deploy=true populate=true",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

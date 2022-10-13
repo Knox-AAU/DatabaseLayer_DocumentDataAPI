@@ -1,21 +1,24 @@
+-- Creates a copy of the document_data schema (see https://wiki.knox.cs.aau.dk/en/Database/DocumentDataAPI/document_data).
+-- The actual name of the schema is provided though the ${schema} placeholder.
+
 drop schema if exists ${schema} cascade;
 
 create schema ${schema};
 
 create table ${schema}.sources (
-    id      serial          primary key,
-    name    varchar(100)    not null
+    id      bigserial primary key,
+    name    varchar(100) not null
 );
 
 create table ${schema}.documents (
-    id          bigint       primary key,
-    sources_id  integer      not null,
+    id          bigint primary key,
+    sources_id  bigint not null,
     title       varchar(400) not null,
     path        varchar(400) not null,
-    summary     text         not null,
-    date        timestamp    not null,
+    summary     text,
+    date        timestamp not null,
     author      varchar(200) not null,
-    total_words integer      not null,
+    total_words bigint not null,
     constraint fk_sources foreign key (sources_id) references ${schema}.sources(id)
 );
 
@@ -30,7 +33,7 @@ create table ${schema}.word_ratios (
 );
 
 create table ${schema}.document_contents (
-    documents_id    bigint not null,
+    documents_id    bigint primary key,
     content         text not null,
     constraint fk_documents foreign key (documents_id) references ${schema}.documents(id)
 );
