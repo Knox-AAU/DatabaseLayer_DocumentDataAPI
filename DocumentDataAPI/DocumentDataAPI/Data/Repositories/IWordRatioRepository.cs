@@ -4,7 +4,7 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface IWordRatioRepository : IRepository<WordRatioModel>
 {
-    new WordRatioModel Get(int id);
+    WordRatioModel GetByDocumentIdAndWord(int id, string word);
     new IEnumerable<WordRatioModel> GetAll();
     new int Add(WordRatioModel entity);
     new int Delete(WordRatioModel entity);
@@ -12,5 +12,4 @@ public interface IWordRatioRepository : IRepository<WordRatioModel>
     IEnumerable<WordRatioModel> GetByWord(string word);
     IEnumerable<WordRatioModel> GetByWords(IEnumerable<string> word);
     int AddWordRatios(IEnumerable<WordRatioModel> entities);
-    WordRatioModel GetByDocumentIdAndWord(int documentId, string word);
 }
