@@ -7,13 +7,14 @@ using DocumentDataAPI.Controllers;
 
 //Tests:
 //1. Does it connect properly?
-//2. Post document
-//3. GetAll
-//4. GetID
-//5. GetTotalDocumentCount
-//6. GetBySourceID
-//7. GetByAuthor
-//8. GetByDate
+//2. Do they throw if null?
+//3. Post document
+//4. GetAll
+//5. GetID
+//6. GetTotalDocumentCount
+//7. GetBySourceID
+//8. GetByAuthor
+//9. GetByDate
 
 
 namespace UnitTests;
@@ -25,13 +26,13 @@ public class DocumentsControllerTests
     {
         //Arrange
         var expected = e.Message;
-        var GetAll = new PutDocument(string document);
+        var GetAll = new PutDocument("hello");
 
         //Act
 
 
         //Assert
-
+        Assert.Equal(GetAll, expected);
     }*/
 
 }

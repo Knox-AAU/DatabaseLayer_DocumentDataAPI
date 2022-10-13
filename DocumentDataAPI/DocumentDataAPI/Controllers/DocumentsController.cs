@@ -12,12 +12,12 @@ namespace DocumentDataAPI.Controllers
     public class DocumentsController : ControllerBase
     {
         private readonly ILogger<DocumentsController> _logger;
-        private readonly DocumentRepository _repository;
+        private readonly IDocumentRepository _repository;
 
-        public DocumentsController(ILogger<DocumentsController> logger, IConfiguration config)
+        public DocumentsController(ILogger<DocumentsController> logger, IConfiguration config, IDocumentRepository repository)
         {
             _logger = logger;
-            _repository = new DocumentRepository(config);
+            _repository = repository;
         }
 
         /*TODO
@@ -80,7 +80,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                DocumentModel result = _repository.Get(id);
+                DocumentModel? result = _repository.Get(id);
                 return result == null ?
                     NotFound() :
                     Ok(result);

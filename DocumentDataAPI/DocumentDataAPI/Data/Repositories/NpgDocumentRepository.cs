@@ -1,6 +1,9 @@
+using System;
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Models;
+
+using static Dapper.SqlMapper;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -80,5 +83,47 @@ public class NpgDocumentRepository : IDocumentRepository
                 entity.SourceId,
                 entity.Id
             });
+    }
+
+    public IEnumerable<DocumentModel> GetByAuthor(string author)
+    {
+        _logger.LogDebug("Retrieving Documents by {author} from database", author);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<DocumentModel>($"select * from documents where author = @Author",
+            new
+            {
+                author
+            });
+    }
+
+    public IEnumerable<DocumentModel> GetByDate(DateTime dateTime)
+    {
+        _logger.LogDebug("Retrieving Documents by {dateTime} from database", dateTime);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<DocumentModel>($"select * from documents where date = @Date",
+            new
+            {
+                dateTime
+            });
+    }
+
+    public IEnumerable<DocumentModel> GetBySource(int id)
+    {
+        _logger.LogDebug("Retrieving Documents by {source} from database", id);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<DocumentModel>($"select * from documents where sources_id = @SourceId",
+            new
+            {
+                id
+            });
+    }
+
+    public int GetTotalDocumentCount()
+    {
+        /*_logger.LogDebug("Retrieving Documents by {source} from database", id);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<DocumentModel>("select count(id) from documents");*/
+
+        return 0;
     }
 }
