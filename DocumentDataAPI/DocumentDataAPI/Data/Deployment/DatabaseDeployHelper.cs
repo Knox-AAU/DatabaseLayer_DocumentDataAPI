@@ -28,11 +28,12 @@ public class DatabaseDeployHelper
     public void ExecuteSqlFromFile(string fileName)
     {
         string path = Path.Join(Environment.CurrentDirectory, "Data", "Deployment", "Scripts", fileName);
-        string script = File.ReadAllText(path)
-            .Replace("${schema}", _databaseOptions.Schema);
-        _logger.LogInformation("Executing script: {path}", path);
         try
         {
+            string script = File.ReadAllText(path)
+                .Replace("${schema}", _databaseOptions.Schema);
+
+            _logger.LogInformation("Executing script: {path}", path);
             using IDbConnection connection = _connectionFactory.CreateConnection();
             connection.Execute(script);
         }

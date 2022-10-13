@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-[Produces("application/json")]
+[Route("document-contents")]
+[Produces(MediaTypeNames.Application.Json)]
 public class DocumentContentController : ControllerBase
 {
     private readonly ILogger<DocumentContentController> _logger;
@@ -17,14 +17,13 @@ public class DocumentContentController : ControllerBase
     {
         _logger = logger;
         _repository = repository;
-        _repository = repository;
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<DocumentContentModel>> Get()
+    public ActionResult<IEnumerable<DocumentContentModel>> GetAll()
     {
         try
         {
@@ -65,7 +64,7 @@ public class DocumentContentController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult PutDocumentContent([FromBody] DocumentContentModel documentContent)
+    public ActionResult<DocumentContentModel?> PutDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
@@ -86,7 +85,7 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult UpdateDocumentContent([FromBody] DocumentContentModel documentContent)
+    public ActionResult<DocumentContentModel?> UpdateDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
