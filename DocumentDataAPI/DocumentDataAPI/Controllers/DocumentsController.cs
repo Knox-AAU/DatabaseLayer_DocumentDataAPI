@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace DocumentDataAPI.Controllers
 {
     [ApiController]
-    [Route("DocumentDataAPI/[controller]")]
+    [Route("[controller]")]
     public class DocumentsController : ControllerBase
     {
         private readonly ILogger<DocumentsController> _logger;
@@ -20,94 +20,145 @@ namespace DocumentDataAPI.Controllers
             _repository = new DocumentRepository(config);
         }
 
-        [HttpPost]
-        [Route("PostDocument")]
-        public IActionResult PostDocument(string document)
+        /*TODO
+         * Use ActionResult instead of IActionResult
+         * Documentation
+         * Unit tests
+        */
+
+        [HttpPut]
+        [Route("PutDocument")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult PutDocument(string document)
         {
             try
             {
                 var model = JsonSerializer.Deserialize<DocumentModel>(document);
 
                 _repository.Add(model!);
-                return Ok();
+                return model == null?
+                    NotFound() :
+                    Ok(model);
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                _logger.LogError($"Unable to add document.\n{e.Message}");
+                return Problem(e.Message);
             }
         }
 
         [HttpGet]
         [Route("Get")]
-        public IActionResult GetAll()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<IEnumerable<DocumentModel>> GetAll()
         {
             try
             {
                 List<DocumentModel> result = _repository.GetAll().ToList();
-                return Ok(result);
+                return result == null ?
+                    NotFound() :
+                    Ok(result);
             }
             catch (Exception e)
             {
-                return NotFound(e.Message);
+                _logger.LogError($"Unable to fetch documents\n{e.Message}");
+                return Problem(e.Message);
             }
             
         }
 
         [HttpGet]
         [Route("Get/{id:int?}")]
-        public IActionResult GetById(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<DocumentModel> GetById(int id)
         {
             try
             {
                 DocumentModel result = _repository.Get(id);
-                return Ok(result);
+                return result == null ?
+                    NotFound() :
+                    Ok(result);
             }
             catch (Exception e)
             {
-                return NotFound(e.Message);
+                _logger.LogError($"Unable to fetch document with id: {id}.\n{e.Message}");
+                return Problem(e.Message);
             }
         }
 
         [HttpGet]
         [Route("GetTotalDocumentCount")]
-        public int GetTotalDocumentCount()
-        {
-            return _repository.GetTotalDocumentCount();
-        }
-
-        [HttpGet]
-        [Route("GetBySourceId/{id:int?}")]
-        public IActionResult GetBySourceId(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<int> GetTotalDocumentCount()
         {
             try
             {
-                List<DocumentModel> result = _repository.GetBySource(id).ToList();
+                int result = _repository.GetTotalDocumentCount();
                 return Ok(result);
             }
             catch (Exception e)
             {
-                return NotFound(e.Message);
+                return Problem(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetBySourceId/{id:int?}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<IEnumerable<DocumentModel>> GetBySourceId(int id)
+        {
+            try
+            {
+                List<DocumentModel> result = _repository.GetBySource(id).ToList();
+                return result == null ?
+                    NotFound() :
+                    Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Unable to fetch document by source id: {id}.\n{e.Message}");
+                return Problem(e.Message);
             }
         }
 
         [HttpGet]
         [Route("GetByAuthor")]
-        public IActionResult GetByAuthor(string author)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<IEnumerable<DocumentModel>> GetByAuthor(string author)
         {
             try
             {
                 List<DocumentModel> result = _repository.GetByAuthor(author).ToList();
-                return Ok(result);
+                return result == null ?
+                    NotFound() :
+                    Ok(result);
             }
             catch (Exception e)
             {
-                return NotFound(e.Message);
+                _logger.LogError($"Unable to fetch documents by author: {author}.\n{e.Message}");
+                return Problem(e.Message);
             }
         }
 
         [HttpGet]
         [Route("GetByDate")]
-        public IActionResult GetByDate(string date)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<IEnumerable<DocumentModel>> GetByDate(string date)
         {
             try
             {
@@ -118,11 +169,14 @@ namespace DocumentDataAPI.Controllers
                 }
 
                 List<DocumentModel> result = _repository.GetByDate(dateTime).ToList();
-                return Ok(result);
+                return result == null ?
+                    NotFound() :
+                    Ok(result);
             }
             catch (Exception e)
             {
-                return NotFound(e.Message);
+                _logger.LogError($"Unable to fetch documents by date {date}.\n{e.Message}");
+                return Problem(e.Message);
             }
         }
     }
