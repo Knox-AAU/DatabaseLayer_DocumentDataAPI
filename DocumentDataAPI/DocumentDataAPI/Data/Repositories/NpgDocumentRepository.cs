@@ -1,5 +1,7 @@
 using System.Data;
+using System.Text;
 using Dapper;
+using DocumentDataAPI.Controllers;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
@@ -28,6 +30,30 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogDebug("Retrieving all Documents from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Query<DocumentModel>($"select * from documents");
+    }
+
+    public IEnumerable<DocumentModel> GetAll(SearchParameters parameters)
+    {
+        _logger.LogDebug("Retrieving all Documents that the given search parameters from database");
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        StringBuilder query = new ("select * from documents");
+        if (parameters.Parameters.Any())
+        {
+            QueryParameter firstParam = parameters.Parameters.First();
+            query.Append($" where {firstParam.Key} {firstParam.ComparisonOperator} @{firstParam.Key}");
+            foreach (QueryParameter param in parameters.Parameters.Skip(1))
+            {
+                query.Append($" and {param.Key} {param.ComparisonOperator} @{param.Key}");
+            }
+        }
+
+        DynamicParameters args = new();
+        foreach (QueryParameter param in parameters.Parameters)
+        {
+            args.Add(param.Key, param.Value);
+        }
+        
+        return con.Query<DocumentModel>(query.ToString(), args);
     }
 
     public int Add(DocumentModel entity)
