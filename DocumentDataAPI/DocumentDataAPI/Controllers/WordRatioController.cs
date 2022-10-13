@@ -37,6 +37,7 @@ public class WordRatioController : ControllerBase
         }
     }
 
+
     [HttpGet]
     [Route("GetByDocumentIDAndWord/{id:int}/{word}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -85,6 +86,59 @@ public class WordRatioController : ControllerBase
         {
             IEnumerable<WordRatioModel> result = _repository.GetByWords(wordlist);
             return result.Any()
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
+    }
+
+    [HttpDelete]
+    [Route("DeleteWordRatio/{wordRatio}")]
+    public ActionResult<int> DeleteWordRatio(WordRatioModel wordRatio)
+    {
+        try
+        {
+            int result = _repository.Delete(wordRatio);
+            return result == 1
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
+    }
+
+
+    [HttpPost]
+    [Route("UpdateWordRatio/{wordratio}")]
+    public ActionResult<int> UpdateWordRatio(WordRatioModel wordRatio)
+    {
+        try
+        {
+            int result = _repository.Update(wordRatio);
+            return result == 1
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
+    }
+    
+    
+    [HttpPut]
+    [Route("PutWordRatio/{wordratio}")]
+    public ActionResult<int> PutWordRatio(WordRatioModel wordRatio)
+    {
+        try
+        {
+            int result = _repository.Add(wordRatio);
+            return result == 1
                 ? Ok(result)
                 : NoContent();
         }
