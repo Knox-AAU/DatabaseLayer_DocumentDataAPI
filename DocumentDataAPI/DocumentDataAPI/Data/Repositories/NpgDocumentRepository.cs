@@ -32,7 +32,7 @@ public class NpgDocumentRepository : IDocumentRepository
         return con.Query<DocumentModel>($"select * from documents");
     }
 
-    public IEnumerable<DocumentModel> GetAll(SearchParameters parameters)
+    public IEnumerable<DocumentModel> GetAll(DocumentSearchParameters parameters)
     {
         _logger.LogDebug("Retrieving all Documents that the given search parameters from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
@@ -52,7 +52,7 @@ public class NpgDocumentRepository : IDocumentRepository
         {
             args.Add(param.Key, param.Value);
         }
-        
+
         return con.Query<DocumentModel>(query.ToString(), args);
     }
 

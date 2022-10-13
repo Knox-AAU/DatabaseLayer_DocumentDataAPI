@@ -1,34 +1,36 @@
 namespace DocumentDataAPI.Models;
 
-public class SearchParameters
+public class DocumentSearchParameters : ISearchParameters
 {
-    public readonly List<QueryParameter> Parameters = new();
+    public List<QueryParameter> Parameters { get; }
 
-    public SearchParameters()
+    public DocumentSearchParameters()
     {
+        Parameters = new();
     }
 
-    public SearchParameters AddSource(int sourceId)
+    public DocumentSearchParameters AddSource(int sourceId)
     {
         Parameters.Add(new QueryParameter("sources_id", sourceId));
         return this;
     }
 
-    public SearchParameters AddAuthor(string authorName)
+    public DocumentSearchParameters AddAuthor(string authorName)
     {
         Parameters.Add(new QueryParameter("author", authorName));
         return this;
     }
 
-    public SearchParameters AddBeforeDate(DateTime date)
+    public DocumentSearchParameters AddBeforeDate(DateTime date)
     {
         Parameters.Add(new QueryParameter("date", date, "<="));
         return this;
     }
 
-    public SearchParameters AddAfterDate(DateTime date)
+    public DocumentSearchParameters AddAfterDate(DateTime date)
     {
         Parameters.Add(new QueryParameter("date", date, ">="));
         return this;
     }
+
 }

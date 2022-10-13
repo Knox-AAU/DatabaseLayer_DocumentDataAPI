@@ -5,5 +5,5 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface IDocumentRepository : IRepository<DocumentModel>
 {
-    public IEnumerable<DocumentModel> GetAll(SearchParameters parameters);
+    public IEnumerable<DocumentModel> GetAll(DocumentSearchParameters parameters);
 }
