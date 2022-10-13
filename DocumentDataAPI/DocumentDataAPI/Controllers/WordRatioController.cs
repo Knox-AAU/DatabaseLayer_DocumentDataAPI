@@ -44,7 +44,17 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<WordRatioModel> GetByDocumentIdAndWord(int documentId, string word)
     {
-        throw new NotImplementedException();
+        try
+        {
+            WordRatioModel? result = _repository.GetByDocumentIdAndWord(documentId, word);
+            return result != null
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
     }
 
     [HttpGet]
@@ -58,7 +68,7 @@ public class WordRatioController : ControllerBase
         {
             IEnumerable<WordRatioModel> result = _repository.GetByWord(word);
             return result.Any()
-                ? Ok(_repository.GetByWord(word))
+                ? Ok(result)
                 : NoContent();
         }
         catch (DbException e)
@@ -71,13 +81,22 @@ public class WordRatioController : ControllerBase
     [Route("GetByWords/{wordlist}")]
     public ActionResult<int> GetByWords(IEnumerable<string> wordlist)
     {
-        //TODO: Split word list by semicolon
-        throw new NotImplementedException();
+        try
+        {
+            IEnumerable<WordRatioModel> result = _repository.GetByWords(wordlist);
+            return result.Any()
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
     }
 
-    [HttpGet]
-    [Route("PostWordRatios/{wordRatios}")]
-    public ActionResult<int> PostWordRatios(IEnumerable<WordRatioModel> wordRatios)
+    [HttpPut]
+    [Route("PutWordRatios/{wordRatios}")]
+    public ActionResult<int> PutWordRatios(IEnumerable<WordRatioModel> wordRatios)
     {
         try
         {
