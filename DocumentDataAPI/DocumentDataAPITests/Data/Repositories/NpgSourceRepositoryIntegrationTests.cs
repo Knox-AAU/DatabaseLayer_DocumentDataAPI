@@ -8,12 +8,12 @@ namespace DocumentDataAPITests.Data.Repositories;
 
 public class NpgSourceRepositoryIntegrationTests
 {
-    private readonly PostgresDbConnectionFactory _connectionFactory;
+    private readonly NpgDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgSourceRepository> _logger;
 
     public NpgSourceRepositoryIntegrationTests()
     {
-        _connectionFactory = new PostgresDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgSourceRepository>(new NullLoggerFactory());
         TestHelper.DeployDatabaseWithTestData();
     }
@@ -51,7 +51,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public void DeleteWithNoForeignKeyVoilation_DeletesRow()
+    public void DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);

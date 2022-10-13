@@ -1,7 +1,8 @@
+using Dapper.FluentMap;
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Repositories;
-using DocumentDataAPI.Models;
+using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Options;
 using Serilog;
 
@@ -12,7 +13,7 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 // Add services to the container.
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
-    .AddSingleton<IDbConnectionFactory>(_ => new PostgresDbConnectionFactory(databaseOptions.ConnectionString))
+    .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
     .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
     .AddScoped<ISourceRepository, NpgSourceRepository>()
@@ -27,6 +28,15 @@ builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
 
 
 var app = builder.Build();
+
+// Set up Dapper mappers
+FluentMapper.Initialize(config =>
+{
+    config.AddMap(new DocumentContentMap());
+    config.AddMap(new DocumentMap());
+    config.AddMap(new WordRatioMap());
+    config.AddMap(new SourceMap());
+});
 
 // Check for "deploy=true" command-line argument
 if (app.Configuration.GetValue<bool>("deploy"))

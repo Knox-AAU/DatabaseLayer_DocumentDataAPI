@@ -6,25 +6,24 @@ public class DocumentModel
     {
     }
 
-    public DocumentModel(string? author, DateTime date, int id, string? path, int sourceId, string? summary,
-        string? title, int totalWords)
+    public DocumentModel(string author, DateTime date, long id, string path, int sourceId, string summary, string title, int totalWords)
     {
         Author = author;
         Date = date;
         Id = id;
         Path = path;
-        Source_Id = sourceId;
+        SourceId = sourceId;
         Summary = summary;
         Title = title;
         TotalWords = totalWords;
     }
 
-    public string? Author { get; init; }
+    public string Author { get; init; } = null!;
     public DateTime Date { get; init; }
-    public int Id { get; init; }
-    public string? Path { get; init; }
-    public int Source_Id { get; init; }
-    public string? Summary { get; init; }
-    public string? Title { get; init; }
+    public long Id { get; init; }
+    public string Path { get; init; } = null!;
+    public int SourceId { get; init; }
+    public string Summary { get; init; } = null!;
+    public string Title { get; init; } = null!;
     public int TotalWords { get; init; }
 }

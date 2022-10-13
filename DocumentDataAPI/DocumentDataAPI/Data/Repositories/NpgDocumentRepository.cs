@@ -15,12 +15,12 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger = logger;
     }
 
-    public DocumentModel Get(int id)
+    public DocumentModel? Get(long id)
     {
         _logger.LogDebug("Retrieving Document with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<DocumentModel>("select * from documents " +
-                                              "where id=@Id", new { id });
+        return con.Query<DocumentModel>("select * from documents where id=@Id", new { id })
+            .SingleOrDefault();
     }
 
     public IEnumerable<DocumentModel> GetAll()
@@ -37,7 +37,7 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
             "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
-            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @Source_Id)",
+            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
             new
             {
                 entity.Id,
@@ -47,7 +47,7 @@ public class NpgDocumentRepository : IDocumentRepository
                 entity.Summary,
                 entity.Path,
                 entity.TotalWords,
-                entity.Source_Id
+                entity.SourceId
             });
     }
 
@@ -67,7 +67,7 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
             "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
-            "path = @Path, total_words = @TotalWords, sources_id = @Source_Id " +
+            "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
             "where id = @Id",
             new
             {
@@ -77,7 +77,7 @@ public class NpgDocumentRepository : IDocumentRepository
                 entity.Summary,
                 entity.Path,
                 entity.TotalWords,
-                entity.Source_Id,
+                entity.SourceId,
                 entity.Id
             });
     }

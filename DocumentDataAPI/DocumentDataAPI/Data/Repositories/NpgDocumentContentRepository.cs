@@ -16,19 +16,19 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger = logger;
     }
 
-    public DocumentContentModel Get(int id)
+    public DocumentContentModel? Get(long id)
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<DocumentContentModel>("select * from document_contents " +
-                                                     "where documents_id=@Id", new { id });
+        return con.Query<DocumentContentModel>("select * from document_contents where documents_id=@Id", new { id })
+            .SingleOrDefault();
     }
 
     public IEnumerable<DocumentContentModel> GetAll()
     {
         _logger.LogDebug("Retrieving all DocumentContents from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentContentModel>($"select * from document_contents");
+        return con.Query<DocumentContentModel>("select * from document_contents");
     }
 
     public int Add(DocumentContentModel entity)
@@ -62,7 +62,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
             "update document_contents set content = @Content " +
-            "where id = @DocumentId",
+            "where documents_id = @DocumentId",
             new
             {
                 entity.Content,

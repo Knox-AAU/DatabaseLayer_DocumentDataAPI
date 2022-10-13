@@ -31,12 +31,15 @@ public class SourceController : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetById/{id:int?}")]
-    public ActionResult<SourceModel> GetById(int id)
+    [Route("GetById/{id:long}")]
+    public ActionResult<SourceModel> GetById(long id)
     {
         try
         {
-            return Ok(_repository.Get(id));
+            SourceModel? result = _repository.Get(id);
+            return result == null
+                ? NotFound()
+                : Ok(result);
         }
         catch (DbException e)
         {
@@ -45,8 +48,8 @@ public class SourceController : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetDocumentCount/{id:int?}")]
-    public ActionResult<int> GetDocumentCount(int id)
+    [Route("GetDocumentCount/{id:long}")]
+    public ActionResult<int> GetDocumentCount(long id)
     {
         try
         {
