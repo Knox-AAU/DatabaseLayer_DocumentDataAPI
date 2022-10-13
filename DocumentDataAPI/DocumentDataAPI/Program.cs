@@ -26,8 +26,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
 
-
 var app = builder.Build();
+app.UsePathBase("/document-data-api");
+app.UseRouting();
 
 // Set up Dapper mappers
 FluentMapper.Initialize(config =>

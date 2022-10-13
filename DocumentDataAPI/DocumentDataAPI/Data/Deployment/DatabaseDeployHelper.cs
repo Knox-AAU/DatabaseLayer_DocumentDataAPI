@@ -27,12 +27,13 @@ public class DatabaseDeployHelper
     /// <example>deployHelper.ExecuteSqlFromFile("deploy_schema.sql")</example>
     public void ExecuteSqlFromFile(string fileName)
     {
-        string path = Path.Join(Environment.CurrentDirectory, @"Data\Deployment\Scripts", fileName);
-        string script = File.ReadAllText(path)
-            .Replace("${schema}", _databaseOptions.Schema);
-        _logger.LogInformation("Executing script: {path}", path);
+        string path = Path.Join(Environment.CurrentDirectory, "Data", "Deployment", "Scripts", fileName);
         try
         {
+            string script = File.ReadAllText(path)
+                .Replace("${schema}", _databaseOptions.Schema);
+
+            _logger.LogInformation("Executing script: {path}", path);
             using IDbConnection connection = _connectionFactory.CreateConnection();
             connection.Execute(script);
         }
