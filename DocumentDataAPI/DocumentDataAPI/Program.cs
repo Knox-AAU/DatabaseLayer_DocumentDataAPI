@@ -5,7 +5,6 @@ using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Options;
-using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,8 +32,6 @@ builder.Services.AddSwaggerGen(config =>
 builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
 
 var app = builder.Build();
-app.UsePathBase("/document-data-api");
-app.UseRouting();
 
 // Set up Dapper mappers
 FluentMapper.Initialize(config =>

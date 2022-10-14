@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
-[Route("document-contents")]
+[Route(RoutePrefixHelper.Prefix + "/document-contents")]
 [Produces(MediaTypeNames.Application.Json)]
 public class DocumentContentController : ControllerBase
 {

@@ -6,7 +6,7 @@ using DocumentDataAPI.Data.Repositories;
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
-[Route("sources")]
+[Route(RoutePrefixHelper.Prefix + "/sources")]
 [Produces(MediaTypeNames.Application.Json)]
 public class SourceController : ControllerBase
 {
