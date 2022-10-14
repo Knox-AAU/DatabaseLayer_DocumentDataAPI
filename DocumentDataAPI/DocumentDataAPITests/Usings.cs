@@ -21,18 +21,24 @@ namespace UnitTests;
 
 public class DocumentsControllerTests
 {
-    /*[Fact]
+    [Fact]
     public void Check_If_GetAll_Throws_Error_Message()
     {
+        var mock = new Mock<DocumentsController> { };
+
+
+
+
+
+
         //Arrange
-        var expected = e.Message;
-        var GetAll = new PutDocument("hello");
+      /*  var DocumentsController = new DocumentDataAPI.Controllers.DocumentsController(logger, config, repository);
 
         //Act
-
+        var actual = DocumentsController.PutDocument("hello there");
 
         //Assert
-        Assert.Equal(GetAll, expected);
-    }*/
+        Assert.IsAssignableFrom<NotFoundObjectResult>(actual);*/
+    } 
 
 }
