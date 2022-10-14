@@ -18,7 +18,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     {
         _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgWordRatioRepository>(new NullLoggerFactory());
-        _sqlHelper = Mock.Of<ISqlHelper>();
+        _sqlHelper = new DapperSqlHelper(TestHelper.Configuration);
         TestHelper.DeployDatabaseWithTestData();
     }
 
@@ -62,7 +62,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void GetByWordReturnsCorrectWordRatio()
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
 
         //Act
         List<WordRatioModel> results = repository.GetByWord("til").ToList();
@@ -81,7 +81,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void GetByWordsReturnsCorrectWordRatio()
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         List<string> words = new List<string>() { "til", "dronningen" };
 
         //Act
@@ -115,7 +115,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void AddCorrectlyAddsWordRatio()
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         WordRatioModel wordRatio = new WordRatioModel(6, 5, 0.41999998688697815, (Rank) 0, "ass");
 
         //Act
@@ -130,7 +130,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void AddWordRatiosCorrectlyAddsWordRatios()
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         List<WordRatioModel> wordRatios = new List<WordRatioModel>()
         {
             new WordRatioModel(6, 5, 0.41999998688697815, (Rank) 0, "ass"),
@@ -139,7 +139,7 @@ public class NpgWordRatioRepositoryIntegrationTests
         };
 
         //Act
-        int result = repository.AddWordRatios(wordRatios);
+        int result = repository.AddBatch(wordRatios);
 
         //Assert
         result.Should().Be(3);
@@ -152,7 +152,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void UpdateCorrectlyUpdatesWordRatio()
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         WordRatioModel wordRatio = new WordRatioModel(10, 2, 5, (Rank) 2, "dronningen");
 
         //Act
@@ -167,7 +167,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void DeleteCorrectlyDeletesWordRatio()
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         WordRatioModel wordRatio = new WordRatioModel(2, 2, 1.6100000143051147, (Rank) 1, "dronningen");
 
         //Act
