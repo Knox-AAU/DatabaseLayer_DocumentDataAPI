@@ -169,4 +169,30 @@ public class SourceController : ControllerBase
             return Problem(e.Message);
         }
     }
+
+    /// <summary>
+    /// Deletes the source given in the request body in the database.
+    /// </summary>
+    /// <response code="200">Success: The source that was deleted.</response>
+    /// <response code="404">Not Found: A message.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpDelete]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<SourceModel?> DeleteSource([FromBody] SourceModel source)
+    {
+        try
+        {
+            return _repository.Delete(source) == 1
+                ? Ok(source)
+                : NotFound("Could not find source with id: " + source.Id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to delete source ({id}, {name})", source.Id, source.Name);
+            return Problem(e.Message);
+        }
+    }
 }
