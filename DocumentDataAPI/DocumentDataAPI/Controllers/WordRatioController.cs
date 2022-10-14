@@ -100,6 +100,9 @@ public class WordRatioController : ControllerBase
 
     [HttpGet]
     [Route("GetByWords/{wordlist}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<int> GetByWords(IEnumerable<string> wordlist)
     {
         try
@@ -117,6 +120,9 @@ public class WordRatioController : ControllerBase
 
     [HttpDelete]
     [Route("DeleteWordRatio/{wordRatio}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<int> DeleteWordRatio(WordRatioModel wordRatio)
     {
         try
@@ -135,6 +141,9 @@ public class WordRatioController : ControllerBase
 
     [HttpPost]
     [Route("UpdateWordRatio/{wordratio}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<int> UpdateWordRatio(WordRatioModel wordRatio)
     {
         try
@@ -153,6 +162,9 @@ public class WordRatioController : ControllerBase
 
     [HttpPut]
     [Route("PutWordRatio/{wordratio}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<int> PutWordRatio(WordRatioModel wordRatio)
     {
         try
@@ -170,6 +182,9 @@ public class WordRatioController : ControllerBase
 
     [HttpPut]
     [Route("PutWordRatios/{wordRatios}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<int> PutWordRatios(IEnumerable<WordRatioModel> wordRatios)
     {
         try
