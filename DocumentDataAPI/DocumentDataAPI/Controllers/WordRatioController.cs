@@ -69,8 +69,8 @@ public class WordRatioController : ControllerBase
         {
             IEnumerable<WordRatioModel> result = _repository.GetByDocumentId(documentId);
             return result.Any()
-            ? Ok(result)
-            : NoContent();
+                ? Ok(result)
+                : NoContent();
         }
         catch (DbException e)
         {

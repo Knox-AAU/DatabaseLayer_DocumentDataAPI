@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DocumentDataAPITests.Data.Repositories;
 
+[Collection("DocumentDataApiIntegrationTests")]
 public class NpgWordRatioRepositoryIntegrationTests
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
@@ -28,7 +29,7 @@ public class NpgWordRatioRepositoryIntegrationTests
         List<WordRatioModel> results = repository.GetAll().ToList();
 
         //Assert
-        Assert.Equal(409, results.Count()); // 409 is the amount of word ratios in the test data-set
+        Assert.Equal(410, results.Count()); // 410 is the amount of word ratios in the test data-set
     }
 
     [Theory]
@@ -48,10 +49,10 @@ public class NpgWordRatioRepositoryIntegrationTests
     public static IEnumerable<object[]> WordRatioData =>
         new List<object[]>
         {
-            new object[] { 5, "kunne", new WordRatioModel(1, 5, 0.52, (Rank)0, "kunne") },
-            new object[] { 3, "et", new WordRatioModel(3, 3, 1.96, (Rank)0, "et") },
-            new object[] { 4, "sag", new WordRatioModel(1, 4, 2.56, (Rank)0, "sag") },
-            new object[] { 2, "dronningen", new WordRatioModel(2, 2, 1.61, (Rank)1, "dronningen") },
+            new object[] { 5, "kunne", new WordRatioModel(1, 5, 0.5199999809265137, (Rank) 0, "kunne") },
+            new object[] { 3, "et", new WordRatioModel(3, 3, 1.9600000381469727, (Rank) 0, "et") },
+            new object[] { 4, "sag", new WordRatioModel(1, 4, 2.559999942779541, (Rank) 0, "sag") },
+            new object[] { 2, "dronningen", new WordRatioModel(2, 2, 1.6100000143051147, (Rank) 1, "dronningen") },
         };
 
     [Fact]
@@ -64,7 +65,19 @@ public class NpgWordRatioRepositoryIntegrationTests
         List<WordRatioModel> results = repository.GetByDocumentId(1).ToList();
 
         //Assert
-        results.Count().Should().Be(68, "because the document with id=1 has 68 wordratios");
+        results.Should().HaveCount(68, "because the document with id=1 has 68 wordratios");
     }
 
+    [Fact]
+    public void GetAll_ReturnsAllWordRatios()
+    {
+        // Arrange
+        NpgWordRatioRepository repository = new(_connectionFactory, _logger);
+
+        // Act
+        List<WordRatioModel> result = repository.GetAll().ToList();
+
+        // Assert
+        result.Should().HaveCount(410, "because the word_ratios table in the test database has 410 rows");
+    }
 }

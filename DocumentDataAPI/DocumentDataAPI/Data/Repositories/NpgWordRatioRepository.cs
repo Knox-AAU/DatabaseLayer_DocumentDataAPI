@@ -103,14 +103,15 @@ public class NpgWordRatioRepository : IWordRatioRepository
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Query<WordRatioModel>(
-            "select * from word_ratios where word = @Word and documents_id = @Documentid",
+            "select * from word_ratios where word = @Word and documents_id = @DocumentId",
             new { DocumentId = documentId, Word = word }).FirstOrDefault();
     }
 
     public IEnumerable<WordRatioModel> GetByDocumentId(int id)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<WordRatioModel>("select * from word_ratios where id = @Id", new { Id = id });
+        return con.Query<WordRatioModel>("select * from word_ratios where documents_id = @DocumentId",
+            new { DocumentId = id });
     }
 
     public IEnumerable<WordRatioModel> GetByWord(string word)
