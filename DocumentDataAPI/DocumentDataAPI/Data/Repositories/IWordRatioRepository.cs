@@ -11,5 +11,6 @@ public interface IWordRatioRepository : IRepository<WordRatioModel>
     new int Update(WordRatioModel entity);
     IEnumerable<WordRatioModel> GetByWord(string word);
     IEnumerable<WordRatioModel> GetByWords(IEnumerable<string> word);
+    IEnumerable<WordRatioModel> GetByDocumentId(int id);
     int AddWordRatios(IEnumerable<WordRatioModel> entities);
 }

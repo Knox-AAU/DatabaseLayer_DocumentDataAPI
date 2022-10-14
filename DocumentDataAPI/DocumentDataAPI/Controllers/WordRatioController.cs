@@ -59,6 +59,26 @@ public class WordRatioController : ControllerBase
     }
 
     [HttpGet]
+    [Route("GetByDocumentId/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<IEnumerable<WordRatioModel>> GetByDocumentId(int documentId)
+    {
+        try
+        {
+            IEnumerable<WordRatioModel> result = _repository.GetByDocumentId(documentId);
+            return result.Any()
+            ? Ok(result)
+            : NoContent();
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
+    }
+
+    [HttpGet]
     [Route("GetByWord/{word}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -129,8 +149,8 @@ public class WordRatioController : ControllerBase
             return Problem(e.Message);
         }
     }
-    
-    
+
+
     [HttpPut]
     [Route("PutWordRatio/{wordratio}")]
     public ActionResult<int> PutWordRatio(WordRatioModel wordRatio)
