@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route(RoutePrefixHelper.Prefix + "/word-ratios")]
 public class WordRatioController : ControllerBase
 {
     private readonly IWordRatioRepository _repository;
@@ -19,7 +19,6 @@ public class WordRatioController : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetAll/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -38,9 +37,8 @@ public class WordRatioController : ControllerBase
         }
     }
 
-
     [HttpGet]
-    [Route("GetByDocumentIDAndWord/{id:int}/{word}")]
+    [Route("documents/{documentId:int}/{word}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -60,7 +58,7 @@ public class WordRatioController : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetByDocumentId/{id:int}")]
+    [Route("documents/{documentId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -80,35 +78,16 @@ public class WordRatioController : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetByWord/{word}")]
+    [Route("words/{wordListString}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<WordRatioModel>> GetByWord(string word)
+    public ActionResult<IEnumerable<WordRatioModel>> GetByWord(string wordListString)
     {
+        List<string> wordList = wordListString.Split(',').ToList();
         try
         {
-            IEnumerable<WordRatioModel> result = _repository.GetByWord(word);
-            return result.Any()
-                ? Ok(result)
-                : NoContent();
-        }
-        catch (DbException e)
-        {
-            return Problem(e.Message);
-        }
-    }
-
-    [HttpGet]
-    [Route("GetByWords/{wordlist}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> GetByWords(IEnumerable<string> wordlist)
-    {
-        try
-        {
-            IEnumerable<WordRatioModel> result = _repository.GetByWords(wordlist);
+            IEnumerable<WordRatioModel> result = _repository.GetByWords(wordList);
             return result.Any()
                 ? Ok(result)
                 : NoContent();
@@ -120,11 +99,11 @@ public class WordRatioController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("DeleteWordRatio/{wordRatio}")]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> DeleteWordRatio(WordRatioModel wordRatio)
+    public ActionResult<int> DeleteWordRatio([FromBody] WordRatioModel wordRatio)
     {
         try
         {
@@ -139,13 +118,12 @@ public class WordRatioController : ControllerBase
         }
     }
 
-
     [HttpPost]
-    [Route("UpdateWordRatio/{wordratio}")]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> UpdateWordRatio(WordRatioModel wordRatio)
+    public ActionResult<int> UpdateWordRatio([FromBody] WordRatioModel wordRatio)
     {
         try
         {
@@ -160,30 +138,7 @@ public class WordRatioController : ControllerBase
         }
     }
 
-
     [HttpPut]
-    [Route("PutWordRatio")]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> PutWordRatio([FromBody] WordRatioModel wordRatio)
-    {
-        try
-        {
-            int result = _repository.Add(wordRatio);
-            return result == 1
-                ? Ok(result)
-                : NoContent();
-        }
-        catch (DbException e)
-        {
-            return Problem(e.Message);
-        }
-    }
-
-    [HttpPut]
-    [Route("PutWordRatios")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
