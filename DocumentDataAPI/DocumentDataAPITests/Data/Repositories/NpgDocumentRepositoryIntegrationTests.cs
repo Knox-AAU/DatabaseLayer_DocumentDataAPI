@@ -73,4 +73,40 @@ public class NpgDocumentRepositoryIntegrationTests
             d.Date.Should().BeAfter(searchDate);
         }, "because the query specifies an author and afterdate");
     }
+
+    [Fact]
+    public void Get_ReturnsCorrectRows()
+    {
+        // Arrange
+        NpgDocumentRepository repository = new(_connectionFactory, _logger);
+        int id = 1;
+
+        // Act
+        DocumentModel result = repository.Get(id).Result;
+
+
+        // Assert
+        result.Id.Should().Be(1);
+            
+    /*        (d =>
+        {
+            d.id.Should().Be(1);
+        }, "because the query specifies a specific id (In this case 1)");*/
+
+    }
+
+    [Fact]
+    public void Get_ReturnsDefault()
+    {
+        // Arrange
+        NpgDocumentRepository repository = new(_connectionFactory, _logger);
+        int id = 9999; //out of bounds
+
+        // Act
+        var result = repository.Get(id).result;
+
+
+        // Assert
+        result.ShouldBe(null);
+    }
 }

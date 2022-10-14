@@ -4,6 +4,7 @@ using System.Text;
 using Dapper;
 using DocumentDataAPI.Controllers;
 using DocumentDataAPI.Models;
+using DocumentDataAPI.Exceptions;
 
 using static Dapper.SqlMapper;
 
@@ -60,26 +61,46 @@ public class NpgDocumentRepository : IDocumentRepository
 
     public async Task<int> Add(DocumentModel entity)
     {
-        int rowsAffected = 0;
         _logger.LogDebug("Adding Document with id {Id} to database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync("insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
+            new
+            {
+                entity.Id,
+                entity.Title,
+                entity.Author,
+                entity.Date,
+                entity.Summary,
+                entity.Path,
+                entity.TotalWords,
+                entity.SourceId
+            });
+    }
+
+    public async Task<int> AddBatch(List<DocumentModel> entity)
+    {
+        int rowsAffected = 0;
+        _logger.LogDebug("Adding Documents to database");
+        _logger.LogTrace("Documents: {document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         IDbTransaction transaction = con.BeginTransaction();
         foreach (DocumentModel entityModel in entity)
         {
-            await rowsAffected += con.ExecuteAsync(
+            rowsAffected += await con.ExecuteAsync(
                 "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
                         " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
                         new
                         {
-                            entity.Id,
-                            entity.Title,
-                            entity.Author,
-                            entity.Date,
-                            entity.Summary,
-                            entity.Path,
-                            entity.TotalWords,
-                            entity.SourceId
+                            entityModel.Id,
+                            entityModel.Title,
+                            entityModel.Author,
+                            entityModel.Date,
+                            entityModel.Summary,
+                            entityModel.Path,
+                            entityModel.TotalWords,
+                            entityModel.SourceId
                         }, transaction: transaction);
         }
 
@@ -90,7 +111,7 @@ public class NpgDocumentRepository : IDocumentRepository
         }
 
         transaction.Commit();
-        return await rowsAffected;
+        return rowsAffected;
     }
 
     public async Task<int> Delete(DocumentModel entity)

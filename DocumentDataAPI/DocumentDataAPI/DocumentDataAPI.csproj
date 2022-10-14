@@ -10,6 +10,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Exceptions\NewFile.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Dapper" Version="2.0.123" />
         <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0-rc.1.22426.10" />
