@@ -25,7 +25,6 @@ namespace DocumentDataAPI.Controllers
         /// <summary>
         /// Adds the document from the content body.
         /// </summary>
-        /// <param name="document">The document to add.</param>
         /// <response code="200">Success: The document that was added to the database.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpPut]
@@ -78,7 +77,6 @@ namespace DocumentDataAPI.Controllers
         /// <summary>
         /// Retrives a document based on the document id.
         /// </summary>
-        /// <param name="id"></param>
         /// <response code="200">Success: A document for the given id.</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
@@ -106,7 +104,6 @@ namespace DocumentDataAPI.Controllers
         /// <summary>
         /// Retrives the number of documents in the database.
         /// </summary>
-        /// <param name="id"></param>
         /// <response code="200">Success: A number</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
@@ -131,7 +128,6 @@ namespace DocumentDataAPI.Controllers
         /// <summary>
         /// Retrives a list of documents based on the source id.
         /// </summary>
-        /// <param name="id"></param>
         /// <response code="200">Success: A list of documents for the given source id.</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
@@ -159,7 +155,6 @@ namespace DocumentDataAPI.Controllers
         /// <summary>
         /// Retrives a list of documents based on the author.
         /// </summary>
-        /// <param name="id"></param>
         /// <response code="200">Success: A list of documents by the given author.</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
@@ -187,7 +182,6 @@ namespace DocumentDataAPI.Controllers
         /// <summary>
         /// Retrives a list of documents created at the specifeid date.
         /// </summary>
-        /// <param name="id"></param>
         /// <response code="200">Success: A list of documents by the given author.</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
@@ -201,7 +195,7 @@ namespace DocumentDataAPI.Controllers
             try
             {
                 List<DocumentModel> result = _repository.GetByDate(date).Result.ToList();
-                return result == null ?
+                return result.Count == 0 ?
                     NotFound() :
                     Ok(result);
             }

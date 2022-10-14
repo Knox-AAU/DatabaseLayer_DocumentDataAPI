@@ -63,4 +63,11 @@ public class NpgSourceRepository : ISourceRepository
         return await con.QuerySingleOrDefaultAsync<int>("select COUNT(*) as document_count from documents " +
                                                         "where sources_id=@Id", new { id });
     }
+
+    public IEnumerable<SourceModel> GetByName(string name)
+    {
+        _logger.LogDebug("Retrieving sources with name: {name}", name);
+        using IDbConnection connection = _connectionFactory.CreateConnection();
+        return connection.Query<SourceModel>("select * from sources where name = @Name", new { name });
+    }
 }
