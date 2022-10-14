@@ -22,6 +22,12 @@ namespace DocumentDataAPI.Controllers
             _repository = repository;
         }
 
+        /// <summary>
+        /// Adds the document from the content body.
+        /// </summary>
+        /// <param name="document">The document to add.</param>
+        /// <response code="200">Success: The document that was added to the database.</response>
+        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpPut]
         [Route("PutDocument")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -30,7 +36,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                return _repository.Add(document) == 0?
+                return _repository.Add(document).Result == 0?
                     Problem("No rows were added") :
                     Ok(_repository.Get(document.Id));
             }
@@ -41,6 +47,12 @@ namespace DocumentDataAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrives a list of all documents from the database.
+        /// </summary>
+        /// <response code="200">Success: A list of all documents</response>
+        /// <response code="404">Not Found: Nothing is returned.</response>
+        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
         [Route("Get")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -50,7 +62,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                List<DocumentModel> result = _repository.GetAll().ToList();
+                List<DocumentModel> result = _repository.GetAll().Result.ToList();
                 return result == null ?
                     NotFound() :
                     Ok(result);
@@ -63,6 +75,13 @@ namespace DocumentDataAPI.Controllers
             
         }
 
+        /// <summary>
+        /// Retrives a document based on the document id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Success: A document for the given id.</response>
+        /// <response code="404">Not Found: Nothing is returned.</response>
+        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
         [Route("Get/{id:int?}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -72,7 +91,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                DocumentModel? result = _repository.Get(id);
+                DocumentModel? result = _repository.Get(id).Result;
                 return result == null ?
                     NotFound() :
                     Ok(result);
@@ -84,6 +103,13 @@ namespace DocumentDataAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrives the number of documents in the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Success: A number</response>
+        /// <response code="404">Not Found: Nothing is returned.</response>
+        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
         [Route("GetTotalDocumentCount")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -93,7 +119,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                int result = _repository.GetTotalDocumentCount();
+                int result = _repository.GetTotalDocumentCount().Result;
                 return Ok(result);
             }
             catch (Exception e)
@@ -102,6 +128,13 @@ namespace DocumentDataAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrives a list of documents based on the source id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Success: A list of documents for the given source id.</response>
+        /// <response code="404">Not Found: Nothing is returned.</response>
+        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
         [Route("GetBySourceId/{id:int?}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -111,7 +144,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                List<DocumentModel> result = _repository.GetBySource(id).ToList();
+                List<DocumentModel> result = _repository.GetBySource(id).Result.ToList();
                 return result == null ?
                     NotFound() :
                     Ok(result);
@@ -123,6 +156,13 @@ namespace DocumentDataAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrives a list of documents based on the author.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Success: A list of documents by the given author.</response>
+        /// <response code="404">Not Found: Nothing is returned.</response>
+        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
         [Route("GetByAuthor")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -132,7 +172,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                List<DocumentModel> result = _repository.GetByAuthor(author).ToList();
+                List<DocumentModel> result = _repository.GetByAuthor(author).Result.ToList();
                 return result == null ?
                     NotFound() :
                     Ok(result);
@@ -144,17 +184,23 @@ namespace DocumentDataAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrives a list of documents created at the specifeid date.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Success: A list of documents by the given author.</response>
+        /// <response code="404">Not Found: Nothing is returned.</response>
+        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
         [Route("GetByDate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<IEnumerable<DocumentModel>> GetByDate(DateTime date)
         {
             try
             {
-                List<DocumentModel> result = _repository.GetByDate(date).ToList();
+                List<DocumentModel> result = _repository.GetByDate(date).Result.ToList();
                 return result == null ?
                     NotFound() :
                     Ok(result);

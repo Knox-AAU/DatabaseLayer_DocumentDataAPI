@@ -18,110 +18,109 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger = logger;
     }
 
-    public DocumentModel? Get(long id)
+    public async Task<DocumentModel?> Get(long id)
     {
         _logger.LogDebug("Retrieving Document with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>("select * from documents where id=@Id", new { id })
-            .SingleOrDefault();
+        return await con.QueryFirstOrDefaultAsync<DocumentModel>("select * from documents where id=@Id", new { id });
     }
 
-    public IEnumerable<DocumentModel> GetAll()
+    public async Task<IEnumerable<DocumentModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all Documents from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents");
+        return await con.QueryAsync<DocumentModel>($"select * from documents");
     }
 
-    public int Add(DocumentModel entity)
+    public async Task<int> Add(DocumentModel entity)
     {
         _logger.LogDebug("Adding Document with id {Id} to database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
-            "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
-            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
-            new
-            {
-                entity.Id,
-                entity.Title,
-                entity.Author,
-                entity.Date,
-                entity.Summary,
-                entity.Path,
-                entity.TotalWords,
-                entity.SourceId
-            });
+        return await con.ExecuteAsync(
+                        "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+                        " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
+                        new
+                        {
+                            entity.Id,
+                            entity.Title,
+                            entity.Author,
+                            entity.Date,
+                            entity.Summary,
+                            entity.Path,
+                            entity.TotalWords,
+                            entity.SourceId
+                        });
     }
 
-    public int Delete(DocumentModel entity)
+    public async Task<int> Delete(DocumentModel entity)
     {
         _logger.LogDebug("Deleting Document with id {Id} from database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from documents " +
-                           "where id=@Id", new { entity.Id });
+        return await con.ExecuteAsync("delete from documents " +
+                                      "where id=@Id", new { entity.Id });
     }
 
-    public int Update(DocumentModel entity)
+    public async Task<int> Update(DocumentModel entity)
     {
         _logger.LogDebug("Updating Document with id {Id} in database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
-            "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
-            "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
-            "where id = @Id",
-            new
-            {
-                entity.Title,
-                entity.Author,
-                entity.Date,
-                entity.Summary,
-                entity.Path,
-                entity.TotalWords,
-                entity.SourceId,
-                entity.Id
-            });
+        return await con.ExecuteAsync(
+                        "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
+                        "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
+                        "where id = @Id",
+                        new
+                        {
+                            entity.Title,
+                            entity.Author,
+                            entity.Date,
+                            entity.Summary,
+                            entity.Path,
+                            entity.TotalWords,
+                            entity.SourceId,
+                            entity.Id
+                        });
     }
 
-    public IEnumerable<DocumentModel> GetByAuthor(string author)
+    public async Task<IEnumerable<DocumentModel>> GetByAuthor(string author)
     {
         _logger.LogDebug("Retrieving Documents by {author} from database", author);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents where author = @Author",
-            new
-            {
-                author
-            });
+        return await con.QueryAsync<DocumentModel>($"select * from documents where author = @Author",
+                        new
+                        {
+                            author
+                        });
     }
 
-    public IEnumerable<DocumentModel> GetByDate(DateTime dateTime)
+    public async Task<IEnumerable<DocumentModel>> GetByDate(DateTime dateTime)
     {
         _logger.LogDebug("Retrieving Documents by {dateTime} from database", dateTime);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents where date::date = @DateTime::date",
-            new
-            {
-                dateTime
-            });
+        return await con.QueryAsync<DocumentModel>($"select * from documents where date::date = @DateTime::date",
+                        new
+                        {
+                            dateTime
+                        });
     }
 
-    public IEnumerable<DocumentModel> GetBySource(int sourceId)
+    public async Task<IEnumerable<DocumentModel>> GetBySource(int sourceId)
     {
         _logger.LogDebug("Retrieving Documents by {sourceId} from database", sourceId);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents where sources_id = @SourceId",
-            new
-            {
-                sourceId
-            });
+        return await con.QueryAsync<DocumentModel>($"select * from documents where sources_id = @SourceId",
+                        new
+                        {
+                            sourceId
+                        });
     }
 
-    public int GetTotalDocumentCount()
+    public async Task<int> GetTotalDocumentCount()
     {
         _logger.LogDebug("Retrieving Document count from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<Int32>("select count(id) from documents");
+        return await con.QuerySingleAsync<int>("select count(id) from documents");
     }
 }

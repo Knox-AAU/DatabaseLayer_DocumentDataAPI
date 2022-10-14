@@ -36,7 +36,7 @@ public class SourceController : ControllerBase
     {
         try
         {
-            SourceModel? result = _repository.Get(id);
+            SourceModel? result = _repository.Get(id).Result;
             return result == null
                 ? NotFound()
                 : Ok(result);
@@ -67,7 +67,7 @@ public class SourceController : ControllerBase
     {
         try
         {
-            int status = _repository.Add(new SourceModel() { Name = name });
+            int status = _repository.Add(new SourceModel() { Name = name }).Result;
             if (status == 0)
             {
                 return BadRequest($"Rows affected: {status}");

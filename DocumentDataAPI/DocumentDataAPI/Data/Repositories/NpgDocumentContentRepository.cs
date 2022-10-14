@@ -16,57 +16,56 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger = logger;
     }
 
-    public DocumentContentModel? Get(long id)
+    public async Task<DocumentContentModel?> Get(long id)
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentContentModel>("select * from document_contents where documents_id=@Id", new { id })
-            .SingleOrDefault();
+        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id", new { id });
     }
 
-    public IEnumerable<DocumentContentModel> GetAll()
+    public async Task<IEnumerable<DocumentContentModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all DocumentContents from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentContentModel>("select * from document_contents");
+        return await con.QueryAsync<DocumentContentModel>("select * from document_contents");
     }
 
-    public int Add(DocumentContentModel entity)
+    public async Task<int> Add(DocumentContentModel entity)
     {
         _logger.LogDebug("Adding DocumentContent with id {DocumentId} to database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
-            "insert into document_contents(documents_id, content)" +
-            " values (@DocumentId, @Content)",
-            new
-            {
-                entity.DocumentId,
-                entity.Content
-            });
+        return await con.ExecuteAsync(
+                        "insert into document_contents(documents_id, content)" +
+                        " values (@DocumentId, @Content)",
+                        new
+                        {
+                            entity.DocumentId,
+                            entity.Content
+                        });
     }
 
-    public int Delete(DocumentContentModel entity)
+    public async Task<int> Delete(DocumentContentModel entity)
     {
         _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from document_contents " +
-                           "where documents_id=@DocumentId", new { entity.DocumentId });
+        return await con.ExecuteAsync("delete from document_contents " +
+                                      "where documents_id=@DocumentId", new { entity.DocumentId });
     }
 
-    public int Update(DocumentContentModel entity)
+    public async Task<int> Update(DocumentContentModel entity)
     {
         _logger.LogDebug("Updating DocumentContent with id {DocumentId} in database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
-            "update document_contents set content = @Content " +
-            "where documents_id = @DocumentId",
-            new
-            {
-                entity.Content,
-                entity.DocumentId
-            });
+        return await con.ExecuteAsync(
+                        "update document_contents set content = @Content " +
+                        "where documents_id = @DocumentId",
+                        new
+                        {
+                            entity.Content,
+                            entity.DocumentId
+                        });
     }
 }
