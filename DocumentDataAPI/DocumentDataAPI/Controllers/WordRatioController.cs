@@ -18,6 +18,12 @@ public class WordRatioController : ControllerBase
         _repository = repository;
     }
 
+    /// <summary>
+    /// Retrieves all word ratios.
+    /// </summary>
+    /// <response code="200">Success: A list of word ratios.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -37,6 +43,12 @@ public class WordRatioController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves a word ratio with a specific word and document.
+    /// </summary>
+    /// <response code="200">Success: The word ratio.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("documents/{documentId:int}/{word}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -57,6 +69,12 @@ public class WordRatioController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves all word ratios for a specific document.
+    /// </summary>
+    /// <response code="200">Success: All word ratios for the specified document.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("documents/{documentId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -77,6 +95,12 @@ public class WordRatioController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves all word ratios that contain a word in the given <paramref name="wordListString"/>, which is a comma-separated string of words.
+    /// </summary>
+    /// <response code="200">Success: All word ratios with the specified word.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("words/{wordListString}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -98,6 +122,12 @@ public class WordRatioController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Deletes the word ratio that is given in the request body.
+    /// </summary>
+    /// <response code="200">Success: The deleted word ratio.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -118,6 +148,12 @@ public class WordRatioController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Updates the values of the word ratio that is given in the request body.
+    /// </summary>
+    /// <response code="200">Success: The updated word ratio.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -138,6 +174,12 @@ public class WordRatioController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Inserts the given list of word ratios in the database.
+    /// </summary>
+    /// <response code="200">Success: The number of rows inserted.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
