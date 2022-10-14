@@ -2,5 +2,8 @@
 
 public enum Rank
 {
-    Body, Synopsis, Subtitle, Title
+    Body,
+    Synopsis,
+    Subtitle,
+    Title
 }

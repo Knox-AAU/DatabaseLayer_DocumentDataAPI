@@ -1,5 +1,6 @@
 using System.Data;
 using Dapper;
+using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
@@ -13,14 +14,6 @@ public class NpgWordRatioRepository : IWordRatioRepository
     {
         _connectionFactory = connectionFactory;
         _logger = logger;
-    }
-
-    public WordRatioModel? Get(long id)
-    {
-        _logger.LogDebug("Retrieving WordRatio with id {id} from database", id);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<WordRatioModel>("select * from word_ratios where id=@Id", new { id })
-            .SingleOrDefault();
     }
 
     public IEnumerable<WordRatioModel> GetAll()
@@ -48,6 +41,37 @@ public class NpgWordRatioRepository : IWordRatioRepository
             });
     }
 
+    public int AddWordRatios(IEnumerable<WordRatioModel> entities)
+    {
+        int rowsAffected = 0;
+        IEnumerable<WordRatioModel> wordRatios = entities.ToList();
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        IDbTransaction transaction = con.BeginTransaction();
+        foreach (WordRatioModel entity in wordRatios)
+        {
+            rowsAffected += con.Execute(
+                "insert into word_ratios(documents_id, word, amount, percent, rank)" +
+                " values (@DocumentId, @Word, @Amount, @Percent, @Rank)",
+                new
+                {
+                    entity.DocumentId,
+                    entity.Word,
+                    entity.Amount,
+                    entity.Percent,
+                    entity.Rank
+                }, transaction: transaction);
+        }
+
+        if (rowsAffected != wordRatios.Count())
+        {
+            transaction.Rollback();
+            throw new RowsAffectedMismatchException();
+        }
+
+        transaction.Commit();
+        return rowsAffected;
+    }
+
     public int Delete(WordRatioModel entity)
     {
         _logger.LogDebug("Deleting WordRatio with id {DocumentId} from database", entity.DocumentId);
@@ -73,5 +97,32 @@ public class NpgWordRatioRepository : IWordRatioRepository
                 entity.Rank,
                 entity.DocumentId
             });
+    }
+
+    public WordRatioModel? GetByDocumentIdAndWord(int documentId, string word)
+    {
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<WordRatioModel>(
+            "select * from word_ratios where word = @Word and documents_id = @DocumentId",
+            new { DocumentId = documentId, Word = word }).FirstOrDefault();
+    }
+
+    public IEnumerable<WordRatioModel> GetByDocumentId(int id)
+    {
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<WordRatioModel>("select * from word_ratios where documents_id = @DocumentId",
+            new { DocumentId = id });
+    }
+
+    public IEnumerable<WordRatioModel> GetByWord(string word)
+    {
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<WordRatioModel>("select * from word_ratios where word = @Word", new { Word = word });
+    }
+
+    public IEnumerable<WordRatioModel> GetByWords(IEnumerable<string> wordlist)
+    {
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<WordRatioModel>("select * from word_ratios where word = any(@wordlist)", new { wordlist });
     }
 }

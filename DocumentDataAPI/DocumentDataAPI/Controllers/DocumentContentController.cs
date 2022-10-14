@@ -119,7 +119,8 @@ public class DocumentContentController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to update document content with documents_id: {id}", documentContent.DocumentId);
+            _logger.LogError(e, "Unable to update document content with documents_id: {id}",
+                documentContent.DocumentId);
             return Problem(e.Message);
         }
     }

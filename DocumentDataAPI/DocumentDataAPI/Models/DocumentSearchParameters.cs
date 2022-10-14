@@ -32,5 +32,4 @@ public class DocumentSearchParameters : ISearchParameters
         Parameters.Add(new QueryParameter("date", date, ">="));
         return this;
     }
-
 }

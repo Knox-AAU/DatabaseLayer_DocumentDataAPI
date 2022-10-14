@@ -43,7 +43,8 @@ public static class TestHelper
     public static void DeployDatabaseWithTestData()
     {
         IDbConnectionFactory connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
-        DatabaseDeployHelper deployHelper = new(Mock.Of<ILogger<DatabaseDeployHelper>>(), Configuration, connectionFactory);
+        DatabaseDeployHelper deployHelper =
+            new(Mock.Of<ILogger<DatabaseDeployHelper>>(), Configuration, connectionFactory);
         deployHelper.ExecuteSqlFromFile("deploy_schema.sql");
         deployHelper.ExecuteSqlFromFile("populate_tables.sql");
     }

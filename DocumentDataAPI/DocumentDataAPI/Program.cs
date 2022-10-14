@@ -28,7 +28,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(config =>
 {
-    string xmlDocFilePath = Path.Combine(AppContext.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml");
+    string xmlDocFilePath =
+        Path.Combine(AppContext.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml");
     config.IncludeXmlComments(xmlDocFilePath);
 });
 builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
@@ -62,7 +63,7 @@ if (app.Configuration.GetValue<bool>("deploy"))
     }
     catch (Exception)
     {
-        app.Logger.LogError("Deploy was aborted due to errors.");
+        app.Logger.LogError("Deploy was aborted due to errors");
     }
 
     return;
