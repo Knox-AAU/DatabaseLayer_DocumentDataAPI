@@ -1,5 +1,6 @@
 ﻿using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -11,11 +12,13 @@ public class NpgDocumentContentRepositoryIntegrationTests
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgDocumentContentRepository> _logger;
+    private readonly ISqlHelper _sqlHelper;
 
     public NpgDocumentContentRepositoryIntegrationTests()
     {
         _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgDocumentContentRepository>(new NullLoggerFactory());
+        _sqlHelper = Mock.Of<ISqlHelper>();
         TestHelper.DeployDatabaseWithTestData();
     }
 
@@ -23,7 +26,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
     public void GetAll_ReturnsAllDocumentContents()
     {
         // Arrange
-        NpgDocumentContentRepository repository = new(_connectionFactory, _logger);
+        NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
 
         // Act
         List<DocumentContentModel> result = repository.GetAll().ToList();
@@ -36,7 +39,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
     public void Update_UpdatesRow()
     {
         // Arrange
-        NpgDocumentContentRepository repository = new(_connectionFactory, _logger);
+        NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         const string expected = "Test Content";
 
         // Act
@@ -52,7 +55,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
     public void DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
-        NpgDocumentContentRepository repository = new(_connectionFactory, _logger);
+        NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         DocumentContentModel toBeDeleted = repository.Get(5);
         repository.Delete(toBeDeleted);
 

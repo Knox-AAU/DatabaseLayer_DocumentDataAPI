@@ -1,5 +1,6 @@
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -11,11 +12,13 @@ public class NpgWordRatioRepositoryIntegrationTests
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgWordRatioRepository> _logger;
+    private readonly ISqlHelper _sqlHelper;
 
     public NpgWordRatioRepositoryIntegrationTests()
     {
         _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgWordRatioRepository>(new NullLoggerFactory());
+        _sqlHelper = Mock.Of<ISqlHelper>();
         TestHelper.DeployDatabaseWithTestData();
     }
 
@@ -23,7 +26,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void GetAllReturnsAllWordRatios()
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
 
         //Act
         List<WordRatioModel> results = repository.GetAll().ToList();
@@ -37,7 +40,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void GetByDocumentIdAndWordReturnsCorrectWordRatio(int docID, string word, WordRatioModel expected)
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
 
         //Act
         WordRatioModel? result = repository.GetByDocumentIdAndWord(docID, word);
@@ -59,7 +62,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void GetByDocumentIdReturnsCorrectCount()
     {
         //Arrange
-        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
 
         //Act
         List<WordRatioModel> results = repository.GetByDocumentId(1).ToList();
@@ -72,7 +75,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     public void GetAll_ReturnsAllWordRatios()
     {
         // Arrange
-        NpgWordRatioRepository repository = new(_connectionFactory, _logger);
+        NpgWordRatioRepository repository = new(_connectionFactory, _logger, _sqlHelper);
 
         // Act
         List<WordRatioModel> result = repository.GetAll().ToList();
