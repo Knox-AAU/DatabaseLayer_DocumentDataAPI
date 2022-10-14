@@ -24,12 +24,12 @@ public static class TestHelper
                     .Build();
                 // Set up Dapper mappers
                 FluentMapper.Initialize(config =>
-                    {
-                        config.AddMap(new DocumentContentMap());
-                        config.AddMap(new DocumentMap());
-                        config.AddMap(new WordRatioMap());
-                        config.AddMap(new SourceMap());
-                    });
+                {
+                    config.AddMap(new DocumentContentMap());
+                    config.AddMap(new DocumentMap());
+                    config.AddMap(new WordRatioMap());
+                    config.AddMap(new SourceMap());
+                });
                 _isInitialized = true;
             }
 
@@ -43,7 +43,8 @@ public static class TestHelper
     public static void DeployDatabaseWithTestData()
     {
         IDbConnectionFactory connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
-        DatabaseDeployHelper deployHelper = new(Mock.Of<ILogger<DatabaseDeployHelper>>(), Configuration, connectionFactory);
+        DatabaseDeployHelper deployHelper =
+            new(Mock.Of<ILogger<DatabaseDeployHelper>>(), Configuration, connectionFactory);
         deployHelper.ExecuteSqlFromFile("deploy_schema.sql");
         deployHelper.ExecuteSqlFromFile("populate_tables.sql");
     }

@@ -46,10 +46,8 @@ public class NpgDocumentRepositoryIntegrationTests
         List<DocumentModel> result = repository.GetAll(parameters).ToList();
 
         // Assert
-        result.Should().AllSatisfy(d =>
-        {
-            d.Author.Should().Be(searchAuthor);
-        }, "because the query specifies an author");
+        result.Should().AllSatisfy(d => { d.Author.Should().Be(searchAuthor); },
+            "because the query specifies an author");
     }
 
     [Fact]

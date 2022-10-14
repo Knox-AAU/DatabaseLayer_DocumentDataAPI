@@ -13,7 +13,8 @@ public class DatabaseDeployHelper
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly DatabaseOptions _databaseOptions;
 
-    public DatabaseDeployHelper(ILogger<DatabaseDeployHelper> logger, IConfiguration configuration, IDbConnectionFactory connectionFactory)
+    public DatabaseDeployHelper(ILogger<DatabaseDeployHelper> logger, IConfiguration configuration,
+        IDbConnectionFactory connectionFactory)
     {
         _logger = logger;
         _connectionFactory = connectionFactory;

@@ -29,6 +29,5 @@ public class DatabaseOptions
         "Host=" + Host + ";" +
         "Port=" + Port + ";" +
         "Database=" + Database + ";" +
-        "SearchPath=" + Schema + ";"
-        ;
+        "SearchPath=" + Schema + ";";
 }
