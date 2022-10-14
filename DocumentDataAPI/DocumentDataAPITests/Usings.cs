@@ -24,7 +24,7 @@ public class DocumentsControllerTests
     [Fact]
     public void Check_If_GetAll_Throws_Error_Message()
     {
-        var mock = new Mock<DocumentsController> { };
+        var mock = new Mock<DocumentController> { };
 
 
 

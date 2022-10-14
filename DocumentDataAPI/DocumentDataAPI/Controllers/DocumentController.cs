@@ -4,19 +4,18 @@ using DocumentDataAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Net.Mime;
-using System.Text.Json;
 
 namespace DocumentDataAPI.Controllers
 {
     [ApiController]
     [Route("document")]
     [Produces(MediaTypeNames.Application.Json)]
-    public class DocumentsController : ControllerBase
+    public class DocumentController : ControllerBase
     {
-        private readonly ILogger<DocumentsController> _logger;
+        private readonly ILogger<DocumentController> _logger;
         private readonly IDocumentRepository _repository;
 
-        public DocumentsController(ILogger<DocumentsController> logger, IConfiguration config, IDocumentRepository repository)
+        public DocumentController(ILogger<DocumentController> logger, IDocumentRepository repository)
         {
             _logger = logger;
             _repository = repository;
@@ -47,7 +46,7 @@ namespace DocumentDataAPI.Controllers
         }
 
         /// <summary>
-        /// Retrives a list of all documents from the database.
+        /// Retrieves a list of all documents from the database.
         /// </summary>
         /// <response code="200">Success: A list of all documents</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
@@ -62,7 +61,7 @@ namespace DocumentDataAPI.Controllers
             try
             {
                 List<DocumentModel> result = _repository.GetAll().Result.ToList();
-                return result == null ?
+                return result.Count == 0 ?
                     NotFound() :
                     Ok(result);
             }
@@ -71,11 +70,11 @@ namespace DocumentDataAPI.Controllers
                 _logger.LogError($"Unable to fetch documents\n{e.Message}");
                 return Problem(e.Message);
             }
-            
+
         }
 
         /// <summary>
-        /// Retrives a document based on the document id.
+        /// Retrieves a document based on the document id.
         /// </summary>
         /// <response code="200">Success: A document for the given id.</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
@@ -102,7 +101,7 @@ namespace DocumentDataAPI.Controllers
         }
 
         /// <summary>
-        /// Retrives the number of documents in the database.
+        /// Retrieves the number of documents in the database.
         /// </summary>
         /// <response code="200">Success: A number</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
@@ -126,7 +125,7 @@ namespace DocumentDataAPI.Controllers
         }
 
         /// <summary>
-        /// Retrives a list of documents based on the source id.
+        /// Retrieves a list of documents based on the source id.
         /// </summary>
         /// <response code="200">Success: A list of documents for the given source id.</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
@@ -141,7 +140,7 @@ namespace DocumentDataAPI.Controllers
             try
             {
                 List<DocumentModel> result = _repository.GetBySource(id).Result.ToList();
-                return result == null ?
+                return result.Count == 0 ?
                     NotFound() :
                     Ok(result);
             }
@@ -153,7 +152,7 @@ namespace DocumentDataAPI.Controllers
         }
 
         /// <summary>
-        /// Retrives a list of documents based on the author.
+        /// Retrieves a list of documents based on the author.
         /// </summary>
         /// <response code="200">Success: A list of documents by the given author.</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
@@ -168,7 +167,7 @@ namespace DocumentDataAPI.Controllers
             try
             {
                 List<DocumentModel> result = _repository.GetByAuthor(author).Result.ToList();
-                return result == null ?
+                return result.Count == 0 ?
                     NotFound() :
                     Ok(result);
             }
@@ -180,7 +179,7 @@ namespace DocumentDataAPI.Controllers
         }
 
         /// <summary>
-        /// Retrives a list of documents created at the specifeid date.
+        /// Retrieves a list of documents created at the specified date.
         /// </summary>
         /// <response code="200">Success: A list of documents by the given author.</response>
         /// <response code="404">Not Found: Nothing is returned.</response>
