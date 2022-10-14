@@ -6,11 +6,11 @@ namespace DocumentDataAPI.Data;
 /// <summary>
 /// An <see cref="IDbConnectionFactory"/> for PostgreSQL.
 /// </summary>
-public class PostgresDbConnectionFactory : IDbConnectionFactory
+public class NpgDbConnectionFactory : IDbConnectionFactory
 {
     private readonly string _connectionString;
 
-    public PostgresDbConnectionFactory(string connectionString)
+    public NpgDbConnectionFactory(string connectionString)
     {
         _connectionString = connectionString;
     }

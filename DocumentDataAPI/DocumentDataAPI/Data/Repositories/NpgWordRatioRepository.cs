@@ -5,17 +5,28 @@ using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public class WordRatioRepository : IWordRatioRepository
+public class NpgWordRatioRepository : IWordRatioRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
+    private readonly ILogger<NpgWordRatioRepository> _logger;
 
-    public WordRatioRepository(IDbConnectionFactory connectionFactory)
+    public NpgWordRatioRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRatioRepository> logger)
     {
         _connectionFactory = connectionFactory;
+        _logger = logger;
+    }
+
+    public IEnumerable<WordRatioModel> GetAll()
+    {
+        _logger.LogDebug("Retrieving all WordRatios from database");
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<WordRatioModel>($"select * from word_ratios");
     }
 
     public int Add(WordRatioModel entity)
     {
+        _logger.LogDebug("Adding WordRatio with id {DocumentId} to database", entity.DocumentId);
+        _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
             "insert into word_ratios(documents_id, word, amount, percent, rank)" +
@@ -63,14 +74,29 @@ public class WordRatioRepository : IWordRatioRepository
 
     public int Delete(WordRatioModel entity)
     {
+        _logger.LogDebug("Deleting WordRatio with id {DocumentId} from database", entity.DocumentId);
+        _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from word_ratios where documents_id=@DocumentId", new { entity.DocumentId });
+        return con.Execute("delete from word_ratios " +
+                           "where documents_id=@DocumentId", new { entity.DocumentId });
     }
 
-    public IEnumerable<WordRatioModel> GetAll()
+    public int Update(WordRatioModel entity)
     {
+        _logger.LogDebug("Updating WordRatio with id {DocumentId} in database", entity.DocumentId);
+        _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<WordRatioModel>($"select * from word_ratios");
+        return con.Execute(
+            "update word_ratios set word = @Word, amount = @Amount, percent = @Percent, rank = @Rank " +
+            "where documents_id = @DocumentId",
+            new
+            {
+                entity.Word,
+                entity.Amount,
+                entity.Percent,
+                entity.Rank,
+                entity.DocumentId
+            });
     }
 
     public WordRatioModel? GetByDocumentIdAndWord(int documentId, string word)
@@ -97,20 +123,5 @@ public class WordRatioRepository : IWordRatioRepository
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Query<WordRatioModel>("select * from word_ratios where word = any(@wordlist)", new { wordlist });
-    }
-
-    public int Update(WordRatioModel entity)
-    {
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
-            "update word_ratios set word = @Word, amount = @Amount, percent = @Percent, rank = @Rank where documents_id = @DocumentId",
-            new
-            {
-                entity.Word,
-                entity.Amount,
-                entity.Percent,
-                entity.Rank,
-                entity.DocumentId
-            });
     }
 }

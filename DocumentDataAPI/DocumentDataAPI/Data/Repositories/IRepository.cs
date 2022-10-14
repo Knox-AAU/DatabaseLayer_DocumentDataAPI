@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace DocumentDataAPI.Data.Repositories;
 
 public interface IRepository<TEntity>

@@ -1,16 +1,20 @@
 ﻿using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DocumentDataAPITests.Data.Repositories;
 
-public class SourceRepositoryIntegrationTests
+public class NpgSourceRepositoryIntegrationTests
 {
-    private readonly PostgresDbConnectionFactory _connectionFactory;
+    private readonly NpgDbConnectionFactory _connectionFactory;
+    private readonly ILogger<NpgSourceRepository> _logger;
 
-    public SourceRepositoryIntegrationTests()
+    public NpgSourceRepositoryIntegrationTests()
     {
-        _connectionFactory = new PostgresDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _logger = new Logger<NpgSourceRepository>(new NullLoggerFactory());
         TestHelper.DeployDatabaseWithTestData();
     }
 
@@ -18,7 +22,7 @@ public class SourceRepositoryIntegrationTests
     public void GetAll_ReturnsAllSources()
     {
         // Arrange
-        SourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
 
         // Act
         List<SourceModel> result = repository.GetAll().ToList();
@@ -35,7 +39,7 @@ public class SourceRepositoryIntegrationTests
     public void Update_UpdatesRow()
     {
         // Arrange
-        SourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
         const string expected = "Test Source";
 
         // Act
@@ -47,10 +51,10 @@ public class SourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public void DeleteWithNoForeignKeyVoilation_DeletesRow()
+    public void DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
-        SourceRepository repository = new(_connectionFactory);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
         SourceModel expected = new(3, "Test");
         repository.Add(expected);
 

@@ -6,19 +6,19 @@ drop schema if exists ${schema} cascade;
 create schema ${schema};
 
 create table ${schema}.sources (
-    id      serial          primary key,
-    name    varchar(100)    not null
+    id      bigserial primary key,
+    name    varchar(100) not null
 );
 
 create table ${schema}.documents (
-    id          bigint       primary key,
-    sources_id  integer      not null,
+    id          bigint primary key,
+    sources_id  bigint not null,
     title       varchar(400) not null,
     path        varchar(400) not null,
     summary     text,
-    date        timestamp    not null,
+    date        timestamp not null,
     author      varchar(200) not null,
-    total_words integer      not null,
+    total_words bigint not null,
     constraint fk_sources foreign key (sources_id) references ${schema}.sources(id)
 );
 

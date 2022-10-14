@@ -1,17 +1,20 @@
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DocumentDataAPITests.Data.Repositories;
 
-public class WordRatioRepositoryIntegrationTests
+public class NpgWordRatioRepositoryIntegrationTests
 {
+    private readonly NpgDbConnectionFactory _connectionFactory;
+    private readonly ILogger<NpgWordRatioRepository> _logger;
 
-    private readonly PostgresDbConnectionFactory _connectionFactory;
-
-    public WordRatioRepositoryIntegrationTests()
+    public NpgWordRatioRepositoryIntegrationTests()
     {
-        _connectionFactory = new PostgresDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _logger = new Logger<NpgWordRatioRepository>(new NullLoggerFactory());
         TestHelper.DeployDatabaseWithTestData();
     }
 
@@ -19,7 +22,7 @@ public class WordRatioRepositoryIntegrationTests
     public void GetAllReturnsAllWordRatios()
     {
         //Arrange
-        WordRatioRepository repository = new WordRatioRepository(_connectionFactory);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
 
         //Act
         List<WordRatioModel> results = repository.GetAll().ToList();
@@ -33,7 +36,7 @@ public class WordRatioRepositoryIntegrationTests
     public void GetByDocumentIdAndWordReturnsCorrectWordRatio(int docID, string word, WordRatioModel expected)
     {
         //Arrange
-        WordRatioRepository repository = new WordRatioRepository(_connectionFactory);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
 
         //Act
         WordRatioModel? result = repository.GetByDocumentIdAndWord(docID, word);
@@ -45,17 +48,17 @@ public class WordRatioRepositoryIntegrationTests
     public static IEnumerable<object[]> WordRatioData =>
         new List<object[]>
         {
-            new object[] { 5, "kunne", new WordRatioModel(1, 5, 0.52, (Ranks)0, "kunne") },
-            new object[] { 3, "et", new WordRatioModel(3, 3, 1.96, (Ranks)0, "et") },
-            new object[] { 4, "sag", new WordRatioModel(1, 4, 2.56, (Ranks)0, "sag") },
-            new object[] { 2, "dronningen", new WordRatioModel(2, 2, 1.61, (Ranks)1, "dronningen") },
+            new object[] { 5, "kunne", new WordRatioModel(1, 5, 0.52, (Rank)0, "kunne") },
+            new object[] { 3, "et", new WordRatioModel(3, 3, 1.96, (Rank)0, "et") },
+            new object[] { 4, "sag", new WordRatioModel(1, 4, 2.56, (Rank)0, "sag") },
+            new object[] { 2, "dronningen", new WordRatioModel(2, 2, 1.61, (Rank)1, "dronningen") },
         };
 
     [Fact]
     public void GetByDocumentIdReturnsCorrectCount()
     {
         //Arrange
-        WordRatioRepository repository = new WordRatioRepository(_connectionFactory);
+        NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger);
 
         //Act
         List<WordRatioModel> results = repository.GetByDocumentId(1).ToList();
