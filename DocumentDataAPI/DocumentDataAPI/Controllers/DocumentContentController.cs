@@ -85,12 +85,9 @@ public class DocumentContentController : ControllerBase
     {
         try
         {
-            /*return _repository.Add(documentContent) == 1
-                ? Ok(_repository.Get(documentContent.DocumentId))
+            return _repository.AddBatch(documentContents) == documentContents.Count
+                ? Ok(documentContents.Count)
                 : Problem("No rows were added");
-        */
-            _repository.AddBatch(documentContents);
-            return Ok();
         }
         catch (Exception e)
         {
