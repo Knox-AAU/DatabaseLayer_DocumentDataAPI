@@ -170,6 +170,12 @@ public class SourceController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Deletes the source given in the request body in the database.
+    /// </summary>
+    /// <response code="200">Success: The source that was deleted.</response>
+    /// <response code="404">Not Found: A message.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
