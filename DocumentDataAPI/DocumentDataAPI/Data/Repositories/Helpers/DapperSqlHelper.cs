@@ -1,20 +1,31 @@
-﻿using System.Data;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text;
-using Dapper;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DocumentDataAPI.Data.Repositories.Helpers;
 
 public class DapperSqlHelper : ISqlHelper
 {
-    /// <inheritdoc/>
-    public string GetBatchInsertParameters<T>(T[] models, out DynamicParameters parameterDictionary)
+    public DapperSqlHelper(IConfiguration configuration)
     {
-        parameterDictionary = new DynamicParameters();
+        InsertStatementChunkSize = configuration.GetValue(nameof(InsertStatementChunkSize), defaultValue: 1000);
+    }
+
+    /// <inheritdoc />
+    public int InsertStatementChunkSize { get; }
+
+    /// <inheritdoc/>
+    public string GetBatchInsertParameters<T>(T[] models, out Dictionary<string, dynamic> parameterDictionary)
+    {
+        parameterDictionary = new Dictionary<string, dynamic>();
         StringBuilder stringBuilder = new();
 
-        // Get all properties on the given generic class T
-        List<string> properties = typeof(T).GetProperties().Select(x => x.Name).ToList();
+        // Get all properties on the given generic class T with the [Required] attribute.
+        List<string> properties = typeof(T).GetProperties()
+            .Where(x => x.HasAttribute<RequiredAttribute>())
+            .Select(x => x.Name)
+            .ToList();
 
         // Go through each model
         for (int i = 0; i < models.Length; i++)
@@ -30,7 +41,7 @@ public class DapperSqlHelper : ISqlHelper
             foreach (string property in properties)
             {
                 // Uses reflection to get "value.property"
-                object propertyValue = typeof(T).GetProperty(property)!.GetValue(model)!;
+                dynamic propertyValue = typeof(T).GetProperty(property)!.GetValue(model)!;
                 parameterDictionary.Add(property + i, propertyValue);
             }
 

@@ -3,7 +3,6 @@ using Dapper;
 using Dapper.Transaction;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
-using DocumentDataAPI.Options;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -12,17 +11,13 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgDocumentContentRepository> _logger;
     private readonly ISqlHelper _sqlHelper;
-    private readonly int _insertStatementChunkSize;
 
-    public NpgDocumentContentRepository(IDbConnectionFactory connectionFactory,
-        ILogger<NpgDocumentContentRepository> logger,
-        IConfiguration configuration,
+    public NpgDocumentContentRepository(IDbConnectionFactory connectionFactory, ILogger<NpgDocumentContentRepository> logger,
         ISqlHelper sqlHelper)
     {
         _connectionFactory = connectionFactory;
         _logger = logger;
         _sqlHelper = sqlHelper;
-        _insertStatementChunkSize = configuration.GetValue("InsertStatementChunkSize", defaultValue: 100);
     }
 
     public DocumentContentModel? Get(long id)
@@ -89,9 +84,9 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         try
         {
             // Divide the list of models into chunks to keep the INSERT statements from getting too large.
-            foreach (DocumentContentModel[] chunk in models.Chunk(_insertStatementChunkSize))
+            foreach (DocumentContentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
-                string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out DynamicParameters parameters);
+                string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 rowsAffected += transaction.Execute(
                     "insert into document_contents (documents_id, content) values " + parameterString, parameters);
             }
