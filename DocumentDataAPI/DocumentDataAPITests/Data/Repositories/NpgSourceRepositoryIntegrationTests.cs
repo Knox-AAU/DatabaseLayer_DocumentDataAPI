@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DocumentDataAPITests.Data.Repositories;
 
+[Collection("DocumentDataApiIntegrationTests")]
 public class NpgSourceRepositoryIntegrationTests
 {
     private readonly NpgDbConnectionFactory _connectionFactory;

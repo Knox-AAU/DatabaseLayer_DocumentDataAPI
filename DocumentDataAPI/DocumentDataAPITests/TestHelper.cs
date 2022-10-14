@@ -24,12 +24,12 @@ public static class TestHelper
                     .Build();
                 // Set up Dapper mappers
                 FluentMapper.Initialize(config =>
-                {
-                    config.AddMap(new DocumentContentMap());
-                    config.AddMap(new DocumentMap());
-                    config.AddMap(new WordRatioMap());
-                    config.AddMap(new SourceMap());
-                });
+                    {
+                        config.AddMap(new DocumentContentMap());
+                        config.AddMap(new DocumentMap());
+                        config.AddMap(new WordRatioMap());
+                        config.AddMap(new SourceMap());
+                    });
                 _isInitialized = true;
             }
 

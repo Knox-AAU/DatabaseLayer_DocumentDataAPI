@@ -36,7 +36,7 @@ public class NpgDocumentRepository : IDocumentRepository
     {
         _logger.LogDebug("Retrieving all Documents that the given search parameters from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        StringBuilder query = new ("select * from documents");
+        StringBuilder query = new("select * from documents");
         if (parameters.Parameters.Any())
         {
             QueryParameter firstParam = parameters.Parameters.First();
