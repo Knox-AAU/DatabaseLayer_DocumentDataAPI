@@ -44,7 +44,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
         string? actual = repository.Get(1).Content;
 
         // Assert
-        actual.Should().Be(expected,
+        actual.Should().BeEquivalentTo(expected,
             "because the content of the document with id 1 was updated to (1, 'Test Content')");
     }
 
