@@ -60,11 +60,15 @@ public class NpgDocumentRepository : IDocumentRepository
 
     public async Task<int> Add(DocumentModel entity)
     {
+        int rowsAffected = 0;
         _logger.LogDebug("Adding Document with id {Id} to database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-                        "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+        IDbTransaction transaction = con.BeginTransaction();
+        foreach (DocumentModel entityModel in entity)
+        {
+            await rowsAffected += con.ExecuteAsync(
+                "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
                         " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
                         new
                         {
@@ -76,7 +80,17 @@ public class NpgDocumentRepository : IDocumentRepository
                             entity.Path,
                             entity.TotalWords,
                             entity.SourceId
-                        });
+                        }, transaction: transaction);
+        }
+
+        if (rowsAffected != entity.Count())
+        {
+            transaction.Rollback();
+            throw new RowsAffectedMismatchException();
+        }
+
+        transaction.Commit();
+        return await rowsAffected;
     }
 
     public async Task<int> Delete(DocumentModel entity)
