@@ -1,5 +1,7 @@
 using System.Data;
 using Dapper;
+using Dapper.Transaction;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
 
@@ -9,11 +11,13 @@ public class NpgWordRatioRepository : IWordRatioRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgWordRatioRepository> _logger;
+    private readonly ISqlHelper _sqlHelper;
 
-    public NpgWordRatioRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRatioRepository> logger)
+    public NpgWordRatioRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRatioRepository> logger, ISqlHelper sqlHelper)
     {
         _connectionFactory = connectionFactory;
         _logger = logger;
+        _sqlHelper = sqlHelper;
     }
 
     public IEnumerable<WordRatioModel> GetAll()
@@ -41,34 +45,34 @@ public class NpgWordRatioRepository : IWordRatioRepository
             });
     }
 
-    public int AddWordRatios(IEnumerable<WordRatioModel> entities)
+    public int AddBatch(List<WordRatioModel> entities)
     {
         int rowsAffected = 0;
-        IEnumerable<WordRatioModel> wordRatios = entities.ToList();
         using IDbConnection con = _connectionFactory.CreateConnection();
-        IDbTransaction transaction = con.BeginTransaction();
-        foreach (WordRatioModel entity in wordRatios)
+        con.Open();
+        using IDbTransaction transaction = con.BeginTransaction();
+        try
         {
-            rowsAffected += con.Execute(
-                "insert into word_ratios(documents_id, word, amount, percent, rank)" +
-                " values (@DocumentId, @Word, @Amount, @Percent, @Rank)",
-                new
-                {
-                    entity.DocumentId,
-                    entity.Word,
-                    entity.Amount,
-                    entity.Percent,
-                    entity.Rank
-                }, transaction: transaction);
-        }
+            foreach (WordRatioModel[] chunk in entities.Chunk(_sqlHelper.InsertStatementChunkSize))
+            {
+                string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
+                rowsAffected += transaction.Execute(
+                    "insert into word_ratios(documents_id, word, amount, percent, rank) values " + parameterString, parameters);
+            }
 
-        if (rowsAffected != wordRatios.Count())
+            if (rowsAffected != entities.Count())
+            {
+                transaction.Rollback();
+                throw new RowsAffectedMismatchException();
+            }
+            transaction.Commit();
+        }
+        catch (Exception e)
         {
             transaction.Rollback();
-            throw new RowsAffectedMismatchException();
+            _logger.LogError(e, "Failed to insert word ratios, rolling back transaction");
+            throw;
         }
-
-        transaction.Commit();
         return rowsAffected;
     }
 

@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Net.Mime;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
@@ -161,11 +162,12 @@ public class WordRatioController : ControllerBase
 
 
     [HttpPut]
-    [Route("PutWordRatio/{wordratio}")]
+    [Route("PutWordRatio")]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> PutWordRatio(WordRatioModel wordRatio)
+    public ActionResult<int> PutWordRatio([FromBody] WordRatioModel wordRatio)
     {
         try
         {
@@ -181,15 +183,16 @@ public class WordRatioController : ControllerBase
     }
 
     [HttpPut]
-    [Route("PutWordRatios/{wordRatios}")]
+    [Route("PutWordRatios")]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> PutWordRatios(IEnumerable<WordRatioModel> wordRatios)
+    public ActionResult<int> PutWordRatios([FromBody] List<WordRatioModel> wordRatios)
     {
         try
         {
-            int result = _repository.AddWordRatios(wordRatios);
+            int result = _repository.AddBatch(wordRatios);
             return result > 0
                 ? Ok(result)
                 : NoContent();
