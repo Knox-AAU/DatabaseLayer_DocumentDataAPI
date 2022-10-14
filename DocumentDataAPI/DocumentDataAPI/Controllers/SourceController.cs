@@ -84,7 +84,7 @@ public class SourceController : ControllerBase
     {
         try
         {
-            IEnumerable<SourceModel> result = _repository.GetByName(name);
+            IEnumerable<SourceModel> result = _repository.GetByName(name).Result;
             return result.Any()
                 ? Ok(result)
                 : NotFound("No source exists with name: " + name);
@@ -134,7 +134,7 @@ public class SourceController : ControllerBase
         try
         {
             return _repository.Add(new SourceModel { Name = name }).Result == 1
-                ? Ok(_repository.GetByName(name).Last())
+                ? Ok(_repository.GetByName(name).Result.Last())
                 : BadRequest("Could not add the source with name: " + name);
         }
         catch (Exception e)

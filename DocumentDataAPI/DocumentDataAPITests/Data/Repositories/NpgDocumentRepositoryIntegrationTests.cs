@@ -29,7 +29,7 @@ public class NpgDocumentRepositoryIntegrationTests
         parameters.AddAuthor(searchAuthor);
 
         // Act
-        List<DocumentModel> result = repository.GetAll(parameters).ToList();
+        List<DocumentModel> result = repository.GetAll(parameters).Result.ToList();
 
         // Assert
         result.Should().AllSatisfy(d =>
@@ -50,7 +50,7 @@ public class NpgDocumentRepositoryIntegrationTests
             .AddAfterDate(searchDate);
 
         // Act
-        List<DocumentModel> result = repository.GetAll(parameters).ToList();
+        List<DocumentModel> result = repository.GetAll(parameters).Result.ToList();
 
         // Assert
         result.Should().AllSatisfy(d =>

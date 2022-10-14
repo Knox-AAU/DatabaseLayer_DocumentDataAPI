@@ -64,10 +64,10 @@ public class NpgSourceRepository : ISourceRepository
                                                         "where sources_id=@Id", new { id });
     }
 
-    public IEnumerable<SourceModel> GetByName(string name)
+    public async Task<IEnumerable<SourceModel>> GetByName(string name)
     {
         _logger.LogDebug("Retrieving sources with name: {name}", name);
         using IDbConnection connection = _connectionFactory.CreateConnection();
-        return connection.Query<SourceModel>("select * from sources where name = @Name", new { name });
+        return await connection.QueryAsync<SourceModel>("select * from sources where name = @Name", new { name });
     }
 }
