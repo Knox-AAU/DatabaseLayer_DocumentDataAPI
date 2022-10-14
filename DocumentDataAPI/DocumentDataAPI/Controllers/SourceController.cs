@@ -185,7 +185,7 @@ public class SourceController : ControllerBase
     {
         try
         {
-            return _repository.Delete(source) == 1
+            return _repository.Delete(source).Result == 1
                 ? Ok(source)
                 : NotFound("Could not find source with id: " + source.Id);
         }
