@@ -56,7 +56,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
         repository.Delete(toBeDeleted);
 
         // Act
-        DocumentContentModel actual = repository.Get(5);
+        DocumentContentModel? actual = repository.Get(5);
 
         // Assert
         actual.Should().BeNull("because the document_content with id 5 was removed from the database");
