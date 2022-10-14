@@ -29,7 +29,8 @@ public class NpgWordRatioRepository : IWordRatioRepository
 
     public int Add(WordRatioModel entity)
     {
-        _logger.LogDebug("Adding WordRatio with id {DocumentId} to database", entity.DocumentId);
+        _logger.LogDebug("Adding WordRatio with id {DocumentId} and name {Word} to database", entity.DocumentId,
+            entity.Word);
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
@@ -78,21 +79,23 @@ public class NpgWordRatioRepository : IWordRatioRepository
 
     public int Delete(WordRatioModel entity)
     {
-        _logger.LogDebug("Deleting WordRatio with id {DocumentId} from database", entity.DocumentId);
+        _logger.LogDebug("Deleting WordRatio with id {DocumentId} and word {Word} from database", entity.DocumentId,
+            entity.Word);
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute("delete from word_ratios " +
-                           "where documents_id=@DocumentId", new { entity.DocumentId });
+                           "where documents_id=@DocumentId and word=@Word", new { entity.DocumentId, entity.Word });
     }
 
     public int Update(WordRatioModel entity)
     {
-        _logger.LogDebug("Updating WordRatio with id {DocumentId} in database", entity.DocumentId);
+        _logger.LogDebug("Updating WordRatio with id {DocumentId} and word {Word} in database", entity.DocumentId,
+            entity.Word);
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-            "update word_ratios set word = @Word, amount = @Amount, percent = @Percent, rank = @Rank " +
-            "where documents_id = @DocumentId",
+            "update word_ratios set amount = @Amount, percent = @Percent, rank = @Rank " +
+            "where documents_id = @DocumentId and word = @Word",
             new
             {
                 entity.Word,
