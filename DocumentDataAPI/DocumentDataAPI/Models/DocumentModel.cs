@@ -1,4 +1,6 @@
-﻿namespace DocumentDataAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DocumentDataAPI.Models;
 
 public class DocumentModel
 {
@@ -6,8 +8,7 @@ public class DocumentModel
     {
     }
 
-    public DocumentModel(string author, DateTime date, long id, string path, int sourceId, string summary, string title,
-        int totalWords)
+    public DocumentModel(string author, DateTime date, long id, string path, int sourceId, string? summary, string title, int totalWords)
     {
         Author = author;
         Date = date;
@@ -19,12 +20,20 @@ public class DocumentModel
         TotalWords = totalWords;
     }
 
-    public string Author { get; init; } = null!;
-    public DateTime Date { get; init; }
+    [Required]
     public long Id { get; init; }
-    public string Path { get; init; } = null!;
+    [Required]
     public int SourceId { get; init; }
-    public string Summary { get; init; } = null!;
+    [Required]
     public string Title { get; init; } = null!;
+    [Required]
+    public string Path { get; init; } = null!;
+    [Required]
+    public string? Summary { get; init; }
+    [Required]
+    public DateTime Date { get; init; }
+    [Required]
+    public string Author { get; init; } = null!;
+    [Required]
     public int TotalWords { get; init; }
 }

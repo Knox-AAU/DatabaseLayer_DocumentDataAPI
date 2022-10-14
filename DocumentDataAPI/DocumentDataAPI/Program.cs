@@ -4,6 +4,7 @@ using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Options;
 using Serilog;
 
@@ -14,6 +15,7 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 // Add services to the container.
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
+    .AddSingleton<ISqlHelper, DapperSqlHelper>()
     .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
     .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
