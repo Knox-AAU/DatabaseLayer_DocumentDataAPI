@@ -7,7 +7,7 @@ namespace DocumentDataAPI.Exceptions;
 [Serializable]
 public class RowsAffectedMismatchException : Exception
 {
-    public RowsAffectedMismatchException()
+    public RowsAffectedMismatchException() : this("Not all rows were inserted due to an unknown error.")
     {
     }
 

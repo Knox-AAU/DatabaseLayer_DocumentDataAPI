@@ -2,6 +2,7 @@ using System.Data;
 using Dapper;
 using Dapper.Transaction;
 using DocumentDataAPI.Data.Repositories.Helpers;
+using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
@@ -93,7 +94,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
 
             if (rowsAffected != models.Count)
             {
-                throw new Exception("Mismatch!");
+                throw new RowsAffectedMismatchException();
             }
             transaction.Commit();
         }
