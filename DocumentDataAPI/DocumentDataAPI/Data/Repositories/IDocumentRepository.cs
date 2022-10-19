@@ -5,9 +5,9 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface IDocumentRepository : IRepository<DocumentModel>
 {
-    public Task<IEnumerable<DocumentModel>> GetAll(DocumentSearchParameters parameters);
-    public Task<IEnumerable<DocumentModel>> GetByAuthor(string author);
-    public Task<IEnumerable<DocumentModel>> GetByDate(DateTime dateTime);
-    public Task<IEnumerable<DocumentModel>> GetBySource(int id);
-    public Task<int> GetTotalDocumentCount();
+    public IEnumerable<DocumentModel> GetAll(DocumentSearchParameters parameters);
+    public IEnumerable<DocumentModel> GetByAuthor(string author);
+    public IEnumerable<DocumentModel> GetByDate(DateTime dateTime);
+    public IEnumerable<DocumentModel> GetBySource(int id);
+    public int GetTotalDocumentCount();
 }

@@ -33,7 +33,7 @@ public class DocumentContentController : ControllerBase
     {
         try
         {
-            IEnumerable<DocumentContentModel> result = _repository.GetAll().Result;
+            IEnumerable<DocumentContentModel> result = _repository.GetAll();
             return result.Any()
                 ? Ok(result)
                 : NoContent();
@@ -60,7 +60,7 @@ public class DocumentContentController : ControllerBase
     {
         try
         {
-            DocumentContentModel? result = _repository.Get(documentId).Result;
+            DocumentContentModel? result = _repository.Get(documentId);
             return result == null
                 ? NotFound()
                 : Ok(result);
@@ -85,7 +85,7 @@ public class DocumentContentController : ControllerBase
     {
         try
         {
-            return _repository.Add(documentContent).Result == 1
+            return _repository.Add(documentContent) == 1
                 ? Ok(_repository.Get(documentContent.DocumentId))
                 : Problem("No rows were added");
         }
@@ -111,7 +111,7 @@ public class DocumentContentController : ControllerBase
     {
         try
         {
-            return _repository.Update(documentContent).Result == 1
+            return _repository.Update(documentContent) == 1
                 ? Ok(_repository.Get(documentContent.DocumentId))
                 : NotFound();
         }

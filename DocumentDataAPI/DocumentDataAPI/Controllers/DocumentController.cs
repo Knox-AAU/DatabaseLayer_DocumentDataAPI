@@ -34,7 +34,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                return _repository.Add(document).Result == 0?
+                return _repository.Add(document) == 0?
                     Problem("No rows were added") :
                     Ok(_repository.Get(document.Id));
             }
@@ -60,7 +60,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                List<DocumentModel> result = _repository.GetAll().Result.ToList();
+                List<DocumentModel> result = _repository.GetAll().ToList();
                 return result.Count == 0 ?
                     NotFound() :
                     Ok(result);
@@ -88,7 +88,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                DocumentModel? result = _repository.Get(id).Result;
+                DocumentModel? result = _repository.Get(id);
                 return result == null ?
                     NotFound() :
                     Ok(result);
@@ -115,7 +115,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                int result = _repository.GetTotalDocumentCount().Result;
+                int result = _repository.GetTotalDocumentCount();
                 return Ok(result);
             }
             catch (Exception e)
@@ -139,7 +139,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                List<DocumentModel> result = _repository.GetBySource(id).Result.ToList();
+                List<DocumentModel> result = _repository.GetBySource(id).ToList();
                 return result.Count == 0 ?
                     NotFound() :
                     Ok(result);
@@ -166,7 +166,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                List<DocumentModel> result = _repository.GetByAuthor(author).Result.ToList();
+                List<DocumentModel> result = _repository.GetByAuthor(author).ToList();
                 return result.Count == 0 ?
                     NotFound() :
                     Ok(result);
@@ -193,7 +193,7 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                List<DocumentModel> result = _repository.GetByDate(date).Result.ToList();
+                List<DocumentModel> result = _repository.GetByDate(date).ToList();
                 return result.Count == 0 ?
                     NotFound() :
                     Ok(result);

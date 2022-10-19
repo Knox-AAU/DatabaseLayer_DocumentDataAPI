@@ -26,7 +26,7 @@ public class NpgSourceRepositoryIntegrationTests
         NpgSourceRepository repository = new(_connectionFactory, _logger);
 
         // Act
-        List<SourceModel> result = repository.GetAll().Result.ToList();
+        List<SourceModel> result = repository.GetAll().ToList();
 
         // Assert
         result.Should().BeEquivalentTo(new[]
@@ -45,7 +45,7 @@ public class NpgSourceRepositoryIntegrationTests
 
         // Act
         repository.Update(new SourceModel(1, expected));
-        string? actual = repository.Get(1).Result.Name;
+        string? actual = repository.Get(1).Name;
 
         // Assert
         actual.Should().Be(expected, "because the tuple (1, 'DR') was updated to (1, 'Test Source')");
@@ -60,7 +60,7 @@ public class NpgSourceRepositoryIntegrationTests
         repository.Add(expected);
 
         // Act
-        SourceModel actual = repository.Get(expected.Id).Result;
+        SourceModel actual = repository.Get(expected.Id);
 
         // Assert
         actual.Should().NotBeNull("because it was added to the database")

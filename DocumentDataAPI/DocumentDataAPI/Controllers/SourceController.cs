@@ -57,7 +57,7 @@ public class SourceController : ControllerBase
     {
         try
         {
-            SourceModel? result = _repository.Get(id).Result;
+            SourceModel? result = _repository.Get(id);
             return result == null
                 ? NotFound()
                 : Ok(result);
@@ -84,7 +84,7 @@ public class SourceController : ControllerBase
     {
         try
         {
-            IEnumerable<SourceModel> result = _repository.GetByName(name).Result;
+            IEnumerable<SourceModel> result = _repository.GetByName(name);
             return result.Any()
                 ? Ok(result)
                 : NotFound("No source exists with name: " + name);
@@ -133,8 +133,8 @@ public class SourceController : ControllerBase
     {
         try
         {
-            return _repository.Add(new SourceModel { Name = name }).Result == 1
-                ? Ok(_repository.GetByName(name).Result.Last())
+            return _repository.Add(new SourceModel { Name = name }) == 1
+                ? Ok(_repository.GetByName(name).Last())
                 : BadRequest("Could not add the source with name: " + name);
         }
         catch (Exception e)
@@ -159,7 +159,7 @@ public class SourceController : ControllerBase
     {
         try
         {
-            return _repository.Update(source).Result == 1
+            return _repository.Update(source) == 1
                 ? Ok(_repository.Get(source.Id))
                 : NotFound("Could not find source with id: " + source.Id);
         }
@@ -185,7 +185,7 @@ public class SourceController : ControllerBase
     {
         try
         {
-            return _repository.Delete(source).Result == 1
+            return _repository.Delete(source) == 1
                 ? Ok(source)
                 : NotFound("Could not find source with id: " + source.Id);
         }
