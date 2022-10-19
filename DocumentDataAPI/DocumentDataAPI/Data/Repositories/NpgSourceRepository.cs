@@ -34,8 +34,9 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Adding Source with id {Id} to database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("insert into sources(name) " +
-                           "values (@Name)", new { entity.Name });
+        return con.Execute(
+            "insert into sources(name) " +
+            "values (@Name)", new { entity.Name });
     }
 
     public int Delete(SourceModel entity)
@@ -43,8 +44,9 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Deleting Source with id {Id} from database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from sources " +
-                           "where id=@Id", new { entity.Id });
+        return con.Execute(
+            "delete from sources " +
+            "where id=@Id", new { entity.Id });
     }
 
     public int Update(SourceModel entity)
@@ -52,16 +54,18 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Updating Source with id {Id} in database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("update sources set name = @Name " +
-                           "where id = @Id", new { entity.Name, entity.Id });
+        return con.Execute(
+            "update sources set name = @Name " +
+            "where id = @Id", new { entity.Name, entity.Id });
     }
 
     public long GetCountFromId(long id)
     {
         _logger.LogDebug("Retrieving Document count with sources_id {id}", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingleOrDefault<int>("select COUNT(*) as document_count from documents " +
-                                             "where sources_id=@Id", new { id });
+        return con.QuerySingleOrDefault<int>(
+            "select COUNT(*) as document_count from documents " +
+            "where sources_id=@Id", new { id });
     }
 
     public IEnumerable<SourceModel> GetByName(string name)

@@ -83,8 +83,9 @@ public class NpgWordRatioRepository : IWordRatioRepository
             entity.Word);
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from word_ratios " +
-                           "where documents_id=@DocumentId and word=@Word", new { entity.DocumentId, entity.Word });
+        return con.Execute(
+            "delete from word_ratios " +
+            "where documents_id=@DocumentId and word=@Word", new { entity.DocumentId, entity.Word });
     }
 
     public int Update(WordRatioModel entity)

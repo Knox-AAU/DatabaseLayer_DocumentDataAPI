@@ -65,8 +65,8 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-                        "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
-                           " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
+            "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
             new
             {
                 entity.Id,
@@ -93,8 +93,8 @@ public class NpgDocumentRepository : IDocumentRepository
             foreach (DocumentModel entityModel in entity)
             {
                 rowsAffected += con.Execute(
-                                         "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
-                                            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
+                    "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+                    " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
                     new
                     {
                         entityModel.Id,
@@ -125,8 +125,8 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-                        "delete from documents " +
-                           "where id=@Id", new { entity.Id });
+            "delete from documents " +
+            "where id=@Id", new { entity.Id });
     }
 
     public int Update(DocumentModel entity)
@@ -135,9 +135,9 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-                        "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
-                           "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
-                           "where id = @Id",
+            "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
+            "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
+            "where id = @Id",
                         new
                         {
                             entity.Title,

@@ -41,8 +41,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-                        "insert into document_contents(documents_id, content)" + 
-                           " values (@DocumentId, @Content)",
+            "insert into document_contents(documents_id, content)" +
+            " values (@DocumentId, @Content)",
                         new
                         {
                             entity.DocumentId,
@@ -56,8 +56,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-                        "delete from document_contents " +
-                           "where documents_id=@DocumentId", new { entity.DocumentId });
+            "delete from document_contents " +
+            "where documents_id=@DocumentId", new { entity.DocumentId });
     }
 
     public int Update(DocumentContentModel entity)
@@ -66,8 +66,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
-                        "update document_contents set content = @Content " +
-                           "where documents_id = @DocumentId",
+            "update document_contents set content = @Content " +
+            "where documents_id = @DocumentId",
                         new
                         {
                             entity.Content,
