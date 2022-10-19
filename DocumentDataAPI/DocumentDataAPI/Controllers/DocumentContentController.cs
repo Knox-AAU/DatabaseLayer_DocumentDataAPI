@@ -81,18 +81,17 @@ public class DocumentContentController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DocumentContentModel?> PutDocumentContent([FromBody] DocumentContentModel documentContent)
+    public ActionResult<DocumentContentModel?> PutDocumentContent([FromBody] List<DocumentContentModel> documentContents)
     {
         try
         {
-            return _repository.Add(documentContent) == 1
-                ? Ok(_repository.Get(documentContent.DocumentId))
+            return _repository.AddBatch(documentContents) == documentContents.Count
+                ? Ok(documentContents.Count)
                 : Problem("No rows were added");
         }
         catch (Exception e)
         {
-            _logger.LogError("Unable to insert document content with documents_id: {id}: {message}",
-                documentContent.DocumentId, e.Message);
+            _logger.LogError("Unable to insert document contents: {message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -117,7 +116,8 @@ public class DocumentContentController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to update document content with documents_id: {id}", documentContent.DocumentId);
+            _logger.LogError(e, "Unable to update document content with documents_id: {id}",
+                documentContent.DocumentId);
             return Problem(e.Message);
         }
     }

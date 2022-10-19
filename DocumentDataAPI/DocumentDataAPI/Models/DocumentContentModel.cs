@@ -1,4 +1,6 @@
-﻿namespace DocumentDataAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DocumentDataAPI.Models;
 
 public class DocumentContentModel
 {
@@ -12,6 +14,8 @@ public class DocumentContentModel
         DocumentId = documentId;
     }
 
-    public string Content { get; init; } = null!;
+    [Required]
     public long DocumentId { get; init; }
+    [Required]
+    public string Content { get; init; } = null!;
 }

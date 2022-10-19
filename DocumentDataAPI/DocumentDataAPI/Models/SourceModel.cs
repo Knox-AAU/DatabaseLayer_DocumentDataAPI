@@ -1,4 +1,6 @@
-﻿namespace DocumentDataAPI.Models;
+﻿using Microsoft.Build.Framework;
+
+namespace DocumentDataAPI.Models;
 
 public class SourceModel
 {
@@ -13,5 +15,6 @@ public class SourceModel
     }
 
     public long Id { get; init; }
+    [Required]
     public string Name { get; init; } = null!;
 }

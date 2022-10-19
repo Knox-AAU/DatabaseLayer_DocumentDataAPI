@@ -1,4 +1,4 @@
-﻿namespace DocumentDataAPI.Controllers;
+﻿namespace DocumentDataAPI;
 
 public static class RoutePrefixHelper
 {

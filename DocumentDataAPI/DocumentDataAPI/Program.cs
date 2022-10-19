@@ -4,6 +4,7 @@ using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Options;
 using Serilog;
 
@@ -14,6 +15,7 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 // Add services to the container.
 builder.Services
     .AddSingleton<DatabaseDeployHelper>()
+    .AddSingleton<ISqlHelper, DapperSqlHelper>()
     .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
     .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
@@ -26,7 +28,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(config =>
 {
-    string xmlDocFilePath = Path.Combine(AppContext.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml");
+    string xmlDocFilePath =
+        Path.Combine(AppContext.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml");
     config.IncludeXmlComments(xmlDocFilePath);
 });
 builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
@@ -60,7 +63,7 @@ if (app.Configuration.GetValue<bool>("deploy"))
     }
     catch (Exception)
     {
-        app.Logger.LogError("Deploy was aborted due to errors.");
+        app.Logger.LogError("Deploy was aborted due to errors");
     }
 
     return;

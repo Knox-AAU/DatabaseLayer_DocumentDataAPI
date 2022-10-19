@@ -1,4 +1,6 @@
-﻿namespace DocumentDataAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DocumentDataAPI.Models;
 
 public class WordRatioModel
 {
@@ -21,9 +23,14 @@ public class WordRatioModel
         Word = word;
     }
 
-    public int Amount { get; init; }
+    [Required]
     public long DocumentId { get; init; }
-    public double Percent { get; init; }
-    public Rank Rank { get; init; }
+    [Required]
     public string Word { get; init; } = null!;
+    [Required]
+    public int Amount { get; init; }
+    [Required]
+    public double Percent { get; init; }
+    [Required]
+    public Rank Rank { get; init; }
 }

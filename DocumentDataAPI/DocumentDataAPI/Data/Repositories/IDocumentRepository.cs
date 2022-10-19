@@ -5,9 +5,10 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface IDocumentRepository : IRepository<DocumentModel>
 {
-    public IEnumerable<DocumentModel> GetAll(DocumentSearchParameters parameters);
-    public IEnumerable<DocumentModel> GetByAuthor(string author);
-    public IEnumerable<DocumentModel> GetByDate(DateTime dateTime);
-    public IEnumerable<DocumentModel> GetBySource(int id);
-    public int GetTotalDocumentCount();
+    DocumentModel? Get(long id);
+    IEnumerable<DocumentModel> GetAll(DocumentSearchParameters parameters);
+    IEnumerable<DocumentModel> GetByAuthor(string author);
+    IEnumerable<DocumentModel> GetByDate(DateTime dateTime);
+    IEnumerable<DocumentModel> GetBySource(int id);
+    int GetTotalDocumentCount();
 }
