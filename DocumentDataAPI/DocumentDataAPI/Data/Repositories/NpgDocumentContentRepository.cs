@@ -40,8 +40,9 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Adding DocumentContent with id {DocumentId} to database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("insert into document_contents(documents_id, content)" +
-                        " values (@DocumentId, @Content)",
+        return con.Execute(
+                        "insert into document_contents(documents_id, content)" + 
+                           " values (@DocumentId, @Content)",
                         new
                         {
                             entity.DocumentId,
@@ -54,7 +55,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from document_contents " +
+        return con.Execute(
+                        "delete from document_contents " +
                            "where documents_id=@DocumentId", new { entity.DocumentId });
     }
 
@@ -63,8 +65,9 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Updating DocumentContent with id {DocumentId} in database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("update document_contents set content = @Content " +
-                        "where documents_id = @DocumentId",
+        return con.Execute(
+                        "update document_contents set content = @Content " +
+                           "where documents_id = @DocumentId",
                         new
                         {
                             entity.Content,

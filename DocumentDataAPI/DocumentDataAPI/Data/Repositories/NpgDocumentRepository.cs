@@ -64,8 +64,9 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogDebug("Adding Document with id {Id} to database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
-            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
+        return con.Execute(
+                        "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+                           " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
             new
             {
                 entity.Id,
@@ -86,32 +87,35 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogTrace("Documents: {document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         con.Open();
-        IDbTransaction transaction = con.BeginTransaction();
-        foreach (DocumentModel entityModel in entity)
+        using IDbTransaction transaction = con.BeginTransaction();
+        try
         {
-            rowsAffected += con.Execute(
-                "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
-                        " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
-                        new
-                        {
-                            entityModel.Id,
-                            entityModel.Title,
-                            entityModel.Author,
-                            entityModel.Date,
-                            entityModel.Summary,
-                            entityModel.Path,
-                            entityModel.TotalWords,
-                            entityModel.SourceId
-                        }, transaction: transaction);
+            foreach (DocumentModel entityModel in entity)
+            {
+                rowsAffected += con.Execute(
+                                         "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+                                            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
+                    new
+                    {
+                        entityModel.Id,
+                        entityModel.Title,
+                        entityModel.Author,
+                        entityModel.Date,
+                        entityModel.Summary,
+                        entityModel.Path,
+                        entityModel.TotalWords,
+                        entityModel.SourceId
+                    }, transaction: transaction);
+            }
+            
+            transaction.Commit();
         }
-
-        if (rowsAffected != entity.Count())
+        catch (Exception e)
         {
             transaction.Rollback();
             throw new RowsAffectedMismatchException();
         }
 
-        transaction.Commit();
         return rowsAffected;
     }
 
@@ -120,8 +124,9 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogDebug("Deleting Document with id {Id} from database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from documents " +
-                                      "where id=@Id", new { entity.Id });
+        return con.Execute(
+                        "delete from documents " +
+                           "where id=@Id", new { entity.Id });
     }
 
     public int Update(DocumentModel entity)
@@ -131,8 +136,8 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Execute(
                         "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
-                        "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
-                        "where id = @Id",
+                           "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
+                           "where id = @Id",
                         new
                         {
                             entity.Title,
@@ -150,7 +155,7 @@ public class NpgDocumentRepository : IDocumentRepository
     {
         _logger.LogDebug("Retrieving Documents by {author} from database", author);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents where author = @Author",
+        return con.Query<DocumentModel>("select * from documents where author = @Author",
                         new
                         {
                             author

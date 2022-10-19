@@ -8,7 +8,7 @@ using System.Net.Mime;
 namespace DocumentDataAPI.Controllers
 {
     [ApiController]
-    [Route("document")]
+    [Route(RoutePrefixHelper.Prefix + "/documents")]
     [Produces(MediaTypeNames.Application.Json)]
     public class DocumentController : ControllerBase
     {
@@ -27,7 +27,6 @@ namespace DocumentDataAPI.Controllers
         /// <response code="200">Success: The document that was added to the database.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpPut]
-        [Route("PutDocument")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<DocumentModel> PutDocument([FromBody] DocumentModel document)
@@ -40,7 +39,7 @@ namespace DocumentDataAPI.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unable to add document.\n{e.Message}");
+                _logger.LogError(e, "Unable to add document.");
                 return Problem(e.Message);
             }
         }
@@ -52,7 +51,6 @@ namespace DocumentDataAPI.Controllers
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
-        [Route("Get")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -61,13 +59,13 @@ namespace DocumentDataAPI.Controllers
             try
             {
                 List<DocumentModel> result = _repository.GetAll().ToList();
-                return result.Count == 0 ?
-                    NotFound() :
-                    Ok(result);
+                return result.Count == 0
+                    ? NotFound()
+                    : Ok(result);
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unable to fetch documents\n{e.Message}");
+                _logger.LogError(e, "Unable to get documents.");
                 return Problem(e.Message);
             }
 
@@ -80,7 +78,7 @@ namespace DocumentDataAPI.Controllers
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
-        [Route("Get/{id:int?}")]
+        [Route("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -89,13 +87,13 @@ namespace DocumentDataAPI.Controllers
             try
             {
                 DocumentModel? result = _repository.Get(id);
-                return result == null ?
-                    NotFound() :
-                    Ok(result);
+                return result == null
+                    ? NotFound()
+                    : Ok(result);
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unable to fetch document with id: {id}.\n{e.Message}");
+                _logger.LogError(e, "Unable to get document with id: {id}.", id);
                 return Problem(e.Message);
             }
         }
@@ -107,7 +105,7 @@ namespace DocumentDataAPI.Controllers
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
-        [Route("GetTotalDocumentCount")]
+        [Route("count")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -120,6 +118,7 @@ namespace DocumentDataAPI.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e, "Unable to get document count.");
                 return Problem(e.Message);
             }
         }
@@ -131,7 +130,7 @@ namespace DocumentDataAPI.Controllers
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
-        [Route("GetBySourceId/{id:int?}")]
+        [Route("sources/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -140,13 +139,13 @@ namespace DocumentDataAPI.Controllers
             try
             {
                 List<DocumentModel> result = _repository.GetBySource(id).ToList();
-                return result.Count == 0 ?
-                    NotFound() :
-                    Ok(result);
+                return result.Count == 0
+                    ? NotFound()
+                    : Ok(result);
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unable to fetch document by source id: {id}.\n{e.Message}");
+                _logger.LogError(e, "Unable to get document with source id: {id}.", id);
                 return Problem(e.Message);
             }
         }
@@ -158,7 +157,7 @@ namespace DocumentDataAPI.Controllers
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
-        [Route("GetByAuthor")]
+        [Route("authors/{author}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -166,14 +165,14 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                List<DocumentModel> result = _repository.GetByAuthor(author).ToList();
-                return result.Count == 0 ?
-                    NotFound() :
-                    Ok(result);
+                IEnumerable<DocumentModel> result = _repository.GetByAuthor(author);
+                return result.Count() == 0
+                    ? NotFound()
+                    : Ok(result);
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unable to fetch documents by author: {author}.\n{e.Message}");
+                _logger.LogError(e, "Unable to get documents with author: {author}.", author);
                 return Problem(e.Message);
             }
         }
@@ -185,7 +184,7 @@ namespace DocumentDataAPI.Controllers
         /// <response code="404">Not Found: Nothing is returned.</response>
         /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
         [HttpGet]
-        [Route("GetByDate")]
+        [Route("dates/{date:datetime}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -194,13 +193,13 @@ namespace DocumentDataAPI.Controllers
             try
             {
                 List<DocumentModel> result = _repository.GetByDate(date).ToList();
-                return result.Count == 0 ?
-                    NotFound() :
-                    Ok(result);
+                return result.Count == 0
+                    ? NotFound()
+                    : Ok(result);
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unable to fetch documents by date {date}.\n{e.Message}");
+                _logger.LogError(e, "Unable to get document with date: {date}.", date);
                 return Problem(e.Message);
             }
         }
