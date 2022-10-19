@@ -34,7 +34,7 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return con.Query<DocumentModel>($"select * from documents");
     }
-    
+
     public IEnumerable<DocumentModel> GetAll(DocumentSearchParameters parameters)
     {
         _logger.LogDebug("Retrieving all Documents that the given search parameters from database");

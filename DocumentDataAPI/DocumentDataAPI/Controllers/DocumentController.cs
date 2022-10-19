@@ -34,9 +34,9 @@ namespace DocumentDataAPI.Controllers
         {
             try
             {
-                return _repository.Add(document) == 0?
-                    Problem("No rows were added") :
-                    Ok(_repository.Get(document.Id));
+                return _repository.Add(document) == 0
+                    ? Problem("No rows were added")
+                    : Ok(_repository.Get(document.Id));
             }
             catch (Exception e)
             {
