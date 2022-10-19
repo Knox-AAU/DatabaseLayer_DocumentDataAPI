@@ -107,7 +107,7 @@ public class NpgDocumentRepository : IDocumentRepository
                         entityModel.SourceId
                     }, transaction: transaction);
             }
-            
+
             transaction.Commit();
         }
         catch (Exception e)
