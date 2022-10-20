@@ -122,7 +122,7 @@ public class NpgDocumentRepositoryIntegrationTests
         int result = _repository.Add(model);
 
         //Assert
-        result.Should().Be(1);
+        result.Should().Be(1, "because the add method should only update 1 row in the database");
     }
     
     [Fact]
@@ -157,7 +157,7 @@ public class NpgDocumentRepositoryIntegrationTests
         int result = _repository.AddBatch(documentModels);
 
         //Assert
-        result.Should().Be(3);
+        result.Should().Be(3, "because the AddBatch method should update exactly 3 rows in the database");
     }
     
     [Fact]
@@ -189,7 +189,6 @@ public class NpgDocumentRepositoryIntegrationTests
     public void Delete_RemovesDocumentCorrect_ReturnRowsAffected()
     {
         //Arrange
-        //Model 0
         DocumentModel model = _documentData[0];
         _repository.Add(model);
 
@@ -197,7 +196,7 @@ public class NpgDocumentRepositoryIntegrationTests
         int result = _repository.Delete(model);
 
         //Assert
-        result.Should().Be(1);
+        result.Should().Be(1, "because the add method should only update 1 row in the database");
     }
     
     [Fact]
