@@ -25,8 +25,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentContentModel>("select * from document_contents where documents_id=@Id", new { id })
-            .SingleOrDefault();
+        return con.QueryFirstOrDefault<DocumentContentModel>("select * from document_contents where documents_id=@Id", new { id });
     }
 
     public IEnumerable<DocumentContentModel> GetAll()
@@ -44,11 +43,11 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         return con.Execute(
             "insert into document_contents(documents_id, content)" +
             " values (@DocumentId, @Content)",
-            new
-            {
-                entity.DocumentId,
-                entity.Content
-            });
+                        new
+                        {
+                            entity.DocumentId,
+                            entity.Content
+                        });
     }
 
     public int Delete(DocumentContentModel entity)
@@ -56,8 +55,9 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from document_contents " +
-                           "where documents_id=@DocumentId", new { entity.DocumentId });
+        return con.Execute(
+            "delete from document_contents " +
+            "where documents_id=@DocumentId", new { entity.DocumentId });
     }
 
     public int Update(DocumentContentModel entity)
@@ -68,11 +68,11 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         return con.Execute(
             "update document_contents set content = @Content " +
             "where documents_id = @DocumentId",
-            new
-            {
-                entity.Content,
-                entity.DocumentId
-            });
+                        new
+                        {
+                            entity.Content,
+                            entity.DocumentId
+                        });
     }
 
     public int AddBatch(List<DocumentContentModel> models)

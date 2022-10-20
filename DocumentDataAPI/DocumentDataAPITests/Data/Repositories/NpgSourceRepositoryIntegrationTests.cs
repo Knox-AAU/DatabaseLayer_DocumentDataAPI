@@ -45,10 +45,11 @@ public class NpgSourceRepositoryIntegrationTests
 
         // Act
         repository.Update(new SourceModel(1, expected));
-        string? actual = repository.Get(1).Name;
+        string? actual = repository.Get(1)?.Name;
 
         // Assert
-        actual.Should().Be(expected, "because the tuple (1, 'DR') was updated to (1, 'Test Source')");
+        actual.Should().NotBeNull()
+            .And.Be(expected, "because the tuple (1, 'DR') was updated to (1, 'Test Source')");
     }
 
     [Fact]

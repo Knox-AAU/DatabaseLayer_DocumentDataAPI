@@ -1,8 +1,8 @@
 using System.Data;
 using System.Text;
 using Dapper;
-using DocumentDataAPI.Controllers;
 using DocumentDataAPI.Models;
+using DocumentDataAPI.Exceptions;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -21,8 +21,7 @@ public class NpgDocumentRepository : IDocumentRepository
     {
         _logger.LogDebug("Retrieving Document with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>("select * from documents where id=@Id", new { id })
-            .SingleOrDefault();
+        return con.QueryFirstOrDefault<DocumentModel>("select * from documents where id=@Id", new { id });
     }
 
     public IEnumerable<DocumentModel> GetAll()
@@ -77,13 +76,53 @@ public class NpgDocumentRepository : IDocumentRepository
             });
     }
 
+    public int AddBatch(List<DocumentModel> entity)
+    {
+        int rowsAffected = 0;
+        _logger.LogDebug("Adding Documents to database");
+        _logger.LogTrace("Documents: {document}", entity);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        con.Open();
+        using IDbTransaction transaction = con.BeginTransaction();
+        try
+        {
+            foreach (DocumentModel entityModel in entity)
+            {
+                rowsAffected += con.Execute(
+                    "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
+                    " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
+                    new
+                    {
+                        entityModel.Id,
+                        entityModel.Title,
+                        entityModel.Author,
+                        entityModel.Date,
+                        entityModel.Summary,
+                        entityModel.Path,
+                        entityModel.TotalWords,
+                        entityModel.SourceId
+                    }, transaction: transaction);
+            }
+
+            transaction.Commit();
+        }
+        catch (Exception)
+        {
+            transaction.Rollback();
+            throw new RowsAffectedMismatchException();
+        }
+
+        return rowsAffected;
+    }
+
     public int Delete(DocumentModel entity)
     {
         _logger.LogDebug("Deleting Document with id {Id} from database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute("delete from documents " +
-                           "where id=@Id", new { entity.Id });
+        return con.Execute(
+            "delete from documents " +
+            "where id=@Id", new { entity.Id });
     }
 
     public int Update(DocumentModel entity)
@@ -95,16 +134,56 @@ public class NpgDocumentRepository : IDocumentRepository
             "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
             "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
             "where id = @Id",
-            new
-            {
-                entity.Title,
-                entity.Author,
-                entity.Date,
-                entity.Summary,
-                entity.Path,
-                entity.TotalWords,
-                entity.SourceId,
-                entity.Id
-            });
+                        new
+                        {
+                            entity.Title,
+                            entity.Author,
+                            entity.Date,
+                            entity.Summary,
+                            entity.Path,
+                            entity.TotalWords,
+                            entity.SourceId,
+                            entity.Id
+                        });
+    }
+
+    public IEnumerable<DocumentModel> GetByAuthor(string author)
+    {
+        _logger.LogDebug("Retrieving Documents by {author} from database", author);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<DocumentModel>("select * from documents where author = @Author",
+                        new
+                        {
+                            author
+                        });
+    }
+
+    public IEnumerable<DocumentModel> GetByDate(DateTime dateTime)
+    {
+        _logger.LogDebug("Retrieving Documents by {dateTime} from database", dateTime);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<DocumentModel>($"select * from documents where date::date = @DateTime::date",
+                        new
+                        {
+                            dateTime
+                        });
+    }
+
+    public IEnumerable<DocumentModel> GetBySource(int sourceId)
+    {
+        _logger.LogDebug("Retrieving Documents by {sourceId} from database", sourceId);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.Query<DocumentModel>($"select * from documents where sources_id = @SourceId",
+                        new
+                        {
+                            sourceId
+                        });
+    }
+
+    public int GetTotalDocumentCount()
+    {
+        _logger.LogDebug("Retrieving Document count from database");
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return con.QuerySingle<int>("select count(id) from documents");
     }
 }

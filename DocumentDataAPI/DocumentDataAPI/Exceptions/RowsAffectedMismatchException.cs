@@ -1,4 +1,4 @@
-namespace DocumentDataAPI.Exceptions;
+﻿namespace DocumentDataAPI.Exceptions;
 
 /// <summary>
 /// This exception will be used when a transaction needs to rollback, since the rows affected does not match the amount

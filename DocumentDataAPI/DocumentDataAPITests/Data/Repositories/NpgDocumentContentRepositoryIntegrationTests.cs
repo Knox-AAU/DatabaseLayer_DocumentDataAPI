@@ -44,10 +44,11 @@ public class NpgDocumentContentRepositoryIntegrationTests
 
         // Act
         repository.Update(new DocumentContentModel(expected, 1));
-        string? actual = repository.Get(1).Content;
+        string? actual = repository.Get(1)?.Content;
 
         // Assert
-        actual.Should().BeEquivalentTo(expected,
+        actual.Should().NotBeNull()
+            .And.BeEquivalentTo(expected,
             "because the content of the document with id 1 was updated to (1, 'Test Content')");
     }
 
@@ -56,7 +57,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
-        DocumentContentModel toBeDeleted = repository.Get(5);
+        DocumentContentModel toBeDeleted = repository.Get(5)!;
         repository.Delete(toBeDeleted);
 
         // Act
