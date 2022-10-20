@@ -11,4 +11,5 @@ public interface IDocumentRepository : IRepository<DocumentModel>
     IEnumerable<DocumentModel> GetByDate(DateTime dateTime);
     IEnumerable<DocumentModel> GetBySource(int id);
     int GetTotalDocumentCount();
+    int AddBatch(List<DocumentModel> models);
 }

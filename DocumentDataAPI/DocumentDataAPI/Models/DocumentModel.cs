@@ -28,8 +28,8 @@ public class DocumentModel
     public string Title { get; init; } = null!;
     [Required]
     public string Path { get; init; } = null!;
-    [Required]
-    public string? Summary { get; init; }
+    [Required(AllowEmptyStrings = true)]
+    public string? Summary { get; init; } = null!;
     [Required]
     public DateTime Date { get; init; }
     [Required]
