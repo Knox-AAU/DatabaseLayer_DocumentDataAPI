@@ -143,39 +143,6 @@ public class NpgDocumentRepository : IDocumentRepository
                         });
     }
 
-    public IEnumerable<DocumentModel> GetByAuthor(string author)
-    {
-        _logger.LogDebug("Retrieving Documents by {author} from database", author);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>("select * from documents where author = @Author",
-                        new
-                        {
-                            author
-                        });
-    }
-
-    public IEnumerable<DocumentModel> GetByDate(DateTime dateTime)
-    {
-        _logger.LogDebug("Retrieving Documents by {dateTime} from database", dateTime);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents where date::date = @DateTime::date",
-                        new
-                        {
-                            dateTime
-                        });
-    }
-
-    public IEnumerable<DocumentModel> GetBySource(int sourceId)
-    {
-        _logger.LogDebug("Retrieving Documents by {sourceId} from database", sourceId);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents where sources_id = @SourceId",
-                        new
-                        {
-                            sourceId
-                        });
-    }
-
     public int GetTotalDocumentCount()
     {
         _logger.LogDebug("Retrieving Document count from database");
