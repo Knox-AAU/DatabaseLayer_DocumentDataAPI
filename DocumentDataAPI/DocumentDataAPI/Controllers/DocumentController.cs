@@ -29,13 +29,13 @@ namespace DocumentDataAPI.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<DocumentModel> PutDocument([FromBody] DocumentModel document)
+        public ActionResult<DocumentModel> PutDocument([FromBody] List<DocumentModel> documents)
         {
             try
             {
-                return _repository.Add(document) == 0
+                return _repository.AddBatch(documents) == 0
                     ? Problem("No rows were added")
-                    : Ok(_repository.Get(document.Id));
+                    : Ok($"Added {documents.Count} documents.");
             }
             catch (Exception e)
             {

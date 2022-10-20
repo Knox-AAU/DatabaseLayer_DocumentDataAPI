@@ -1,6 +1,8 @@
 using System.Data;
 using System.Text;
 using Dapper;
+using Dapper.Transaction;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 using DocumentDataAPI.Exceptions;
 
@@ -10,11 +12,13 @@ public class NpgDocumentRepository : IDocumentRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgDocumentRepository> _logger;
+    private readonly ISqlHelper _sqlHelper;
 
-    public NpgDocumentRepository(IDbConnectionFactory connectionFactory, ILogger<NpgDocumentRepository> logger)
+    public NpgDocumentRepository(IDbConnectionFactory connectionFactory, ILogger<NpgDocumentRepository> logger, ISqlHelper sqlHelper)
     {
         _connectionFactory = connectionFactory;
         _logger = logger;
+        _sqlHelper = sqlHelper;
     }
 
     public DocumentModel? Get(long id)
@@ -76,42 +80,34 @@ public class NpgDocumentRepository : IDocumentRepository
             });
     }
 
-    public int AddBatch(List<DocumentModel> entity)
+    public int AddBatch(List<DocumentModel> models)
     {
         int rowsAffected = 0;
-        _logger.LogDebug("Adding Documents to database");
-        _logger.LogTrace("Documents: {document}", entity);
+        _logger.LogDebug("Adding {count} documents to database", models.Count);
         using IDbConnection con = _connectionFactory.CreateConnection();
         con.Open();
         using IDbTransaction transaction = con.BeginTransaction();
         try
         {
-            foreach (DocumentModel entityModel in entity)
+            foreach (DocumentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
-                rowsAffected += con.Execute(
-                    "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
-                    " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
-                    new
-                    {
-                        entityModel.Id,
-                        entityModel.Title,
-                        entityModel.Author,
-                        entityModel.Date,
-                        entityModel.Summary,
-                        entityModel.Path,
-                        entityModel.TotalWords,
-                        entityModel.SourceId
-                    }, transaction: transaction);
+                string parameterString =
+                    _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
+                rowsAffected += transaction.Execute("insert into documents(id, sources_id, title, path, summary, date, author, total_words) values " + parameterString, parameters);
             }
 
+            if (rowsAffected != models.Count)
+            {
+                throw new RowsAffectedMismatchException();
+            }
             transaction.Commit();
         }
-        catch (Exception)
+        catch (Exception e)
         {
             transaction.Rollback();
-            throw new RowsAffectedMismatchException();
+            _logger.LogError(e, "Failed to insert documents");
+            throw;
         }
-
         return rowsAffected;
     }
 

@@ -1,5 +1,6 @@
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -17,7 +18,7 @@ public class NpgDocumentRepositoryIntegrationTests
     {
         _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgDocumentRepository>(new NullLoggerFactory());
-        _repository = new NpgDocumentRepository(_connectionFactory, _logger);
+        _repository = new NpgDocumentRepository(_connectionFactory, _logger, new DapperSqlHelper(TestHelper.Configuration));
         TestHelper.DeployDatabaseWithTestData();
     }
     
