@@ -234,57 +234,6 @@ public class NpgDocumentRepositoryIntegrationTests
     }
     
     [Fact]
-    public void GetByAuthor_GetAllDocumentsByAuthor_ReturnListOfDocuments()
-    {
-        //Arrange
-        DocumentModel model = _documentData[6];
-        
-        //Act
-        IEnumerable<DocumentModel> result = _repository.GetByAuthor("Jonathan Kjær Troelsen");
-
-            //Assert
-            result.Should().NotBeNull()
-                .And.AllBeEquivalentTo(model);
-    }
-    
-    [Fact]
-    public void GetByDate_GetsAllDocumentsByDate_ReturnListOfDocuments()
-    {
-        //Arrange
-        List<DocumentModel> modelList = new List<DocumentModel>()
-        {
-            _documentData[3],
-            _documentData[4],
-            _documentData[5]
-        };
-
-        //Act
-        IEnumerable<DocumentModel> result = _repository.GetByDate(DateTime.Parse("2022-10-07"));
-
-        //Assert
-        result.Should().NotBeNull()
-            .And.BeEquivalentTo(modelList);
-    }
-    
-    [Fact]
-    public void GetBySource_GetAllDocumentsBySource_ReturnListOfDocuments()
-    {
-      //Arrange
-        List<DocumentModel> modelList = new List<DocumentModel>()
-        {
-            _documentData[5],
-            _documentData[6]
-        };
-        
-        //Act
-        IEnumerable<DocumentModel> result = _repository.GetBySource(2);
-
-        //Assert
-        result.Should().NotBeNull()
-            .And.BeEquivalentTo(modelList);
-    }
-    
-    [Fact]
     public void GetTotalDocumentCount_GetTheNumberOfDocuments_ReturnInt()
     {
         //Arrange
