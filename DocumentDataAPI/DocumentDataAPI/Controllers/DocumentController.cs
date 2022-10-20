@@ -66,8 +66,8 @@ public class DocumentController : ControllerBase
 
             IEnumerable<DocumentModel> result = _repository.GetAll(parameters);
             return result.Any()
-                ? NotFound()
-                : Ok(result);
+                ? Ok(result)
+                : NotFound();
         }
         catch (Exception e)
         {
