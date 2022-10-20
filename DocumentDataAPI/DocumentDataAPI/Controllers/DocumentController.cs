@@ -54,12 +54,18 @@ namespace DocumentDataAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<IEnumerable<DocumentModel>> GetAll()
+        public ActionResult<IEnumerable<DocumentModel>> GetAll(int? sourceId, string? author, DateTime? beforeDate, DateTime? afterDate)
         {
             try
             {
-                List<DocumentModel> result = _repository.GetAll().ToList();
-                return result.Count == 0
+                DocumentSearchParameters parameters = new DocumentSearchParameters();
+                if (sourceId is not null) parameters.AddSource(sourceId.Value);
+                if (author is not null) parameters.AddAuthor(author);
+                if (beforeDate is not null) parameters.AddBeforeDate(beforeDate.Value);
+                if (afterDate is not null) parameters.AddAfterDate(afterDate.Value);
+
+                IEnumerable<DocumentModel> result = _repository.GetAll(parameters);
+                return result.Any()
                     ? NotFound()
                     : Ok(result);
             }
@@ -119,87 +125,6 @@ namespace DocumentDataAPI.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "Unable to get document count.");
-                return Problem(e.Message);
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a list of documents based on the source id.
-        /// </summary>
-        /// <response code="200">Success: A list of documents for the given source id.</response>
-        /// <response code="404">Not Found: Nothing is returned.</response>
-        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
-        [HttpGet]
-        [Route("sources/{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<IEnumerable<DocumentModel>> GetBySourceId(int id)
-        {
-            try
-            {
-                List<DocumentModel> result = _repository.GetBySource(id).ToList();
-                return result.Count == 0
-                    ? NotFound()
-                    : Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unable to get document with source id: {id}.", id);
-                return Problem(e.Message);
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a list of documents based on the author.
-        /// </summary>
-        /// <response code="200">Success: A list of documents by the given author.</response>
-        /// <response code="404">Not Found: Nothing is returned.</response>
-        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
-        [HttpGet]
-        [Route("authors/{author}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<IEnumerable<DocumentModel>> GetByAuthor(string author)
-        {
-            try
-            {
-                IEnumerable<DocumentModel> result = _repository.GetByAuthor(author);
-                return result.Count() == 0
-                    ? NotFound()
-                    : Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unable to get documents with author: {author}.", author);
-                return Problem(e.Message);
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a list of documents created at the specified date.
-        /// </summary>
-        /// <response code="200">Success: A list of documents by the given author.</response>
-        /// <response code="404">Not Found: Nothing is returned.</response>
-        /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
-        [HttpGet]
-        [Route("dates/{date:datetime}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<IEnumerable<DocumentModel>> GetByDate(DateTime date)
-        {
-            try
-            {
-                List<DocumentModel> result = _repository.GetByDate(date).ToList();
-                return result.Count == 0
-                    ? NotFound()
-                    : Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unable to get document with date: {date}.", date);
                 return Problem(e.Message);
             }
         }
