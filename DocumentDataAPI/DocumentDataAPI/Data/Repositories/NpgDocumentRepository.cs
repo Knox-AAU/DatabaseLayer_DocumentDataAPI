@@ -1,12 +1,8 @@
-using System;
 using System.Data;
 using System.Text;
 using Dapper;
-using DocumentDataAPI.Controllers;
 using DocumentDataAPI.Models;
 using DocumentDataAPI.Exceptions;
-
-using static Dapper.SqlMapper;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -110,7 +106,7 @@ public class NpgDocumentRepository : IDocumentRepository
 
             transaction.Commit();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             transaction.Rollback();
             throw new RowsAffectedMismatchException();

@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Models;
@@ -134,13 +133,13 @@ public class NpgDocumentRepositoryIntegrationTests
 
         //Act
         _ = _repository.Add(model);
-        DocumentModel result = _repository.Get(1234);
+        DocumentModel? result = _repository.Get(1234);
 
         //Assert
-        result.Should().BeEquivalentTo(model);
+        result.Should().NotBeNull()
+            .And.BeEquivalentTo(model);
     }
     
-    //AddBatch
     [Fact]
     public void AddBatch_addsRowsCorrect_ReturnRowsAffected()
     {
@@ -174,7 +173,7 @@ public class NpgDocumentRepositoryIntegrationTests
         
         //Act
         _ = _repository.AddBatch(documentModels);
-        List<DocumentModel> result = new()
+        List<DocumentModel?> result = new()
         {
             _repository.Get(1234),
             _repository.Get(2345),
@@ -182,10 +181,10 @@ public class NpgDocumentRepositoryIntegrationTests
         };
 
         //Assert
-        result.Should().BeEquivalentTo(documentModels);
+        result.Should().NotBeNull()
+            .And.BeEquivalentTo(documentModels);
     }
 
-    //Delete
     [Fact]
     public void Delete_RemovesDocumentCorrect_ReturnRowsAffected()
     {
@@ -201,10 +200,10 @@ public class NpgDocumentRepositoryIntegrationTests
         result.Should().Be(1);
     }
     
+    [Fact]
     public void Delete_RemovesDocumentCorrect_ReturnNull()
     {
         //Arrange
-        //Model 0
         DocumentModel model = _documentData[0];
         _repository.Add(model);
 
@@ -216,7 +215,6 @@ public class NpgDocumentRepositoryIntegrationTests
         result.Should().BeNull();
     }
     
-    //Update
     [Fact]
     public void Update_UpdatesRowCorrect_ReturnRowsAffected()
     {
