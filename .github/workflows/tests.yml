@@ -1,4 +1,4 @@
-name: Build and test
+name: Build
 
 on:
   pull_request:
@@ -21,7 +21,4 @@ jobs:
       working-directory: DocumentDataAPI/
     - name: Build
       run: dotnet build --configuration Release --no-restore
-      working-directory: DocumentDataAPI/
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
       working-directory: DocumentDataAPI/
