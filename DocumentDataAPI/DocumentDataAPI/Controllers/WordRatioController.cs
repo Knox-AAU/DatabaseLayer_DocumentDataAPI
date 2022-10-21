@@ -28,11 +28,11 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<WordRatioModel>> GetAll()
+    public async Task<ActionResult<IEnumerable<WordRatioModel>>> GetAll()
     {
         try
         {
-            IEnumerable<WordRatioModel> result = _repository.GetAll();
+            IEnumerable<WordRatioModel> result = await _repository.GetAll();
             return result.Any()
                 ? Ok(result)
                 : NoContent();
@@ -54,11 +54,11 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<WordRatioModel> GetByDocumentIdAndWord(int documentId, string word)
+    public async Task<ActionResult<WordRatioModel>> GetByDocumentIdAndWord(int documentId, string word)
     {
         try
         {
-            WordRatioModel? result = _repository.GetByDocumentIdAndWord(documentId, word);
+            WordRatioModel? result = await _repository.GetByDocumentIdAndWord(documentId, word);
             return result != null
                 ? Ok(result)
                 : NoContent();
@@ -80,11 +80,11 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<WordRatioModel>> GetByDocumentId(int documentId)
+    public async Task<ActionResult<IEnumerable<WordRatioModel>>> GetByDocumentId(int documentId)
     {
         try
         {
-            IEnumerable<WordRatioModel> result = _repository.GetByDocumentId(documentId);
+            IEnumerable<WordRatioModel> result = await _repository.GetByDocumentId(documentId);
             return result.Any()
                 ? Ok(result)
                 : NoContent();
@@ -106,12 +106,12 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<WordRatioModel>> GetByWord(string wordListString)
+    public async Task<ActionResult<IEnumerable<WordRatioModel>>> GetByWord(string wordListString)
     {
         List<string> wordList = wordListString.Split(',').ToList();
         try
         {
-            IEnumerable<WordRatioModel> result = _repository.GetByWords(wordList);
+            IEnumerable<WordRatioModel> result = await _repository.GetByWords(wordList);
             return result.Any()
                 ? Ok(result)
                 : NoContent();
@@ -133,11 +133,11 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> DeleteWordRatio([FromBody] WordRatioModel wordRatio)
+    public async Task<ActionResult<int>> DeleteWordRatio([FromBody] WordRatioModel wordRatio)
     {
         try
         {
-            int result = _repository.Delete(wordRatio);
+            int result = await _repository.Delete(wordRatio);
             return result == 1
                 ? Ok(result)
                 : NoContent();
@@ -159,11 +159,11 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> UpdateWordRatio([FromBody] WordRatioModel wordRatio)
+    public async Task<ActionResult<int>> UpdateWordRatio([FromBody] WordRatioModel wordRatio)
     {
         try
         {
-            int result = _repository.Update(wordRatio);
+            int result = await _repository.Update(wordRatio);
             return result == 1
                 ? Ok(result)
                 : NoContent();
@@ -185,11 +185,11 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> PutWordRatios([FromBody] List<WordRatioModel> wordRatios)
+    public async Task<ActionResult<int>> PutWordRatios([FromBody] List<WordRatioModel> wordRatios)
     {
         try
         {
-            int result = _repository.AddBatch(wordRatios);
+            int result = await _repository.AddBatch(wordRatios);
             return result > 0
                 ? Ok(result)
                 : NoContent();

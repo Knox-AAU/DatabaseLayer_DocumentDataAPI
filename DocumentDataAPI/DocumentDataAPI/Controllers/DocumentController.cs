@@ -29,11 +29,11 @@ public class DocumentController : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DocumentModel> PutDocument([FromBody] List<DocumentModel> documents)
+    public async Task<ActionResult<DocumentModel>> PutDocument([FromBody] List<DocumentModel> documents)
     {
         try
         {
-            return _repository.AddBatch(documents) == 0
+            return await _repository.AddBatch(documents) == 0
                 ? Problem("No rows were added")
                 : Ok($"Added {documents.Count} documents.");
         }
@@ -54,7 +54,7 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<DocumentModel>> GetAll(int? sourceId, string? author, DateTime? beforeDate, DateTime? afterDate)
+    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll(int? sourceId, string? author, DateTime? beforeDate, DateTime? afterDate)
     {
         try
         {
@@ -64,7 +64,7 @@ public class DocumentController : ControllerBase
             if (beforeDate is not null) parameters.AddBeforeDate(beforeDate.Value);
             if (afterDate is not null) parameters.AddAfterDate(afterDate.Value);
 
-            IEnumerable<DocumentModel> result = _repository.GetAll(parameters);
+            IEnumerable<DocumentModel> result = await _repository.GetAll(parameters);
             return result.Any()
                 ? Ok(result)
                 : NotFound();
@@ -88,11 +88,11 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DocumentModel> GetById(int id)
+    public async Task<ActionResult<DocumentModel>> GetById(int id)
     {
         try
         {
-            DocumentModel? result = _repository.Get(id);
+            DocumentModel? result = await _repository.Get(id);
             return result == null
                 ? NotFound()
                 : Ok(result);
@@ -115,11 +115,11 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> GetTotalDocumentCount()
+    public async Task<ActionResult<int>> GetTotalDocumentCount()
     {
         try
         {
-            int result = _repository.GetTotalDocumentCount();
+            int result = await _repository.GetTotalDocumentCount();
             return Ok(result);
         }
         catch (Exception e)
