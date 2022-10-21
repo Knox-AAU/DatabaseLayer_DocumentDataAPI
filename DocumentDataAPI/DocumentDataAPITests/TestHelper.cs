@@ -20,7 +20,8 @@ public static class TestHelper
             if (!_isInitialized)
             {
                 _configuration = new ConfigurationBuilder()
-                    .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.Tests.local.json"), false)
+                    .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.Tests.local.json"), true)
+                    .AddEnvironmentVariables()
                     .Build();
                 // Set up Dapper mappers
                 FluentMapper.Initialize(config =>
