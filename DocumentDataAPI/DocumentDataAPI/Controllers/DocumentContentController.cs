@@ -29,11 +29,11 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<DocumentContentModel>> GetAll()
+    public async Task<ActionResult<IEnumerable<DocumentContentModel>>> GetAll()
     {
         try
         {
-            IEnumerable<DocumentContentModel> result = _repository.GetAll();
+            IEnumerable<DocumentContentModel> result = await _repository.GetAll();
             return result.Any()
                 ? Ok(result)
                 : NoContent();
@@ -56,11 +56,11 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DocumentContentModel?> GetByDocumentId(long documentId)
+    public async Task<ActionResult<DocumentContentModel?>> GetByDocumentId(long documentId)
     {
         try
         {
-            DocumentContentModel? result = _repository.Get(documentId);
+            DocumentContentModel? result = await _repository.Get(documentId);
             return result == null
                 ? NotFound()
                 : Ok(result);
@@ -81,11 +81,11 @@ public class DocumentContentController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DocumentContentModel?> PutDocumentContent([FromBody] List<DocumentContentModel> documentContents)
+    public async Task<ActionResult<DocumentContentModel?>> PutDocumentContent([FromBody] List<DocumentContentModel> documentContents)
     {
         try
         {
-            return _repository.AddBatch(documentContents) == documentContents.Count
+            return await _repository.AddBatch(documentContents) == documentContents.Count
                 ? Ok(documentContents.Count)
                 : Problem("No rows were added");
         }
@@ -106,11 +106,11 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DocumentContentModel?> UpdateDocumentContent([FromBody] DocumentContentModel documentContent)
+    public async Task<ActionResult<DocumentContentModel?>> UpdateDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
-            return _repository.Update(documentContent) == 1
+            return await _repository.Update(documentContent) == 1
                 ? Ok(_repository.Get(documentContent.DocumentId))
                 : NotFound();
         }

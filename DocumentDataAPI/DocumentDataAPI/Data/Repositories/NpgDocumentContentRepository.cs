@@ -21,26 +21,26 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _sqlHelper = sqlHelper;
     }
 
-    public DocumentContentModel? Get(long id)
+    public async Task<DocumentContentModel?> Get(long id)
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QueryFirstOrDefault<DocumentContentModel>("select * from document_contents where documents_id=@Id", new { id });
+        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id", new { id });
     }
 
-    public IEnumerable<DocumentContentModel> GetAll()
+    public async Task<IEnumerable<DocumentContentModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all DocumentContents from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentContentModel>("select * from document_contents");
+        return await con.QueryAsync<DocumentContentModel>("select * from document_contents");
     }
 
-    public int Add(DocumentContentModel entity)
+    public async Task<int> Add(DocumentContentModel entity)
     {
         _logger.LogDebug("Adding DocumentContent with id {DocumentId} to database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
+        return await con.ExecuteAsync(
             "insert into document_contents(documents_id, content)" +
             " values (@DocumentId, @Content)",
                         new
@@ -50,22 +50,22 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
                         });
     }
 
-    public int Delete(DocumentContentModel entity)
+    public async Task<int> Delete(DocumentContentModel entity)
     {
         _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
+        return await con.ExecuteAsync(
             "delete from document_contents " +
             "where documents_id=@DocumentId", new { entity.DocumentId });
     }
 
-    public int Update(DocumentContentModel entity)
+    public async Task<int> Update(DocumentContentModel entity)
     {
         _logger.LogDebug("Updating DocumentContent with id {DocumentId} in database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
+        return await con.ExecuteAsync(
             "update document_contents set content = @Content " +
             "where documents_id = @DocumentId",
                         new
@@ -75,7 +75,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
                         });
     }
 
-    public int AddBatch(List<DocumentContentModel> models)
+    public async Task<int> AddBatch(List<DocumentContentModel> models)
     {
         _logger.LogDebug("Inserting {count} DocumentContents in database", models.Count);
         int rowsAffected = 0;
@@ -88,8 +88,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
             foreach (DocumentContentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                rowsAffected += transaction.Execute(
-                    "insert into document_contents (documents_id, content) values " + parameterString, parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into document_contents (documents_id, content) values " + parameterString, parameters);
             }
 
             if (rowsAffected != models.Count)

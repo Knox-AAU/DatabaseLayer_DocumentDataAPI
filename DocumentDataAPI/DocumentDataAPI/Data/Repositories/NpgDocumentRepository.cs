@@ -21,21 +21,21 @@ public class NpgDocumentRepository : IDocumentRepository
         _sqlHelper = sqlHelper;
     }
 
-    public DocumentModel? Get(long id)
+    public async Task<DocumentModel?> Get(long id)
     {
         _logger.LogDebug("Retrieving Document with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QueryFirstOrDefault<DocumentModel>("select * from documents where id=@Id", new { id });
+        return await con.QueryFirstOrDefaultAsync<DocumentModel>("select * from documents where id=@Id", new { id });
     }
 
-    public IEnumerable<DocumentModel> GetAll()
+    public async Task<IEnumerable<DocumentModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all Documents from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Query<DocumentModel>($"select * from documents");
+        return await con.QueryAsync<DocumentModel>($"select * from documents");
     }
 
-    public IEnumerable<DocumentModel> GetAll(DocumentSearchParameters parameters)
+    public async Task<IEnumerable<DocumentModel>> GetAll(DocumentSearchParameters parameters)
     {
         _logger.LogDebug("Retrieving all Documents that the given search parameters from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
@@ -56,15 +56,15 @@ public class NpgDocumentRepository : IDocumentRepository
             args.Add(param.Key, param.Value);
         }
 
-        return con.Query<DocumentModel>(query.ToString(), args);
+        return await con.QueryAsync<DocumentModel>(query.ToString(), args);
     }
 
-    public int Add(DocumentModel entity)
+    public async Task<int> Add(DocumentModel entity)
     {
         _logger.LogDebug("Adding Document with id {Id} to database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
+        return await con.ExecuteAsync(
             "insert into documents(id, title, author, date, summary, path, total_words, sources_id)" +
             " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId)",
             new
@@ -80,7 +80,7 @@ public class NpgDocumentRepository : IDocumentRepository
             });
     }
 
-    public int AddBatch(List<DocumentModel> models)
+    public async Task<int> AddBatch(List<DocumentModel> models)
     {
         int rowsAffected = 0;
         _logger.LogDebug("Adding {count} documents to database", models.Count);
@@ -89,11 +89,11 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbTransaction transaction = con.BeginTransaction();
         try
         {
+            // Divide the list of models into chunks to keep the INSERT statements from getting too large.
             foreach (DocumentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
-                string parameterString =
-                    _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                rowsAffected += transaction.Execute("insert into documents(id, sources_id, title, path, summary, date, author, total_words) values " + parameterString, parameters);
+                string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into documents(id, sources_id, title, path, summary, date, author, total_words) values " + parameterString, parameters);
             }
 
             if (rowsAffected != models.Count)
@@ -111,22 +111,22 @@ public class NpgDocumentRepository : IDocumentRepository
         return rowsAffected;
     }
 
-    public int Delete(DocumentModel entity)
+    public async Task<int> Delete(DocumentModel entity)
     {
         _logger.LogDebug("Deleting Document with id {Id} from database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
+        return await con.ExecuteAsync(
             "delete from documents " +
             "where id=@Id", new { entity.Id });
     }
 
-    public int Update(DocumentModel entity)
+    public async Task<int> Update(DocumentModel entity)
     {
         _logger.LogDebug("Updating Document with id {Id} in database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.Execute(
+        return await con.ExecuteAsync(
             "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
             "path = @Path, total_words = @TotalWords, sources_id = @SourceId " +
             "where id = @Id",
@@ -143,10 +143,10 @@ public class NpgDocumentRepository : IDocumentRepository
                         });
     }
 
-    public int GetTotalDocumentCount()
+    public async Task<int> GetTotalDocumentCount()
     {
         _logger.LogDebug("Retrieving Document count from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return con.QuerySingle<int>("select count(id) from documents");
+        return await con.QuerySingleAsync<int>("select count(id) from documents");
     }
 }

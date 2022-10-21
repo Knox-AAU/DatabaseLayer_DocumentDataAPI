@@ -24,13 +24,13 @@ public class NpgWordRatioRepositoryIntegrationTests
 
     [Theory]
     [MemberData(nameof(WordRatioData))]
-    public void GetByDocumentIdAndWordReturnsCorrectWordRatio(int docID, string word, WordRatioModel expected)
+    public async Task GetByDocumentIdAndWordReturnsCorrectWordRatio(int docID, string word, WordRatioModel expected)
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
 
         //Act
-        WordRatioModel? result = repository.GetByDocumentIdAndWord(docID, word);
+        WordRatioModel? result = await repository.GetByDocumentIdAndWord(docID, word);
 
         //Assert
         result.Should().BeEquivalentTo(expected);
@@ -46,26 +46,26 @@ public class NpgWordRatioRepositoryIntegrationTests
         };
 
     [Fact]
-    public void GetByDocumentIdReturnsCorrectCount()
+    public async Task GetByDocumentIdReturnsCorrectCount()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
 
         //Act
-        List<WordRatioModel> results = repository.GetByDocumentId(1).ToList();
+        List<WordRatioModel> results = (await repository.GetByDocumentId(1)).ToList();
 
         //Assert
         results.Should().HaveCount(68, "because the document with id=1 has 68 wordratios");
     }
 
     [Fact]
-    public void GetByWordReturnsCorrectWordRatio()
+    public async Task GetByWordReturnsCorrectWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
 
         //Act
-        List<WordRatioModel> results = repository.GetByWord("til").ToList();
+        List<WordRatioModel> results = (await repository.GetByWord("til")).ToList();
 
         //Assert
         results.Should().BeEquivalentTo(new List<WordRatioModel>()
@@ -78,14 +78,14 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public void GetByWordsReturnsCorrectWordRatio()
+    public async Task GetByWordsReturnsCorrectWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         List<string> words = new List<string>() { "til", "dronningen" };
 
         //Act
-        List<WordRatioModel> results = repository.GetByWords(words).ToList();
+        List<WordRatioModel> results = (await repository.GetByWords(words)).ToList();
 
         //Assert
         results.Should().BeEquivalentTo(new List<WordRatioModel>()
@@ -99,35 +99,36 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public void GetAll_ReturnsAllWordRatios()
+    public async Task GetAll_ReturnsAllWordRatios()
     {
         // Arrange
         NpgWordRatioRepository repository = new(_connectionFactory, _logger, _sqlHelper);
 
         // Act
-        List<WordRatioModel> result = repository.GetAll().ToList();
+        List<WordRatioModel> result = (await repository.GetAll()).ToList();
 
         // Assert
         result.Should().HaveCount(410, "because the word_ratios table in the test database has 410 rows");
     }
 
     [Fact]
-    public void AddCorrectlyAddsWordRatio()
+    public async Task AddCorrectlyAddsWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         WordRatioModel wordRatio = new WordRatioModel(6, 5, 0.41999998688697815, (Rank) 0, "ass");
 
         //Act
-        int result = repository.Add(wordRatio);
+        int result1 = await repository.Add(wordRatio);
+        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(5, "ass");
 
         //Assert
-        result.Should().Be(1);
-        repository.GetByDocumentIdAndWord(5, "ass").Should().BeEquivalentTo(wordRatio);
+        result1.Should().Be(1);
+        result2.Should().BeEquivalentTo(wordRatio);
     }
 
     [Fact]
-    public void AddWordRatiosCorrectlyAddsWordRatios()
+    public async Task AddWordRatiosCorrectlyAddsWordRatios()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
@@ -139,42 +140,48 @@ public class NpgWordRatioRepositoryIntegrationTests
         };
 
         //Act
-        int result = repository.AddBatch(wordRatios);
+        int result1 = await repository.AddBatch(wordRatios);
+        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(5, "ass");
+        WordRatioModel? result3 = await repository.GetByDocumentIdAndWord(3, "babbi");
+        WordRatioModel? result4 = await repository.GetByDocumentIdAndWord(1, "lilo");
+
 
         //Assert
-        result.Should().Be(3);
-        repository.GetByDocumentIdAndWord(5, "ass").Should().BeEquivalentTo(wordRatios[0]);
-        repository.GetByDocumentIdAndWord(3, "babbi").Should().BeEquivalentTo(wordRatios[1]);
-        repository.GetByDocumentIdAndWord(1, "lilo").Should().BeEquivalentTo(wordRatios[2]);
+        result1.Should().Be(3);
+        result2.Should().BeEquivalentTo(wordRatios[0]);
+        result3.Should().BeEquivalentTo(wordRatios[1]);
+        result4.Should().BeEquivalentTo(wordRatios[2]);
     }
 
     [Fact]
-    public void UpdateCorrectlyUpdatesWordRatio()
+    public async Task UpdateCorrectlyUpdatesWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         WordRatioModel wordRatio = new WordRatioModel(10, 2, 5, (Rank) 2, "dronningen");
 
         //Act
-        int result = repository.Update(wordRatio);
+        int result1 = await repository.Update(wordRatio);
+        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(2, "dronningen");
 
         //Assert
-        result.Should().Be(1);
-        repository.GetByDocumentIdAndWord(2, "dronningen").Should().BeEquivalentTo(wordRatio);
+        result1.Should().Be(1);
+        result2.Should().BeEquivalentTo(wordRatio);
     }
 
     [Fact]
-    public void DeleteCorrectlyDeletesWordRatio()
+    public async Task DeleteCorrectlyDeletesWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
         WordRatioModel wordRatio = new WordRatioModel(2, 2, 1.6100000143051147, (Rank) 1, "dronningen");
 
         //Act
-        int result = repository.Delete(wordRatio);
+        int result1 = await repository.Delete(wordRatio);
+        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(2, "dronningen");
 
         //Assert
-        result.Should().Be(1);
-        repository.GetByDocumentIdAndWord(2, "dronningen").Should().BeNull();
+        result1.Should().Be(1);
+        result2.Should().BeNull();
     }
 }

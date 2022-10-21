@@ -23,28 +23,28 @@ public class NpgDocumentContentRepositoryIntegrationTests
     }
 
     [Fact]
-    public void GetAll_ReturnsAllDocumentContents()
+    public async Task GetAll_ReturnsAllDocumentContents()
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
 
         // Act
-        List<DocumentContentModel> result = repository.GetAll().ToList();
+        List<DocumentContentModel> result = (await repository.GetAll()).ToList();
 
         // Assert
         result.Should().HaveCount(5, "because the document_contents table in the test database has 5 rows");
     }
 
     [Fact]
-    public void Update_UpdatesRow()
+    public async Task Update_UpdatesRow()
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         const string expected = "Test Content";
 
         // Act
-        repository.Update(new DocumentContentModel(expected, 1));
-        string? actual = repository.Get(1)?.Content;
+        await repository.Update(new DocumentContentModel(expected, 1));
+        string? actual = (await repository.Get(1))?.Content;
 
         // Assert
         actual.Should().NotBeNull()
@@ -53,15 +53,15 @@ public class NpgDocumentContentRepositoryIntegrationTests
     }
 
     [Fact]
-    public void DeleteWithNoForeignKeyViolation_DeletesRow()
+    public async Task DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
-        DocumentContentModel toBeDeleted = repository.Get(5)!;
-        repository.Delete(toBeDeleted);
+        DocumentContentModel? toBeDeleted = await repository.Get(5)!;
+        await repository.Delete(toBeDeleted);
 
         // Act
-        DocumentContentModel? actual = repository.Get(5);
+        DocumentContentModel? actual = await repository.Get(5);
 
         // Assert
         actual.Should().BeNull("because the document_content with id 5 was removed from the database");

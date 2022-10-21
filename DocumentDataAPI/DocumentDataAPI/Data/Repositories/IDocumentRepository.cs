@@ -5,8 +5,8 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface IDocumentRepository : IRepository<DocumentModel>
 {
-    DocumentModel? Get(long id);
-    IEnumerable<DocumentModel> GetAll(DocumentSearchParameters parameters);
-    int GetTotalDocumentCount();
-    int AddBatch(List<DocumentModel> models);
+    Task<DocumentModel?> Get(long id);
+    Task<IEnumerable<DocumentModel>> GetAll(DocumentSearchParameters parameters);
+    Task<int> GetTotalDocumentCount();
+    Task<int> AddBatch(List<DocumentModel> models);
 }

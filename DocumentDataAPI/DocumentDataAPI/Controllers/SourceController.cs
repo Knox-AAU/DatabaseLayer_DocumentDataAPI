@@ -29,11 +29,11 @@ public class SourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<SourceModel>> GetAll()
+    public async Task<ActionResult<IEnumerable<SourceModel>>> GetAll()
     {
         try
         {
-            return Ok(_repository.GetAll());
+            return Ok(await _repository.GetAll());
         }
         catch (Exception e)
         {
@@ -53,11 +53,11 @@ public class SourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<SourceModel> GetById(long id)
+    public async Task<ActionResult<SourceModel>> GetById(long id)
     {
         try
         {
-            SourceModel? result = _repository.Get(id);
+            SourceModel? result = await _repository.Get(id);
             return result == null
                 ? NotFound()
                 : Ok(result);
@@ -80,11 +80,11 @@ public class SourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<SourceModel>> GetByName(string name)
+    public async Task<ActionResult<IEnumerable<SourceModel>>> GetByName(string name)
     {
         try
         {
-            IEnumerable<SourceModel> result = _repository.GetByName(name);
+            IEnumerable<SourceModel> result = await _repository.GetByName(name);
             return result.Any()
                 ? Ok(result)
                 : NotFound("No source exists with name: " + name);
@@ -105,11 +105,11 @@ public class SourceController : ControllerBase
     [Route("{id:long}/document-count")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<int> GetDocumentCount(long id)
+    public async Task<ActionResult<int>> GetDocumentCount(long id)
     {
         try
         {
-            return Ok(_repository.GetCountFromId(id));
+            return Ok(await _repository.GetCountFromId(id));
         }
         catch (Exception e)
         {
@@ -129,12 +129,12 @@ public class SourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<SourceModel?> PutSource(string name)
+    public async Task<ActionResult<SourceModel?>> PutSource(string name)
     {
         try
         {
-            return _repository.Add(new SourceModel { Name = name }) == 1
-                ? Ok(_repository.GetByName(name).Last())
+            return await _repository.Add(new SourceModel { Name = name }) == 1
+                ? Ok((await _repository.GetByName(name)).Last())
                 : BadRequest("Could not add the source with name: " + name);
         }
         catch (Exception e)
@@ -155,12 +155,12 @@ public class SourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<SourceModel?> UpdateSource([FromBody] SourceModel source)
+    public async Task<ActionResult<SourceModel?>> UpdateSource([FromBody] SourceModel source)
     {
         try
         {
-            return _repository.Update(source) == 1
-                ? Ok(_repository.Get(source.Id))
+            return await _repository.Update(source) == 1
+                ? Ok(await _repository.Get(source.Id))
                 : NotFound("Could not find source with id: " + source.Id);
         }
         catch (Exception e)
@@ -181,11 +181,11 @@ public class SourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<SourceModel?> DeleteSource([FromBody] SourceModel source)
+    public async Task<ActionResult<SourceModel?>> DeleteSource([FromBody] SourceModel source)
     {
         try
         {
-            return _repository.Delete(source) == 1
+            return await _repository.Delete(source) == 1
                 ? Ok(source)
                 : NotFound("Could not find source with id: " + source.Id);
         }

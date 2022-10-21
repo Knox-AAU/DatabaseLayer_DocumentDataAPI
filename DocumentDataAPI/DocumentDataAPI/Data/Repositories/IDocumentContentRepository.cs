@@ -4,6 +4,6 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface IDocumentContentRepository : IRepository<DocumentContentModel>
 {
-    DocumentContentModel? Get(long id);
-    int AddBatch(List<DocumentContentModel> models);
+    Task<DocumentContentModel?> Get(long id);
+    Task<int> AddBatch(List<DocumentContentModel> models);
 }

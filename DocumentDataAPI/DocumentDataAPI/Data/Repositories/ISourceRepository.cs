@@ -4,7 +4,7 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface ISourceRepository : IRepository<SourceModel>
 {
-    SourceModel? Get(long id);
-    long GetCountFromId(long id);
-    IEnumerable<SourceModel> GetByName(string name);
+    Task<SourceModel?> Get(long id);
+    Task<long> GetCountFromId(long id);
+    Task<IEnumerable<SourceModel>> GetByName(string name);
 }
