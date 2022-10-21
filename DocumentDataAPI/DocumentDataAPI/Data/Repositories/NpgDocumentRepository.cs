@@ -89,16 +89,12 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbTransaction transaction = con.BeginTransaction();
         try
         {
-            var tasks = models.Chunk(_sqlHelper.InsertStatementChunkSize).Select(async chunk =>
+            // Divide the list of models into chunks to keep the INSERT statements from getting too large.
+            foreach (DocumentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
-                string parameterString =
-                    _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                return await transaction.ExecuteAsync(
-                    "insert into documents(id, sources_id, title, path, summary, date, author, total_words) values "
-                    + parameterString, parameters);
-            });
-            var result = await Task.WhenAll(tasks);
-            rowsAffected = result.Sum();
+                string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into documents(id, sources_id, title, path, summary, date, author, total_words) values " + parameterString, parameters);
+            }
 
             if (rowsAffected != models.Count)
             {

@@ -50,7 +50,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
                         });
     }
 
-    public async Task<int> Delete(DocumentContentModel? entity)
+    public async Task<int> Delete(DocumentContentModel entity)
     {
         _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
@@ -85,15 +85,12 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         try
         {
             // Divide the list of models into chunks to keep the INSERT statements from getting too large.
-            var tasks = models.Chunk(_sqlHelper.InsertStatementChunkSize).Select(async chunk =>
+            foreach (DocumentContentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
-                string parameterString =
-                    _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                return await transaction.ExecuteAsync(
-                    "insert into document_contents (documents_id, content) values " + parameterString, parameters);
-            });
-            var result = await Task.WhenAll(tasks);
-            rowsAffected = result.Sum();
+                string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into document_contents (documents_id, content) values " + parameterString, parameters);
+            }
+
             if (rowsAffected != models.Count)
             {
                 throw new RowsAffectedMismatchException();

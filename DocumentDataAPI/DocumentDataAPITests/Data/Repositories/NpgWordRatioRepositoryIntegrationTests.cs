@@ -119,11 +119,12 @@ public class NpgWordRatioRepositoryIntegrationTests
         WordRatioModel wordRatio = new WordRatioModel(6, 5, 0.41999998688697815, (Rank) 0, "ass");
 
         //Act
-        int result = await repository.Add(wordRatio);
+        int result1 = await repository.Add(wordRatio);
+        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(5, "ass");
 
         //Assert
-        result.Should().Be(1);
-        (await repository.GetByDocumentIdAndWord(5, "ass")).Should().BeEquivalentTo(wordRatio);
+        result1.Should().Be(1);
+        result2.Should().BeEquivalentTo(wordRatio);
     }
 
     [Fact]
@@ -139,13 +140,17 @@ public class NpgWordRatioRepositoryIntegrationTests
         };
 
         //Act
-        int result = await repository.AddBatch(wordRatios);
+        int result1 = await repository.AddBatch(wordRatios);
+        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(5, "ass");
+        WordRatioModel? result3 = await repository.GetByDocumentIdAndWord(3, "babbi");
+        WordRatioModel? result4 = await repository.GetByDocumentIdAndWord(1, "lilo");
+
 
         //Assert
-        result.Should().Be(3);
-        (await repository.GetByDocumentIdAndWord(5, "ass")).Should().BeEquivalentTo(wordRatios[0]);
-        (await repository.GetByDocumentIdAndWord(3, "babbi")).Should().BeEquivalentTo(wordRatios[1]);
-        (await repository.GetByDocumentIdAndWord(1, "lilo")).Should().BeEquivalentTo(wordRatios[2]);
+        result1.Should().Be(3);
+        result2.Should().BeEquivalentTo(wordRatios[0]);
+        result3.Should().BeEquivalentTo(wordRatios[1]);
+        result4.Should().BeEquivalentTo(wordRatios[2]);
     }
 
     [Fact]
@@ -156,11 +161,12 @@ public class NpgWordRatioRepositoryIntegrationTests
         WordRatioModel wordRatio = new WordRatioModel(10, 2, 5, (Rank) 2, "dronningen");
 
         //Act
-        int result = await repository.Update(wordRatio);
+        int result1 = await repository.Update(wordRatio);
+        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(2, "dronningen");
 
         //Assert
-        result.Should().Be(1);
-        (await repository.GetByDocumentIdAndWord(2, "dronningen")).Should().BeEquivalentTo(wordRatio);
+        result1.Should().Be(1);
+        result2.Should().BeEquivalentTo(wordRatio);
     }
 
     [Fact]
@@ -171,10 +177,11 @@ public class NpgWordRatioRepositoryIntegrationTests
         WordRatioModel wordRatio = new WordRatioModel(2, 2, 1.6100000143051147, (Rank) 1, "dronningen");
 
         //Act
-        int result = await repository.Delete(wordRatio);
+        int result1 = await repository.Delete(wordRatio);
+        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(2, "dronningen");
 
         //Assert
-        result.Should().Be(1);
-        (await repository.GetByDocumentIdAndWord(2, "dronningen")).Should().BeNull();
+        result1.Should().Be(1);
+        result2.Should().BeNull();
     }
 }

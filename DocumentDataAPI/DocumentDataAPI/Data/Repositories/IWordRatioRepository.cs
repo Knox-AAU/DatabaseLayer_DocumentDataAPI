@@ -8,5 +8,5 @@ public interface IWordRatioRepository : IRepository<WordRatioModel>
     Task<IEnumerable<WordRatioModel>> GetByWord(string word);
     Task<IEnumerable<WordRatioModel>> GetByWords(IEnumerable<string> word);
     Task<IEnumerable<WordRatioModel>> GetByDocumentId(int id);
-    Task<int> AddBatch(List<WordRatioModel> entities);
+    Task<int> AddBatch(List<WordRatioModel> models);
 }

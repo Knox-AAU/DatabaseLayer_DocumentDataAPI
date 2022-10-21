@@ -46,7 +46,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
             });
     }
 
-    public async Task<int> AddBatch(List<WordRatioModel> entities)
+    public async Task<int> AddBatch(List<WordRatioModel> models)
     {
         int rowsAffected = 0;
         using IDbConnection con = _connectionFactory.CreateConnection();
@@ -54,18 +54,14 @@ public class NpgWordRatioRepository : IWordRatioRepository
         using IDbTransaction transaction = con.BeginTransaction();
         try
         {
-            var tasks = entities.Chunk(_sqlHelper.InsertStatementChunkSize).Select(async chunk =>
+            // Divide the list of models into chunks to keep the INSERT statements from getting too large.
+            foreach (WordRatioModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
-                string parameterString =
-                    _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                return await transaction.ExecuteAsync(
-                    "insert into word_ratios(documents_id, word, amount, percent, rank) values "
-                    + parameterString, parameters);
-            });
-            var result = await Task.WhenAll(tasks);
-            rowsAffected = result.Sum();
+                string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into word_ratios(documents_id, word, amount, percent, rank) values " + parameterString, parameters);
+            }
 
-            if (rowsAffected != entities.Count())
+            if (rowsAffected != models.Count())
             {
                 transaction.Rollback();
                 throw new RowsAffectedMismatchException();
