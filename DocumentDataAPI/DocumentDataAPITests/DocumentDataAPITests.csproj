@@ -30,16 +30,8 @@
 
     <ItemGroup>
       <None Update="appsettings.Tests.local.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="appsettings.Tests.local.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
+      </None>
     </ItemGroup>
 
 </Project>
