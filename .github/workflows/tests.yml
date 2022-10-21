@@ -18,7 +18,10 @@ jobs:
         dotnet-version: 6.x
     - name: Install dependencies
       run: dotnet restore
+      working-directory: DocumentDataAPI/
     - name: Build
       run: dotnet build --configuration Release --no-restore
+      working-directory: DocumentDataAPI/
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+      working-directory: DocumentDataAPI/
