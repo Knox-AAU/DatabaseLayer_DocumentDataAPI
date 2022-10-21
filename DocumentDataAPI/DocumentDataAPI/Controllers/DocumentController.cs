@@ -3,6 +3,7 @@ using DocumentDataAPI.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
+using System.Data.Common;
 using System.Net.Mime;
 
 namespace DocumentDataAPI.Controllers;
@@ -125,6 +126,61 @@ public class DocumentController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Unable to get document count.");
+            return Problem(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Persists the changes to the given <paramref name="documentModel"/> in the database.
+    /// </summary>
+    /// <response code="200">Success: The updated document.</response>
+    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<DocumentModel> UpdateDocument([FromBody] DocumentModel documentModel)
+    {
+        try
+        {
+            return _repository.Update(documentModel) == 1
+                ? Ok(_repository.Get(documentModel.Id))
+                : NotFound();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to update document with id: {id}", documentModel.Id);
+            return Problem(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Deletes the given <paramref name="documentModel"/> from the database.
+    /// </summary>
+    /// <response code="200">Success: Nothing is returned.</response>
+    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<DocumentModel> DeleteDocument([FromBody] DocumentModel documentModel)
+    {
+        try
+        {
+            return _repository.Delete(documentModel) == 1
+                ? Ok()
+                : NotFound();
+        }
+        catch (DbException e) when (e.SqlState != null && e.SqlState.StartsWith("23")) // integrity_constraint_violation, see https://docs.actian.com/ingres/11.0/index.html#page/OpenSQLRef/SQLSTATE_Values.htm
+        {
+            _logger.LogWarning(e, "Rejected attempt to delete document with id: {id} due to constraint violations", documentModel.Id);
+            return Problem($"Could not delete document with id {documentModel.Id} due to constraint violations");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to delete document with id: {id}", documentModel.Id);
             return Problem(e.Message);
         }
     }
