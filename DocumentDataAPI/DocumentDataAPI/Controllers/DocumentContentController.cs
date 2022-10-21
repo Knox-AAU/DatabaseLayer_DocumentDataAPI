@@ -100,6 +100,7 @@ public class DocumentContentController : ControllerBase
     /// Updates an existing document content from the request body in the database.
     /// </summary>
     /// <response code="200">Success: The document content that was updated.</response>
+    /// <response code="404">Not Found: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
@@ -118,6 +119,31 @@ public class DocumentContentController : ControllerBase
         {
             _logger.LogError(e, "Unable to update document content with documents_id: {id}",
                 documentContent.DocumentId);
+            return Problem(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Deletes an existing document content from the request body in the database.
+    /// </summary>
+    /// <response code="200">Success: Nothing is returned.</response>
+    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult DeleteDocumentContent([FromBody] DocumentContentModel documentContent)
+    {
+        try
+        {
+            return _repository.Delete(documentContent) == 1
+                ? Ok()
+                : NotFound();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to delete document content with document id: {documentId}", documentContent.DocumentId);
             return Problem(e.Message);
         }
     }
