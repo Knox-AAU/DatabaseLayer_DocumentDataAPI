@@ -24,7 +24,7 @@ public class NpgWordRatioRepositoryIntegrationTests
 
     [Theory]
     [MemberData(nameof(WordRatioData))]
-    public async void GetByDocumentIdAndWordReturnsCorrectWordRatio(int docID, string word, WordRatioModel expected)
+    public async Task GetByDocumentIdAndWordReturnsCorrectWordRatio(int docID, string word, WordRatioModel expected)
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
@@ -46,7 +46,7 @@ public class NpgWordRatioRepositoryIntegrationTests
         };
 
     [Fact]
-    public async void GetByDocumentIdReturnsCorrectCount()
+    public async Task GetByDocumentIdReturnsCorrectCount()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
@@ -59,7 +59,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetByWordReturnsCorrectWordRatio()
+    public async Task GetByWordReturnsCorrectWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
@@ -78,7 +78,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetByWordsReturnsCorrectWordRatio()
+    public async Task GetByWordsReturnsCorrectWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
@@ -99,7 +99,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetAll_ReturnsAllWordRatios()
+    public async Task GetAll_ReturnsAllWordRatios()
     {
         // Arrange
         NpgWordRatioRepository repository = new(_connectionFactory, _logger, _sqlHelper);
@@ -112,7 +112,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void AddCorrectlyAddsWordRatio()
+    public async Task AddCorrectlyAddsWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
@@ -127,7 +127,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void AddWordRatiosCorrectlyAddsWordRatios()
+    public async Task AddWordRatiosCorrectlyAddsWordRatios()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
@@ -149,7 +149,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void UpdateCorrectlyUpdatesWordRatio()
+    public async Task UpdateCorrectlyUpdatesWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);
@@ -164,7 +164,7 @@ public class NpgWordRatioRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void DeleteCorrectlyDeletesWordRatio()
+    public async Task DeleteCorrectlyDeletesWordRatio()
     {
         //Arrange
         NpgWordRatioRepository repository = new NpgWordRatioRepository(_connectionFactory, _logger, _sqlHelper);

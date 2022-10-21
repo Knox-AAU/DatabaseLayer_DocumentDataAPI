@@ -23,7 +23,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetAll_ReturnsAllDocumentContents()
+    public async Task GetAll_ReturnsAllDocumentContents()
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
@@ -36,7 +36,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void Update_UpdatesRow()
+    public async Task Update_UpdatesRow()
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
@@ -53,7 +53,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void DeleteWithNoForeignKeyViolation_DeletesRow()
+    public async Task DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);

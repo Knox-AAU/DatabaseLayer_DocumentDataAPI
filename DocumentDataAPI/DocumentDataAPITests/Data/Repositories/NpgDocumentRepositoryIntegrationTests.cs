@@ -36,7 +36,7 @@ public class NpgDocumentRepositoryIntegrationTests
         };
 
     [Fact]
-    public async void Get_ReturnsCorrectRows()
+    public async Task Get_ReturnsCorrectRows()
     {
         // Arrange
         DocumentModel model = _documentData[3];
@@ -53,7 +53,7 @@ public class NpgDocumentRepositoryIntegrationTests
     [Theory]
     [InlineData(-1)]
     [InlineData(9999999)]
-    public async void Get_OnIncorrectValue_ReturnsNull(int id)
+    public async Task Get_OnIncorrectValue_ReturnsNull(int id)
     {
         // Arrange
 
@@ -65,7 +65,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetAll_ReturnsAllDocuments()
+    public async Task GetAll_ReturnsAllDocuments()
     {
         // Arrange
 
@@ -77,7 +77,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetAll_SearchParametersByAuthorReturnsCorrectRows()
+    public async Task GetAll_SearchParametersByAuthorReturnsCorrectRows()
     {
         // Arrange
         DocumentSearchParameters parameters = new();
@@ -93,7 +93,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetAll_SearchParametersByAuthorAndDateReturnsCorrectRows()
+    public async Task GetAll_SearchParametersByAuthorAndDateReturnsCorrectRows()
     {
         // Arrange
         DocumentSearchParameters parameters = new();
@@ -114,7 +114,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void Add_addsRowsCorrect_ReturnRowsAffected()
+    public async Task Add_addsRowsCorrect_ReturnRowsAffected()
     {
         //Arrange
         DocumentModel model = _documentData[0];
@@ -127,7 +127,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void Add_AddModelCompareResult_ReturnDocumentModel()
+    public async Task Add_AddModelCompareResult_ReturnDocumentModel()
     {
         //Arrange
         DocumentModel model = _documentData[0];
@@ -142,7 +142,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void AddBatch_addsRowsCorrect_ReturnRowsAffected()
+    public async Task AddBatch_addsRowsCorrect_ReturnRowsAffected()
     {
         //Arrange
         List<DocumentModel> documentModels = new List<DocumentModel>()
@@ -162,7 +162,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void AddBatch_CompareAddedDocuments_ReturnRowsAffected()
+    public async Task AddBatch_CompareAddedDocuments_ReturnRowsAffected()
     {
         //Arrange
         List<DocumentModel> documentModels = new List<DocumentModel>()
@@ -187,7 +187,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void Delete_RemovesDocumentCorrect_ReturnRowsAffected()
+    public async Task Delete_RemovesDocumentCorrect_ReturnRowsAffected()
     {
         //Arrange
         DocumentModel model = _documentData[0];
@@ -201,7 +201,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void Delete_RemovesDocumentCorrect_ReturnNull()
+    public async Task Delete_RemovesDocumentCorrect_ReturnNull()
     {
         //Arrange
         DocumentModel model = _documentData[0];
@@ -216,7 +216,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void Update_UpdatesRowCorrect_ReturnRowsAffected()
+    public async Task Update_UpdatesRowCorrect_ReturnRowsAffected()
     {
         //Arrange
         DocumentModel modelOld = _documentData[0];
@@ -234,7 +234,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetTotalDocumentCount_GetTheNumberOfDocuments_ReturnInt()
+    public async Task GetTotalDocumentCount_GetTheNumberOfDocuments_ReturnInt()
     {
         //Arrange
         int totalCount = 5;

@@ -20,7 +20,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetAll_ReturnsAllSources()
+    public async Task GetAll_ReturnsAllSources()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
@@ -37,7 +37,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void Update_UpdatesRow()
+    public async Task Update_UpdatesRow()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
@@ -53,7 +53,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void DeleteWithNoForeignKeyViolation_DeletesRow()
+    public async Task DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
@@ -70,7 +70,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void Add_AddsNewSource()
+    public async Task Add_AddsNewSource()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
@@ -86,7 +86,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetById_ReturnsSourceSpecifiedById()
+    public async Task GetById_ReturnsSourceSpecifiedById()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
@@ -100,7 +100,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetByName_ReturnsSourcesSpecifiedByName()
+    public async Task GetByName_ReturnsSourcesSpecifiedByName()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
@@ -116,7 +116,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public async void GetCountFromId_ReturnsCountOfDocumentsFromSource()
+    public async Task GetCountFromId_ReturnsCountOfDocumentsFromSource()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
