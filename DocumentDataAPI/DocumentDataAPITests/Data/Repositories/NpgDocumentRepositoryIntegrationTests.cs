@@ -21,7 +21,7 @@ public class NpgDocumentRepositoryIntegrationTests
         _repository = new NpgDocumentRepository(_connectionFactory, _logger, new DapperSqlHelper(TestHelper.Configuration));
         TestHelper.DeployDatabaseWithTestData();
     }
-    
+
     private static List<DocumentModel> _documentData =>
         new List<DocumentModel>
         {
@@ -34,17 +34,17 @@ public class NpgDocumentRepositoryIntegrationTests
             new DocumentModel("Jonathan Kjær Troelsen", DateTime.Parse("2022-10-03 09:01:00"), 5, "https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner", 2, "", "Folk stod i timelange køer for vacciner", 0),
             new DocumentModel("Jonathan Kjær Troelsen", DateTime.Parse("2022-10-03 09:01:00"), 1234, "https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner", 2, "", "Folk stod i timelange køer for vacciner", 0),
         };
-    
+
     [Fact]
-    public void Get_ReturnsCorrectRows()
+    public async void Get_ReturnsCorrectRows()
     {
         // Arrange
         DocumentModel model = _documentData[3];
         int id = 1;
 
         // Act
-        DocumentModel? result = _repository.Get(id);
-        
+        DocumentModel? result = await _repository.Get(id);
+
         // Assert
         result.Should().NotBeNull()
             .And.BeEquivalentTo(model);
@@ -53,31 +53,31 @@ public class NpgDocumentRepositoryIntegrationTests
     [Theory]
     [InlineData(-1)]
     [InlineData(9999999)]
-    public void Get_OnIncorrectValue_ReturnsNull(int id)
+    public async void Get_OnIncorrectValue_ReturnsNull(int id)
     {
         // Arrange
 
         // Act
-        var result = _repository.Get(id);
-        
+        DocumentModel? result = await _repository.Get(id);
+
         // Assert
         result.Should().BeNull();
     }
-    
+
     [Fact]
-    public void GetAll_ReturnsAllDocuments()
+    public async void GetAll_ReturnsAllDocuments()
     {
         // Arrange
 
         // Act
-        List<DocumentModel> result = _repository.GetAll().ToList();
+        List<DocumentModel> result = (await _repository.GetAll()).ToList();
 
         // Assert
         result.Should().HaveCount(5, "because the documents table in the test database has 5 rows");
     }
 
     [Fact]
-    public void GetAll_SearchParametersByAuthorReturnsCorrectRows()
+    public async void GetAll_SearchParametersByAuthorReturnsCorrectRows()
     {
         // Arrange
         DocumentSearchParameters parameters = new();
@@ -85,7 +85,7 @@ public class NpgDocumentRepositoryIntegrationTests
         parameters.AddAuthor(searchAuthor);
 
         // Act
-        List<DocumentModel> result = _repository.GetAll(parameters).ToList();
+        List<DocumentModel> result = (await _repository.GetAll(parameters)).ToList();
 
         // Assert
         result.Should().AllSatisfy(d => { d.Author.Should().Be(searchAuthor); },
@@ -93,7 +93,7 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public void GetAll_SearchParametersByAuthorAndDateReturnsCorrectRows()
+    public async void GetAll_SearchParametersByAuthorAndDateReturnsCorrectRows()
     {
         // Arrange
         DocumentSearchParameters parameters = new();
@@ -103,7 +103,7 @@ public class NpgDocumentRepositoryIntegrationTests
             .AddAfterDate(searchDate);
 
         // Act
-        List<DocumentModel> result = _repository.GetAll(parameters).ToList();
+        List<DocumentModel> result = (await _repository.GetAll(parameters)).ToList();
 
         // Assert
         result.Should().AllSatisfy(d =>
@@ -112,37 +112,37 @@ public class NpgDocumentRepositoryIntegrationTests
             d.Date.Should().BeAfter(searchDate);
         }, "because the query specifies an author and afterdate");
     }
-    
+
     [Fact]
-    public void Add_addsRowsCorrect_ReturnRowsAffected()
+    public async void Add_addsRowsCorrect_ReturnRowsAffected()
     {
         //Arrange
         DocumentModel model = _documentData[0];
 
         //Act
-        int result = _repository.Add(model);
+        int result = await _repository.Add(model);
 
         //Assert
         result.Should().Be(1, "because the add method should only update 1 row in the database");
     }
-    
+
     [Fact]
-    public void Add_AddModelCompareResult_ReturnDocumentModel()
+    public async void Add_AddModelCompareResult_ReturnDocumentModel()
     {
         //Arrange
         DocumentModel model = _documentData[0];
 
         //Act
-        _ = _repository.Add(model);
-        DocumentModel? result = _repository.Get(1234);
+        _ = await _repository.Add(model);
+        DocumentModel? result = await _repository.Get(1234);
 
         //Assert
         result.Should().NotBeNull()
             .And.BeEquivalentTo(model);
     }
-    
+
     [Fact]
-    public void AddBatch_addsRowsCorrect_ReturnRowsAffected()
+    public async void AddBatch_addsRowsCorrect_ReturnRowsAffected()
     {
         //Arrange
         List<DocumentModel> documentModels = new List<DocumentModel>()
@@ -151,18 +151,18 @@ public class NpgDocumentRepositoryIntegrationTests
             _documentData[1],
             _documentData[2]
         };
-        
+
 
 
         //Act
-        int result = _repository.AddBatch(documentModels);
+        int result = await _repository.AddBatch(documentModels);
 
         //Assert
         result.Should().Be(3, "because the AddBatch method should update exactly 3 rows in the database");
     }
-    
+
     [Fact]
-    public void AddBatch_CompareAddedDocuments_ReturnRowsAffected()
+    public async void AddBatch_CompareAddedDocuments_ReturnRowsAffected()
     {
         //Arrange
         List<DocumentModel> documentModels = new List<DocumentModel>()
@@ -171,14 +171,14 @@ public class NpgDocumentRepositoryIntegrationTests
             _documentData[1],
             _documentData[2]
         };
-        
+
         //Act
-        _ = _repository.AddBatch(documentModels);
+        _ = await _repository.AddBatch(documentModels);
         List<DocumentModel?> result = new()
         {
-            _repository.Get(1234),
-            _repository.Get(2345),
-            _repository.Get(3456)
+            await _repository.Get(1234),
+            await _repository.Get(2345),
+            await _repository.Get(3456)
         };
 
         //Assert
@@ -187,61 +187,61 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public void Delete_RemovesDocumentCorrect_ReturnRowsAffected()
+    public async void Delete_RemovesDocumentCorrect_ReturnRowsAffected()
     {
         //Arrange
         DocumentModel model = _documentData[0];
-        _repository.Add(model);
+        await _repository.Add(model);
 
         //Act
-        int result = _repository.Delete(model);
+        int result = await _repository.Delete(model);
 
         //Assert
         result.Should().Be(1, "because the add method should only update 1 row in the database");
     }
-    
+
     [Fact]
-    public void Delete_RemovesDocumentCorrect_ReturnNull()
+    public async void Delete_RemovesDocumentCorrect_ReturnNull()
     {
         //Arrange
         DocumentModel model = _documentData[0];
-        _repository.Add(model);
+        await _repository.Add(model);
 
         //Act
-        _ = _repository.Delete(model);
-        DocumentModel? result = _repository.Get(1234);
+        _ = await _repository.Delete(model);
+        DocumentModel? result = await _repository.Get(1234);
 
         //Assert
         result.Should().BeNull();
     }
-    
+
     [Fact]
-    public void Update_UpdatesRowCorrect_ReturnRowsAffected()
+    public async void Update_UpdatesRowCorrect_ReturnRowsAffected()
     {
         //Arrange
         DocumentModel modelOld = _documentData[0];
         DocumentModel modelNew = _documentData[7];
 
-        _repository.Add(modelOld);
+        await _repository.Add(modelOld);
 
         //Act
-        _ = _repository.Update(modelNew);
-        DocumentModel? result = _repository.Get(1234);
+        _ = await _repository.Update(modelNew);
+        DocumentModel? result = await _repository.Get(1234);
 
         //Assert
         result.Should().NotBeNull()
               .And.BeEquivalentTo(modelNew);
     }
-    
+
     [Fact]
-    public void GetTotalDocumentCount_GetTheNumberOfDocuments_ReturnInt()
+    public async void GetTotalDocumentCount_GetTheNumberOfDocuments_ReturnInt()
     {
         //Arrange
         int totalCount = 5;
-        
+
         //Act
-        int result = _repository.GetTotalDocumentCount();
-        
+        int result = await _repository.GetTotalDocumentCount();
+
         //Assert
         result.Should().Be(totalCount);
     }

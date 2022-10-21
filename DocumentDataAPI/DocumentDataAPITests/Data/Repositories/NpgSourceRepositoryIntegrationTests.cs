@@ -20,13 +20,13 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public void GetAll_ReturnsAllSources()
+    public async void GetAll_ReturnsAllSources()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
 
         // Act
-        List<SourceModel> result = repository.GetAll().ToList();
+        List<SourceModel> result = (await repository.GetAll()).ToList();
 
         // Assert
         result.Should().BeEquivalentTo(new[]
@@ -37,15 +37,15 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public void Update_UpdatesRow()
+    public async void Update_UpdatesRow()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
         const string expected = "Test Source";
 
         // Act
-        repository.Update(new SourceModel(1, expected));
-        string? actual = repository.Get(1)?.Name;
+        await repository.Update(new SourceModel(1, expected));
+        string? actual = (await repository.Get(1))?.Name;
 
         // Assert
         actual.Should().NotBeNull()
@@ -53,32 +53,32 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public void DeleteWithNoForeignKeyViolation_DeletesRow()
+    public async void DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
         IEnumerable<SourceModel> expected = new List<SourceModel>() { new(1, "DR"), new(2, "TV2") };
         SourceModel newSource = new(3, "Test");
-        repository.Add(newSource);
+        await repository.Add(newSource);
 
         // Act
-        repository.Delete(newSource);
-        IEnumerable<SourceModel> actual = repository.GetAll();
+        await repository.Delete(newSource);
+        IEnumerable<SourceModel> actual = await repository.GetAll();
 
         // Assert
         actual.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
-    public void Add_AddsNewSource()
+    public async void Add_AddsNewSource()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
         SourceModel expected = new(3, "Test");
-        repository.Add(expected);
+        await repository.Add(expected);
 
         // Act
-        SourceModel? actual = repository.Get(expected.Id);
+        SourceModel? actual = await repository.Get(expected.Id);
 
         // Assert
         actual.Should().NotBeNull("because it was added to the database")
@@ -86,21 +86,21 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public void GetById_ReturnsSourceSpecifiedById()
+    public async void GetById_ReturnsSourceSpecifiedById()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
         SourceModel expected = new(1, "DR");
 
         // Act
-        SourceModel? actual = repository.Get(expected.Id);
+        SourceModel? actual = await repository.Get(expected.Id);
 
         // Assert
         actual.Should().BeEquivalentTo(expected, "because the tuple (1, 'DR') is contained within the database");
     }
 
     [Fact]
-    public void GetByName_ReturnsSourcesSpecifiedByName()
+    public async void GetByName_ReturnsSourcesSpecifiedByName()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
@@ -108,7 +108,7 @@ public class NpgSourceRepositoryIntegrationTests
         IEnumerable<SourceModel> expected = new List<SourceModel>() { source };
 
         // Act
-        IEnumerable<SourceModel>? actual = repository.GetByName(expected.First().Name);
+        IEnumerable<SourceModel>? actual = await repository.GetByName(expected.First().Name);
 
         // Assert
         actual.Should().NotBeNullOrEmpty("because it contains a source with specified name")
@@ -116,7 +116,7 @@ public class NpgSourceRepositoryIntegrationTests
     }
 
     [Fact]
-    public void GetCountFromId_ReturnsCountOfDocumentsFromSource()
+    public async void GetCountFromId_ReturnsCountOfDocumentsFromSource()
     {
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
@@ -124,7 +124,7 @@ public class NpgSourceRepositoryIntegrationTests
         long expected = 3;
 
         // Act
-        long actual = repository.GetCountFromId(source.Id);
+        long actual = await repository.GetCountFromId(source.Id);
 
         // Assert
         actual.Should().Be(expected, "because the DR source contains 3 entities");

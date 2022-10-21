@@ -50,7 +50,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
                         });
     }
 
-    public async Task<int> Delete(DocumentContentModel entity)
+    public async Task<int> Delete(DocumentContentModel? entity)
     {
         _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
