@@ -21,6 +21,12 @@ public class DocumentSearchParameters : ISearchParameters
         return this;
     }
 
+    public DocumentSearchParameters AddCategory(int categoryId)
+    {
+        Parameters.Add(new QueryParameter("categories_id", categoryId));
+        return this;
+    }
+
     public DocumentSearchParameters AddBeforeDate(DateTime date)
     {
         Parameters.Add(new QueryParameter("date", date, "<="));

@@ -23,6 +23,11 @@ public class WordRatioModel
         Word = word;
     }
 
+    public WordRatioModel(int amount, long documentId, double percent, Rank rank, string word, float clusteringScore) :
+        this(amount, documentId, percent, rank, word)
+    {
+        ClusteringScore = clusteringScore;
+    }
     [Required]
     public long DocumentId { get; init; }
     [Required]
@@ -33,4 +38,6 @@ public class WordRatioModel
     public double Percent { get; init; }
     [Required]
     public Rank Rank { get; init; }
+    [Required]
+    public float ClusteringScore { get; init; }
 }

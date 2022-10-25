@@ -19,14 +19,14 @@ public class NpgSourceRepository : ISourceRepository
     {
         _logger.LogDebug("Retrieving Source with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<SourceModel>("select * from sources where id=@Id", new { id });
+        return await con.QueryFirstOrDefaultAsync<SourceModel>("select * from data_sources where id=@Id", new { id });
     }
 
     public async Task<IEnumerable<SourceModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all Sources from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<SourceModel>($"select * from sources");
+        return await con.QueryAsync<SourceModel>($"select * from data_sources");
     }
 
     public async Task<int> Add(SourceModel entity)
@@ -35,7 +35,7 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "insert into sources(name) " +
+            "insert into data_sources(name) " +
             "values (@Name)", new { entity.Name });
     }
 
@@ -45,7 +45,7 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "delete from sources " +
+            "delete from data_sources " +
             "where id=@Id", new { entity.Id });
     }
 
@@ -55,7 +55,7 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "update sources set name = @Name " +
+            "update data_sources set name = @Name " +
             "where id = @Id", new { entity.Name, entity.Id });
     }
 
@@ -72,6 +72,6 @@ public class NpgSourceRepository : ISourceRepository
     {
         _logger.LogDebug("Retrieving sources with name: {name}", name);
         using IDbConnection connection = _connectionFactory.CreateConnection();
-        return await connection.QueryAsync<SourceModel>("select * from sources where name = @Name", new { name });
+        return await connection.QueryAsync<SourceModel>("select * from data_sources where name = @Name", new { name });
     }
 }

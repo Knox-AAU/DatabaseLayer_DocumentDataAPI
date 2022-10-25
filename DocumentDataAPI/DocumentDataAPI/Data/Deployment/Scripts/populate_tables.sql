@@ -1,29 +1,32 @@
 ﻿-- Populates the given document_data schema with test data.
 
-INSERT INTO ${schema}.sources ("name") VALUES
+INSERT INTO ${schema}.data_sources ("name") VALUES
     ('DR'),
     ('TV2');
 
-INSERT INTO ${schema}.documents (id,sources_id,title,"path",summary,"date",author,total_words) VALUES
-    (1,1,'Iran hævder, at Mahsa Amini døde af organsvigt','https://www.dr.dk/nyheder/seneste/iran-haevder-mahsa-amini-doede-af-organsvigt','','2022-10-07 13:40:00','Maja Lærke Maach',0),
-    (2,1,'Kongehuset: Dronningen har talt med prins Joachim på Fredensborg Slot','https://www.dr.dk/nyheder/seneste/kongehuset-dronningen-har-talt-med-prins-joachim-paa-fredensborg-slot','','2022-10-07 13:33:00','Maja Lærke Maach',0),
-    (3,1,'Radikale vil have nationalt kompromis om unges trivsel','https://www.dr.dk/nyheder/seneste/radikale-vil-have-nationalt-kompromis-om-unges-trivsel','','2022-10-06 23:55:00','Andreas Nygaard Just',0),
-    (4,2,'Eks-landsholdsatlet skal i fængsel for grov vold og voldtægt','https://nyheder.tv2.dk/live/2022-10-07-nyhedsoverblik#entry=3830920','','2022-10-07 05:01:00','Mette Stender Pedersen',0),
-    (5,2,'Folk stod i timelange køer for vacciner','https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner','','2022-10-03 09:01:00','Jonathan Kjær Troelsen',0);
+INSERT INTO ${schema}.categories (name) VALUES
+    ('Nyhedsartikel');
 
-INSERT INTO ${schema}.document_contents (documents_id,"content") VALUES
+INSERT INTO ${schema}.documents (id,sources_id,title,"path",summary,"date",author,total_words, categories_id, unique_words) VALUES
+    (1,1,'Iran hævder, at Mahsa Amini døde af organsvigt','https://www.dr.dk/nyheder/seneste/iran-haevder-mahsa-amini-doede-af-organsvigt','','2022-10-07 13:40:00','Maja Lærke Maach',0, 1, 0),
+    (2,1,'Kongehuset: Dronningen har talt med prins Joachim på Fredensborg Slot','https://www.dr.dk/nyheder/seneste/kongehuset-dronningen-har-talt-med-prins-joachim-paa-fredensborg-slot','','2022-10-07 13:33:00','Maja Lærke Maach',0, 1, 0),
+    (3,1,'Radikale vil have nationalt kompromis om unges trivsel','https://www.dr.dk/nyheder/seneste/radikale-vil-have-nationalt-kompromis-om-unges-trivsel','','2022-10-06 23:55:00','Andreas Nygaard Just',0, 1, 0),
+    (4,2,'Eks-landsholdsatlet skal i fængsel for grov vold og voldtægt','https://nyheder.tv2.dk/live/2022-10-07-nyhedsoverblik#entry=3830920','','2022-10-07 05:01:00','Mette Stender Pedersen',0, 1, 0),
+    (5,2,'Folk stod i timelange køer for vacciner','https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner','','2022-10-03 09:01:00','Jonathan Kjær Troelsen',0, 1, 0);
+
+INSERT INTO ${schema}.document_contents (documents_id,"content",index) VALUES
     (1,'Den unge kvinde Mahsa Amini, som døde efter at være blevet banket af Irans moralpoliti, afgik ikke ved døden som følge af slag mod hovedet, arme og ben.
 Hun døde af organsvigt, som følge af, at hun ikke fik nok ilt til hjernen. Det påstår det iranske styre i en rapport fra iranske retsmedicinere.
 Menneskerettighedsorganisationer er dog af en anden overbevisning og mener, at kvinden døde af sine kvæstelser efter at være blevet tilbageholdt for ikke at dække sit hår til med et tørklæde.
 Mahsa Aminis død i moralpolitiets varetægt udløste verdensomspændende demonstrationer mod styret i landet.
-'),
+', 0),
     (2,'Dronning Margrethe og prins Joachim har talt sammen på Fredensborg Slot.
 Det bekræfter kongehusets kommunikationschef, Lene Balleby, overfor B.T.
 Det er angiveligt første gang, at de to mødes efter nyheden om, at dronningen fra næste år fratager prinsens børn deres titler.
 En nyhed som chokerede prinsen og hans del af den kongelige familie i en sådan grad, at han gik ud i pressen og åbent kritiserede beslutningen og ikke mindst hele forløbet.
 Ifølge hans eget udsagn fik han fem dage til at forberede sine børn på den nye virkelighed.
 - Alle er enige om at se fremad, og som dronningen selv har givet udtryk for, så ønsker hun og prins Joachim ro til at finde vej igennem denne situation, siger Lene Balleby til B.T.
-'),
+', 0),
     (3,'Under torsdagens åbningsdebat i Folketinget, der sluttede for kort tid siden, faldt snakken blandt andet på den mentale trivsel blandt landets børn og unge.
 Radikale Venstre håber, at der efter valget kan blive lavet et nationalt kompromis for at løse problemerne for børn og unge og deres trivsel – ligesom der er lavet et nationalt kompromis om oprustning af forsvaret efter Ruslands invasion af Ukraine.
 For ellers tror den radikale ordfører, Lotte Rod, ikke, at der sker noget.
@@ -32,8 +35,8 @@ For ellers tror den radikale ordfører, Lotte Rod, ikke, at der sker noget.
 Til det svarede statsministeren:
 Der er i hvert fald behov for at arbejde sammen på det her område os, sagde Mette Frederiksen.
 Du kan se, hvordan debatten udviklede sig, her.
-    '),
-    (4,'Den tidligere landsholdstrampolinspringer Daniel Præst er fredag idømt seks års fængsel i en sag om særlig farlig voldtægt, grov vold, røveri og trusler. Dommen er faldet ved Retten i Helsingør. Ved voldtægten mistede offeret bevidstheden og var i livsfare.'),
+    ', 0),
+    (4,'Den tidligere landsholdstrampolinspringer Daniel Præst er fredag idømt seks års fængsel i en sag om særlig farlig voldtægt, grov vold, røveri og trusler. Dommen er faldet ved Retten i Helsingør. Ved voldtægten mistede offeret bevidstheden og var i livsfare.', 0),
     (5,'Det er blevet muligt for personer over 50 år at få deres fjerde vaccinestik mod corona. Men vaccinationerne er ikke forløbet problemfrit.
 Hvis man er blandt de personer, som de seneste dage har været ude og blive vaccineret, så er der en vis chance for, at man har stået i en lang kø.
 Fra weekenden af blev det muligt for personer over 50 år at få sit fjerde vaccinationsstik, men hos nogle af vaccinationsstederne har de ikke kunne følge med tempoet.
@@ -41,7 +44,7 @@ Fra weekenden af blev det muligt for personer over 50 år at få sit fjerde vacc
 Det er blandt andet i Frederikshavn, at der har været timelange ventekøer, men der bliver arbejdet på, at der i de kommende dage ikke opstår ventetid.
 - Vi følger op på, hvad der præcist er gået galt og vil bestræbe os på, at de fremtidige vaccinationsdage forløber bedre. Vi har naturligvis en ambition om, at borgerne skal opleve et effektivt vaccinationstilbud og kortest mulig ventetid, siger Anders Cinicola.
 Regionen har sendt vaccineinvitationer gennem digital post til omkring 250.000 nordjyder.
-');
+', 0);
 
 INSERT INTO ${schema}.word_ratios (documents_id,word,amount,"percent","rank") VALUES
     (1,'den',1,1.03,0),

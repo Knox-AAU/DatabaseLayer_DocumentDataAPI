@@ -21,11 +21,11 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<DocumentContentModel?> Get(long id)
+    public async Task<DocumentContentModel?> Get(long id, int index)
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id", new { id });
+        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id and index=@Index", new { id, index });
     }
 
     public async Task<IEnumerable<DocumentContentModel>> GetAll()
@@ -41,12 +41,14 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "insert into document_contents(documents_id, content)" +
-            " values (@DocumentId, @Content)",
+            "insert into document_contents(documents_id, content, index, subheading)" +
+            " values (@DocumentId, @Content, @Index, @Subheading)",
                         new
                         {
                             entity.DocumentId,
-                            entity.Content
+                            entity.Content,
+                            entity.Index,
+                            entity.Subheading
                         });
     }
 
@@ -57,7 +59,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
             "delete from document_contents " +
-            "where documents_id=@DocumentId", new { entity.DocumentId });
+            "where documents_id=@DocumentId and index=@Index", new { entity.DocumentId, entity.Index });
     }
 
     public async Task<int> Update(DocumentContentModel entity)
@@ -66,12 +68,14 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "update document_contents set content = @Content " +
-            "where documents_id = @DocumentId",
+            "update document_contents set content = @Content, subheading = @Subheading " +
+            "where documents_id = @DocumentId and index = @Index",
                         new
                         {
                             entity.Content,
-                            entity.DocumentId
+                            entity.Subheading,
+                            entity.DocumentId,
+                            entity.Index
                         });
     }
 
@@ -88,7 +92,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
             foreach (DocumentContentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                rowsAffected += await transaction.ExecuteAsync("insert into document_contents (documents_id, content) values " + parameterString, parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into document_contents (documents_id, index, subheading, content) values " + parameterString, parameters);
             }
 
             if (rowsAffected != models.Count)

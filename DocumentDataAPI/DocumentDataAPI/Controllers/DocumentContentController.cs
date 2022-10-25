@@ -56,11 +56,11 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DocumentContentModel?>> GetByDocumentId(long documentId)
+    public async Task<ActionResult<DocumentContentModel?>> GetByDocumentIdAndIndex(long documentId, int index)
     {
         try
         {
-            DocumentContentModel? result = await _repository.Get(documentId);
+            DocumentContentModel? result = await _repository.Get(documentId, index);
             return result == null
                 ? NotFound()
                 : Ok(result);
@@ -112,7 +112,7 @@ public class DocumentContentController : ControllerBase
         try
         {
             return await _repository.Update(documentContent) == 1
-                ? Ok(_repository.Get(documentContent.DocumentId))
+                ? Ok(_repository.Get(documentContent.DocumentId, documentContent.Index))
                 : NotFound();
         }
         catch (Exception e)
@@ -133,11 +133,11 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult DeleteDocumentContent([FromBody] DocumentContentModel documentContent)
+    public async Task<ActionResult> DeleteDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
-            return _repository.Delete(documentContent) == 1
+            return await _repository.Delete(documentContent) == 1
                 ? Ok()
                 : NotFound();
         }

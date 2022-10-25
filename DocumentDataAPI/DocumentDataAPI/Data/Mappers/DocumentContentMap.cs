@@ -9,5 +9,7 @@ public class DocumentContentMap : EntityMap<DocumentContentModel>
     {
         Map(x => x.DocumentId).ToColumn("documents_id");
         Map(x => x.Content).ToColumn("content");
+        Map(x => x.Subheading).ToColumn("subheading");
+        Map(x => x.Index).ToColumn("index");
     }
 }

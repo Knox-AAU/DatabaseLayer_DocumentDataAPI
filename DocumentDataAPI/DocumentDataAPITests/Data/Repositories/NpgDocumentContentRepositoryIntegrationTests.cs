@@ -43,8 +43,8 @@ public class NpgDocumentContentRepositoryIntegrationTests
         const string expected = "Test Content";
 
         // Act
-        await repository.Update(new DocumentContentModel(expected, 1));
-        string? actual = (await repository.Get(1))?.Content;
+        await repository.Update(new DocumentContentModel(1, 0, expected, ""));
+        string? actual = (await repository.Get(1, 0))?.Content;
 
         // Assert
         actual.Should().NotBeNull()
@@ -57,11 +57,11 @@ public class NpgDocumentContentRepositoryIntegrationTests
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
-        DocumentContentModel? toBeDeleted = await repository.Get(5)!;
+        DocumentContentModel toBeDeleted = (await repository.Get(5, 0))!;
         await repository.Delete(toBeDeleted);
 
         // Act
-        DocumentContentModel? actual = await repository.Get(5);
+        DocumentContentModel? actual = await repository.Get(5, 0);
 
         // Assert
         actual.Should().BeNull("because the document_content with id 5 was removed from the database");

@@ -34,15 +34,16 @@ public class NpgWordRatioRepository : IWordRatioRepository
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "insert into word_ratios(documents_id, word, amount, percent, rank)" +
-            " values (@DocumentId, @Word, @Amount, @Percent, @Rank)",
+            "insert into word_ratios(documents_id, word, amount, percent, rank, clustering_score)" +
+            " values (@DocumentId, @Word, @Amount, @Percent, @Rank, @ClusteringScore)",
             new
             {
                 entity.DocumentId,
                 entity.Word,
                 entity.Amount,
                 entity.Percent,
-                entity.Rank
+                entity.Rank,
+                entity.ClusteringScore
             });
     }
 
@@ -58,7 +59,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
             foreach (WordRatioModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                rowsAffected += await transaction.ExecuteAsync("insert into word_ratios(documents_id, word, amount, percent, rank) values " + parameterString, parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into word_ratios(documents_id, word, amount, percent, rank, clustering_score) values " + parameterString, parameters);
             }
 
             if (rowsAffected != models.Count())
@@ -95,7 +96,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "update word_ratios set amount = @Amount, percent = @Percent, rank = @Rank " +
+            "update word_ratios set amount = @Amount, percent = @Percent, rank = @Rank, clustering_score = @ClusteringScore " +
             "where documents_id = @DocumentId and word = @Word",
             new
             {
@@ -103,7 +104,8 @@ public class NpgWordRatioRepository : IWordRatioRepository
                 entity.Amount,
                 entity.Percent,
                 entity.Rank,
-                entity.DocumentId
+                entity.DocumentId,
+                entity.ClusteringScore
             });
     }
 
