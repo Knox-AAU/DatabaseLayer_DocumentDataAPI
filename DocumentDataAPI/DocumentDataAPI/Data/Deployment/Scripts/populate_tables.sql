@@ -1,6 +1,6 @@
 ﻿-- Populates the given document_data schema with test data.
 
-INSERT INTO ${schema}.sources ("name") VALUES
+INSERT INTO ${schema}.data_sources ("name") VALUES
     ('DR'),
     ('TV2');
 

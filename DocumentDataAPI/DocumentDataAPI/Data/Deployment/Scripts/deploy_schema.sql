@@ -10,6 +10,12 @@ create table ${schema}.data_sources (
     name        varchar(100) not null
 );
 
+create table ${schema}.categories (
+    category_id     serial not null,
+    name            varchar(100),
+    constraint pk_categories primary key (category_id)
+);
+
 create table ${schema}.documents (
     id              bigint primary key,
     sources_id      bigint not null,
@@ -22,7 +28,7 @@ create table ${schema}.documents (
     author          varchar(200) not null,
     total_words     bigint not null,
     unique_words    bigint not null,
-    constraint fk_sources foreign key (sources_id) references ${schema}.sources(id),
+    constraint fk_data_sources foreign key (sources_id) references ${schema}.data_sources(id),
     constraint fk_categories foreign key (categories_id) references ${schema}.categories
 );
 
@@ -51,10 +57,4 @@ create table ${schema}.similar_documents (
     similar_document_id bigint not null references ${schema}.documents(id),
     similarity          float not null,
     constraint pk_similar_documents primary key (main_document_id, similar_document_id)
-);
-
-create table ${schema}.categories (
-    category_id     serial not null,
-    name            varchar(100),
-    constraint pk_categories primary key (category_id)
 );
