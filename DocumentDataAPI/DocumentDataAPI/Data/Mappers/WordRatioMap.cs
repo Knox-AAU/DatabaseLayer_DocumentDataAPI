@@ -12,5 +12,6 @@ public class WordRatioMap : EntityMap<WordRatioModel>
         Map(x => x.Amount).ToColumn("amount");
         Map(x => x.Percent).ToColumn("percent");
         Map(x => x.Rank).ToColumn("rank");
+        Map(x => x.ClusteringScore).ToColumn("clustering_score");
     }
 }

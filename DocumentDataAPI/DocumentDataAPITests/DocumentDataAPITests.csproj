@@ -11,6 +11,8 @@
     <ItemGroup>
         <PackageReference Include="Dapper.Transaction" Version="2.0.35.2" />
         <PackageReference Include="FluentAssertions" Version="6.7.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0-rc.2.22472.3" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0-rc.2.22472.3" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
         <PackageReference Include="Moq" Version="4.18.2" />
         <PackageReference Include="xunit" Version="2.4.1" />

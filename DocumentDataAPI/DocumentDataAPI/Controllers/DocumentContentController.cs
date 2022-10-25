@@ -133,11 +133,11 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult DeleteDocumentContent([FromBody] DocumentContentModel documentContent)
+    public async Task<ActionResult> DeleteDocumentContent([FromBody] DocumentContentModel documentContent)
     {
         try
         {
-            return _repository.Delete(documentContent) == 1
+            return await _repository.Delete(documentContent) == 1
                 ? Ok()
                 : NotFound();
         }

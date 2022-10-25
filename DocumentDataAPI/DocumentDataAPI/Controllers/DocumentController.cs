@@ -140,11 +140,11 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DocumentModel> UpdateDocument([FromBody] DocumentModel documentModel)
+    public async Task<ActionResult<DocumentModel>> UpdateDocument([FromBody] DocumentModel documentModel)
     {
         try
         {
-            return _repository.Update(documentModel) == 1
+            return await _repository.Update(documentModel) == 1
                 ? Ok(_repository.Get(documentModel.Id))
                 : NotFound();
         }
@@ -165,11 +165,11 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<DocumentModel> DeleteDocument([FromBody] DocumentModel documentModel)
+    public async Task<ActionResult<DocumentModel>> DeleteDocument([FromBody] DocumentModel documentModel)
     {
         try
         {
-            return _repository.Delete(documentModel) == 1
+            return await _repository.Delete(documentModel) == 1
                 ? Ok()
                 : NotFound();
         }

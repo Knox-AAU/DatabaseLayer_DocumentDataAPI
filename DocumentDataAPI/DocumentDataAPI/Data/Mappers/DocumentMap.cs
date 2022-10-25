@@ -15,5 +15,8 @@ public class DocumentMap : EntityMap<DocumentModel>
         Map(x => x.Date).ToColumn("date");
         Map(x => x.Author).ToColumn("author");
         Map(x => x.TotalWords).ToColumn("total_words");
+        Map(x => x.CategoryId).ToColumn("categories_id");
+        Map(x => x.Publication).ToColumn("publication");
+        Map(x => x.UniqueWords).ToColumn("unique_words");
     }
 }

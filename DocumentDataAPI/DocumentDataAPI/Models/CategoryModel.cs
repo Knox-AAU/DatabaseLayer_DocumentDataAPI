@@ -2,20 +2,21 @@
 
 namespace DocumentDataAPI.Models;
 
-public class SourceModel
+public class CategoryModel
 {
-    public SourceModel()
+    public CategoryModel()
     {
+
     }
 
-    public SourceModel(long id, string name)
+    public CategoryModel(int categoryId)
     {
-        Id = id;
-        Name = name;
+        CategoryId = categoryId;
     }
+
 
     [Required]
-    public long Id { get; init; }
+    public int CategoryId { get; init; }
     [Required]
     public string Name { get; init; } = null!;
 }
