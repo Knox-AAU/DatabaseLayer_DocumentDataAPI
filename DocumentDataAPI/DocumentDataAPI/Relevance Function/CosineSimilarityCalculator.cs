@@ -1,9 +1,9 @@
-﻿namespace DocumentDataAPI;
+﻿namespace DocumentDataAPI.Relevance_Function;
 
-public class CosineSimilarityCalculator
+public static class CosineSimilarityCalculator
 {
     
-    public double CalculateCosineSimilarity(Dictionary<string, int> document, IEnumerable<string> query)
+    public static double CalculateCosineSimilarity(Dictionary<string, int> document, IEnumerable<string> query)
     {
         double dotProduct = 0;
         double documentVectorLengthHelper = 0;

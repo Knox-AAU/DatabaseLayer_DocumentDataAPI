@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using DocumentDataAPI;
+﻿using DocumentDataAPI.Relevance_Function;
 
 namespace DocumentDataAPITests.Relevance_Function;
 
@@ -8,9 +7,6 @@ namespace DocumentDataAPITests.Relevance_Function;
 [Collection("DocumentDataApiUnitTests")]
 public class CosineSimilarityCalculatorUnitTests
 {
-
-    private readonly CosineSimilarityCalculator _calculator = new CosineSimilarityCalculator();
-
     [Theory]
     [MemberData(nameof(TestData))]
     public void CalculateCosineSimilarityReturnsCorrectCosineSimilarity(Dictionary<string, int> document, List<string> query, double expected)
@@ -18,7 +14,7 @@ public class CosineSimilarityCalculatorUnitTests
         //Arrange
         
         //Act
-        double result = _calculator.CalculateCosineSimilarity(document, query);
+        double result = CosineSimilarityCalculator.CalculateCosineSimilarity(document, query);
         
         //Assert
         result.Should().Be(expected);
