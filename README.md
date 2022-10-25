@@ -1,8 +1,8 @@
 # DatabaseLayer_DocumentDataAPI (DLDDAPI)
 <!-- DESCRIPTION -->
-The DocumentDataAPI is the main interface to the document_data database schema, and provides endpoints to retrieve, 
+The DocumentDataAPI is the main interface to the document_data database schema, and provides endpoints to retrieve,
 insert, update, and delete its contents. \
-Besides the actual API, the project also includes a script with all table 
+Besides the actual API, the project also includes a script with all table
 definitions for the schema, as well as a tool to easily deploy this schema in any environment.
 
 <!-- CONTACT -->
