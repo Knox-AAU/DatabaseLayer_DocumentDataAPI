@@ -30,5 +30,4 @@ public static class CosineSimilarityCalculator
         
         return dotProduct/(documentVectorLength * queryVectorLength);
     }
-    
 }
