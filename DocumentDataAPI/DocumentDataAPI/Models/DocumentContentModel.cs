@@ -14,7 +14,7 @@ public class DocumentContentModel
         Index = index;
     }
 
-    public DocumentContentModel(string content, int index, string subheading, long documentId)
+    public DocumentContentModel(long documentId, int index, string content, string subheading) : this(documentId, index)
     {
         Content = content;
         Subheading = subheading;

@@ -43,7 +43,7 @@ public class NpgDocumentContentRepositoryIntegrationTests
         const string expected = "Test Content";
 
         // Act
-        await repository.Update(new DocumentContentModel(expected, 0, null, 1));
+        await repository.Update(new DocumentContentModel(1, 0, expected, ""));
         string? actual = (await repository.Get(1, 0))?.Content;
 
         // Assert
