@@ -26,7 +26,7 @@ public class CosineSimilarityCalculator
         //The length of the query vector can be found simply be using count(),
         //since the query can be interpreted as a vector with entries 0 and 1.
         //Only the entries with 1 are represented in the list and therefore count() suffices 
-        double queryVectorLength = Math.Sqrt(query.Count());
+        double queryVectorLength = Math.Sqrt(query.Distinct().Count());
         
         return dotProduct/(documentVectorLength * queryVectorLength);
     }
