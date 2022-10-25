@@ -25,7 +25,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id and index=@Index", new { id, index});
+        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id and index=@Index", new { id, index });
     }
 
     public async Task<IEnumerable<DocumentContentModel>> GetAll()
