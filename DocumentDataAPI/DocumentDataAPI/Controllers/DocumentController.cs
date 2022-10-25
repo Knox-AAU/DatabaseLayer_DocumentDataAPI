@@ -55,13 +55,14 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll(int? sourceId, string? author, DateTime? beforeDate, DateTime? afterDate)
+    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll(int? sourceId, string? author, int? categoryId, DateTime? beforeDate, DateTime? afterDate)
     {
         try
         {
             DocumentSearchParameters parameters = new DocumentSearchParameters();
             if (sourceId is not null) parameters.AddSource(sourceId.Value);
             if (author is not null) parameters.AddAuthor(author);
+            if (categoryId is not null) parameters.AddCategory(categoryId.Value);
             if (beforeDate is not null) parameters.AddBeforeDate(beforeDate.Value);
             if (afterDate is not null) parameters.AddAfterDate(afterDate.Value);
 
