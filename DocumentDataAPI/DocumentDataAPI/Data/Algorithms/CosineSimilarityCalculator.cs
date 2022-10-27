@@ -4,7 +4,6 @@ namespace DocumentDataAPI.Data.Algorithms;
 
 public class CosineSimilarityCalculator : IRelevanceFunction
 {
-    
     public double CalculateRelevance(IEnumerable<WordRatioModel> docWordRatios, IEnumerable<string> query)
     {
         double dotProduct = 0;
