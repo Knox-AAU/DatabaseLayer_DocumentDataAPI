@@ -1,24 +1,26 @@
-﻿namespace DocumentDataAPI.Relevance_Function;
+﻿using DocumentDataAPI.Models;
 
-public static class CosineSimilarityCalculator
+namespace DocumentDataAPI.Data.Algorithms;
+
+public class CosineSimilarityCalculator : IRelevanceFunction
 {
     
-    public static double CalculateCosineSimilarity(Dictionary<string, int> document, IEnumerable<string> query)
+    public double CalculateRelevance(IEnumerable<WordRatioModel> docWordRatios, IEnumerable<string> query)
     {
         double dotProduct = 0;
         double documentVectorLengthHelper = 0;
         
-        foreach (KeyValuePair<string, int> wordcount in document)
+        foreach (WordRatioModel wordRatio in docWordRatios)
         {
             // Since the query can be interpreted as a vector containing 1 and 0,
             // with a 1 for words in the query and 0 otherwise, the dot product can be
             // calculated by summing the amount of the words that occur in both the query and the document
-            if (query.Contains(wordcount.Key))
+            if (query.Contains(wordRatio.Word))
             {
-                dotProduct += wordcount.Value;
+                dotProduct += wordRatio.Amount;
             }
             //Squaring and summing the values, so that the length of the document vector can be found later
-            documentVectorLengthHelper += Math.Pow(wordcount.Value, 2);
+            documentVectorLengthHelper += Math.Pow(wordRatio.Amount, 2);
         }
 
         double documentVectorLength = Math.Sqrt(documentVectorLengthHelper);
