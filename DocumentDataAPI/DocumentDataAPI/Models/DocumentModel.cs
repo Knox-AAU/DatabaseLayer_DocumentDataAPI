@@ -8,7 +8,7 @@ public class DocumentModel
     {
     }
 
-    public DocumentModel(string author, DateTime date, long id, string path, int sourceId, string? summary, string title, int totalWords, int categoryId, string publication, int uniqueWords)
+    public DocumentModel(string author, DateTime date, long id, string path, int sourceId, string? summary, string title, int totalWords, int categoryId, string? publication, int uniqueWords)
     {
         Author = author;
         Date = date;
