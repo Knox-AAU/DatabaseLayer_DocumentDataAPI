@@ -29,14 +29,14 @@ public class DocumentModel
     public int SourceId { get; init; }
     [Required]
     public int CategoryId { get; init; }
-    [Required]
-    public string Publication { get; init; }
+    [Required(AllowEmptyStrings = true)]
+    public string? Publication { get; init; }
     [Required]
     public string Title { get; init; } = null!;
     [Required]
     public string Path { get; init; } = null!;
     [Required(AllowEmptyStrings = true)]
-    public string? Summary { get; init; } = null!;
+    public string? Summary { get; init; }
     [Required]
     public DateTime Date { get; init; }
     [Required]
