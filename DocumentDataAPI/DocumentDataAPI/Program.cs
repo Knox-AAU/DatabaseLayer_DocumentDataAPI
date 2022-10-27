@@ -9,7 +9,10 @@ using DocumentDataAPI.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
+}
 var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
 
 // Add services to the container.
