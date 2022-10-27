@@ -32,16 +32,16 @@ jobs:
         uses: actions/checkout@v2
 
       # Replace tokens in appsettings with values from the repository secrets
-      - uses: cschleiden/replace-tokens@v1
-        with:
-          file: DocumentDataAPI/DocumentDataAPI/appsettings.json
-        env:
-          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          DATABASE_DATABASE: ${{ secrets.DATABASE_DATABASE }}
-          DATABASE_SCHEMA: ${{ secrets.DATABASE_SCHEMA }}
-          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      #- uses: cschleiden/replace-tokens@v1
+      #  with:
+      #    file: DocumentDataAPI/DocumentDataAPI/appsettings.json
+      #  env:
+      #    DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+      #    DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      #    DATABASE_DATABASE: ${{ secrets.DATABASE_DATABASE }}
+      #    DATABASE_SCHEMA: ${{ secrets.DATABASE_SCHEMA }}
+      #    DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+      #    DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
