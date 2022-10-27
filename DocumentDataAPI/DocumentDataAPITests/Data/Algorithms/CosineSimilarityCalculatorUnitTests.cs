@@ -10,9 +10,7 @@ public class CosineSimilarityCalculatorUnitTests
     [MemberData(nameof(TestData))]
     public void CalculateCosineSimilarityReturnsCorrectCosineSimilarity(IEnumerable<WordRatioModel> docWordRatios, List<string> query, double expected)
     {
-        //Arrange
-        
-        //Act
+        //Arrange and Act
         double result = new CosineSimilarityCalculator().CalculateRelevance(docWordRatios, query);
         
         //Assert
