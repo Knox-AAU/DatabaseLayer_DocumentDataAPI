@@ -83,14 +83,10 @@ do $do$
     end $do$;
 
 -- Grant privileges to these users, but first ensure that all privileges are revoked in case they already exist.
-revoke all privileges on all tables in schema ${schema} from readonly;
-grant usage on schema ${schema} to readonly;
-grant usage on all sequences in schema ${schema} to readonly;
-grant execute on all functions in schema ${schema} to readonly;
-grant select on all tables in schema ${schema} to readonly;
+revoke all privileges on all tables in schema ${schema} from readonly, read_write;
+grant usage on schema ${schema} to readonly, read_write;
+grant usage on all sequences in schema ${schema} to readonly, read_write;
+grant execute on all functions in schema ${schema} to readonly, read_write;
+grant select on all tables in schema ${schema} to readonly, read_write;
 
-revoke all privileges on all tables in schema ${schema} from read_write;
-grant usage on schema ${schema} to read_write;
-grant usage on all sequences in schema ${schema} to readonly;
-grant execute on all functions in schema ${schema} to readonly;
-grant select, insert, update, delete on all tables in schema ${schema} to read_write;
+grant insert, update, delete on all tables in schema ${schema} to read_write;
