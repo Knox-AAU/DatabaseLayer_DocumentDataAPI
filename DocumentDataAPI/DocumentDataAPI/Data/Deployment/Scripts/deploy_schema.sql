@@ -1,5 +1,6 @@
 -- Creates a copy of the document_data schema (see https://wiki.knox.cs.aau.dk/en/Database/DocumentDataAPI/document_data).
 -- The actual name of the schema is provided though the ${schema} placeholder.
+-- Also creates the readonly and read_write users that are used in production (but not necessarily during local development)
 
 drop schema if exists ${schema} cascade;
 
@@ -58,3 +59,20 @@ create table ${schema}.similar_documents (
     similarity          float not null,
     constraint pk_similar_documents primary key (main_document_id, similar_document_id)
 );
+
+-- Create roles if they do not already exist. Looks convoluted due to the lack of a "create role if not exists" command.
+do $do$
+    begin
+        if not exists (select from pg_catalog.pg_roles where rolname = 'readonly') then
+            create role readonly NOINHERIT LOGIN password 'readonly';
+        end if;
+        if not exists (select from pg_catalog.pg_roles where rolname = 'read_write') then
+            create role read_write NOINHERIT LOGIN password 'read_write';
+        end if;
+    end $do$;
+
+revoke all privileges on schema ${schema} from readonly;
+grant select on all tables in schema ${schema} to readonly;
+
+revoke all privileges on schema ${schema} from read_write;
+grant select, insert, update, delete on all tables in schema ${schema} to read_write;

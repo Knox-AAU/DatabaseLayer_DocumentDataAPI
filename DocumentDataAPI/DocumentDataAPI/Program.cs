@@ -46,6 +46,8 @@ FluentMapper.Initialize(config =>
     config.AddMap(new DocumentMap());
     config.AddMap(new WordRatioMap());
     config.AddMap(new SourceMap());
+    config.AddMap(new CategoryMap());
+    config.AddMap(new SimilarDocumentMap());
 });
 
 // Check for "deploy=true" command-line argument
