@@ -7,16 +7,15 @@ drop schema if exists ${schema} cascade;
 create schema ${schema};
 
 create table ${schema}.data_sources (
-    id          bigserial primary key,
+    id          bigint generated always as identity primary key,
     name        varchar(100) not null
 );
 
 create index data_sources_name_idx on ${schema}.data_sources (name);
 
 create table ${schema}.categories (
-    category_id     serial not null,
-    name            varchar(100),
-    constraint pk_categories primary key (category_id)
+    category_id     integer generated always as identity primary key,
+    name            varchar(100)
 );
 
 create index categories_name_idx on ${schema}.categories (name);
@@ -83,8 +82,15 @@ do $do$
         end if;
     end $do$;
 
+-- Grant privileges to these users, but first ensure that all privileges are revoked in case they already exist.
 revoke all privileges on all tables in schema ${schema} from readonly;
+grant usage on schema ${schema} to readonly;
+grant usage on all sequences in schema ${schema} to readonly;
+grant execute on all functions in schema ${schema} to readonly;
 grant select on all tables in schema ${schema} to readonly;
 
 revoke all privileges on all tables in schema ${schema} from read_write;
+grant usage on schema ${schema} to read_write;
+grant usage on all sequences in schema ${schema} to readonly;
+grant execute on all functions in schema ${schema} to readonly;
 grant select, insert, update, delete on all tables in schema ${schema} to read_write;
