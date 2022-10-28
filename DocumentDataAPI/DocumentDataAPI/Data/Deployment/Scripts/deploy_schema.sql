@@ -11,11 +11,15 @@ create table ${schema}.data_sources (
     name        varchar(100) not null
 );
 
+create index data_sources_name_idx on ${schema}.data_sources (name);
+
 create table ${schema}.categories (
     category_id     serial not null,
     name            varchar(100),
     constraint pk_categories primary key (category_id)
 );
+
+create index categories_name_idx on ${schema}.categories (name);
 
 create table ${schema}.documents (
     id              bigint primary key,
@@ -33,6 +37,12 @@ create table ${schema}.documents (
     constraint fk_categories foreign key (categories_id) references ${schema}.categories
 );
 
+create index documents_sources_id_idx on ${schema}.documents (sources_id);
+create index documents_categories_id_idx on ${schema}.documents (categories_id);
+create index documents_author_idx on ${schema}.documents (author);
+create index documents_date_idx on ${schema}.documents (date);
+create index documents_publication_idx on ${schema}.documents (publication);
+
 create table ${schema}.word_ratios (
     documents_id        bigint  not null,
     word                varchar(100) not null,
@@ -41,8 +51,10 @@ create table ${schema}.word_ratios (
     rank                integer not null,
     clustering_score    float default 0 not null,
     constraint fk_documents foreign key (documents_id) references ${schema}.documents(id),
-    constraint pk_files_id_word primary key (documents_id, word)
+    constraint pk_files_id_word primary key (word, documents_id)
 );
+
+create index word_ratios_documents_id_idx on ${schema}.word_ratios (documents_id);
 
 create table ${schema}.document_contents (
     documents_id    bigint not null,
@@ -71,8 +83,8 @@ do $do$
         end if;
     end $do$;
 
-revoke all privileges on schema ${schema} from readonly;
+revoke all privileges on all tables in schema ${schema} from readonly;
 grant select on all tables in schema ${schema} to readonly;
 
-revoke all privileges on schema ${schema} from read_write;
+revoke all privileges on all tables in schema ${schema} from read_write;
 grant select, insert, update, delete on all tables in schema ${schema} to read_write;
