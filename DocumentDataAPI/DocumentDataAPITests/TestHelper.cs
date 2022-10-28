@@ -30,6 +30,8 @@ public static class TestHelper
                     config.AddMap(new DocumentMap());
                     config.AddMap(new WordRatioMap());
                     config.AddMap(new SourceMap());
+                    config.AddMap(new CategoryMap());
+                    config.AddMap(new SimilarDocumentMap());
                 });
                 _isInitialized = true;
             }
