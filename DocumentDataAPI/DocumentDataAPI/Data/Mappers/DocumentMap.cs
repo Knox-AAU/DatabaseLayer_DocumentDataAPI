@@ -8,7 +8,7 @@ public class DocumentMap : EntityMap<DocumentModel>
     public DocumentMap()
     {
         Map(x => x.Id).ToColumn("id");
-        Map(x => x.SourceId).ToColumn("sources_id");
+        Map(x => x.DataSourceId).ToColumn("data_sources_id");
         Map(x => x.Title).ToColumn("title");
         Map(x => x.Path).ToColumn("path");
         Map(x => x.Summary).ToColumn("summary");

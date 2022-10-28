@@ -2,13 +2,13 @@
 
 namespace DocumentDataAPI.Models;
 
-public class SourceModel
+public class DataSourceModel
 {
-    public SourceModel()
+    public DataSourceModel()
     {
     }
 
-    public SourceModel(long id, string name)
+    public DataSourceModel(long id, string name)
     {
         Id = id;
         Name = name;

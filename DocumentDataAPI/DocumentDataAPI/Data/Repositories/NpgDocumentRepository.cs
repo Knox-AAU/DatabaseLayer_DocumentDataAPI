@@ -65,8 +65,8 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "insert into documents(id, title, author, date, summary, path, total_words, sources_id, categories_id, publication, unique_words)" +
-            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId, @CategoryId, @Publication, @UniqueWords)",
+            "insert into documents(id, title, author, date, summary, path, total_words, data_sources_id, categories_id, publication, unique_words)" +
+            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @DataSourceId, @CategoryId, @Publication, @UniqueWords)",
             new
             {
                 entity.Id,
@@ -76,7 +76,7 @@ public class NpgDocumentRepository : IDocumentRepository
                 entity.Summary,
                 entity.Path,
                 entity.TotalWords,
-                entity.SourceId,
+                entity.DataSourceId,
                 entity.CategoryId,
                 entity.Publication,
                 entity.UniqueWords
@@ -96,7 +96,7 @@ public class NpgDocumentRepository : IDocumentRepository
             foreach (DocumentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                rowsAffected += await transaction.ExecuteAsync("insert into documents(id, sources_id, categories_id, publication, title, path, summary, date, author, total_words, unique_words) values " + parameterString, parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into documents(id, data_sources_id, categories_id, publication, title, path, summary, date, author, total_words, unique_words) values " + parameterString, parameters);
             }
 
             if (rowsAffected != models.Count)
@@ -131,7 +131,7 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
             "update documents set title = @Title, author = @Author, date = @Date, summary = @Summary, " +
-            "path = @Path, total_words = @TotalWords, sources_id = @SourceId, categories_id = @CategoryId, " +
+            "path = @Path, total_words = @TotalWords, data_sources_id = @DataSourceId, categories_id = @CategoryId, " +
             "publication = @Publication, unique_words = @UniqueWords where id = @Id",
                         new
                         {
@@ -141,7 +141,7 @@ public class NpgDocumentRepository : IDocumentRepository
                             entity.Summary,
                             entity.Path,
                             entity.TotalWords,
-                            entity.SourceId,
+                            entity.DataSourceId,
                             entity.Id,
                             entity.CategoryId,
                             entity.Publication,

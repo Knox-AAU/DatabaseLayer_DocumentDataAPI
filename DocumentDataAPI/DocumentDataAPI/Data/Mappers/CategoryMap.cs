@@ -8,6 +8,6 @@ public class CategoryMap : EntityMap<CategoryModel>
     public CategoryMap()
     {
         Map(x => x.Name).ToColumn("name");
-        Map(x => x.CategoryId).ToColumn("category_id");
+        Map(x => x.Id).ToColumn("id");
     }
 }

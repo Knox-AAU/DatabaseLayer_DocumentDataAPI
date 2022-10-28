@@ -3,9 +3,9 @@ using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Mappers;
 
-public class SourceMap : EntityMap<SourceModel>
+public class DataSourceMap : EntityMap<DataSourceModel>
 {
-    public SourceMap()
+    public DataSourceMap()
     {
         Map(x => x.Id).ToColumn("id");
         Map(x => x.Name).ToColumn("name");

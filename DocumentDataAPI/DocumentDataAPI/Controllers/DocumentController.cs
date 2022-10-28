@@ -49,18 +49,18 @@ public class DocumentController : ControllerBase
     /// Retrieves a list of all documents from the database.
     /// </summary>
     /// <response code="200">Success: A list of all documents</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll(int? sourceId, string? author, int? categoryId, DateTime? beforeDate, DateTime? afterDate)
     {
         try
         {
             DocumentSearchParameters parameters = new DocumentSearchParameters();
-            if (sourceId is not null) parameters.AddSource(sourceId.Value);
+            if (sourceId is not null) parameters.AddDataSource(sourceId.Value);
             if (author is not null) parameters.AddAuthor(author);
             if (categoryId is not null) parameters.AddCategory(categoryId.Value);
             if (beforeDate is not null) parameters.AddBeforeDate(beforeDate.Value);
@@ -69,7 +69,7 @@ public class DocumentController : ControllerBase
             IEnumerable<DocumentModel> result = await _repository.GetAll(parameters);
             return result.Any()
                 ? Ok(result)
-                : NotFound();
+                : NoContent();
         }
         catch (Exception e)
         {

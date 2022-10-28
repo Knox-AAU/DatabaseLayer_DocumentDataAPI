@@ -22,7 +22,7 @@ builder.Services
     .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
     .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
-    .AddScoped<ISourceRepository, NpgSourceRepository>()
+    .AddScoped<IDataSourceRepository, NpgDataSourceRepository>()
     .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
     ;
 
@@ -45,7 +45,7 @@ FluentMapper.Initialize(config =>
     config.AddMap(new DocumentContentMap());
     config.AddMap(new DocumentMap());
     config.AddMap(new WordRatioMap());
-    config.AddMap(new SourceMap());
+    config.AddMap(new DataSourceMap());
     config.AddMap(new CategoryMap());
     config.AddMap(new SimilarDocumentMap());
 });
