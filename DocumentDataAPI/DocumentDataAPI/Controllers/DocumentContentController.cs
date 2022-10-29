@@ -77,11 +77,11 @@ public class DocumentContentController : ControllerBase
     /// </summary>
     /// <response code="200">Success: The document content that was added to the database.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPut]
+    [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DocumentContentModel?>> PutDocumentContent([FromBody] List<DocumentContentModel> documentContents)
+    public async Task<ActionResult<DocumentContentModel?>> InsertDocumentContent([FromBody] List<DocumentContentModel> documentContents)
     {
         try
         {
@@ -102,7 +102,7 @@ public class DocumentContentController : ControllerBase
     /// <response code="200">Success: The document content that was updated.</response>
     /// <response code="404">Not Found: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPost]
+    [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

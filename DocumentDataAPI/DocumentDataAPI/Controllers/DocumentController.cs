@@ -23,14 +23,14 @@ public class DocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Adds the document from the content body.
+    /// Adds the documents from the content body to the database.
     /// </summary>
     /// <response code="200">Success: The document that was added to the database.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPut]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DocumentModel>> PutDocument([FromBody] List<DocumentModel> documents)
+    public async Task<ActionResult<DocumentModel>> InsertDocument([FromBody] List<DocumentModel> documents)
     {
         try
         {
@@ -109,7 +109,7 @@ public class DocumentController : ControllerBase
     /// <summary>
     /// Retrieves the number of documents in the database.
     /// </summary>
-    /// <response code="200">Success: A number</response>
+    /// <response code="200">Success: The number of rows added.</response>
     /// <response code="404">Not Found: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
@@ -137,7 +137,7 @@ public class DocumentController : ControllerBase
     /// <response code="200">Success: The updated document.</response>
     /// <response code="404">Not Found: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPost]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

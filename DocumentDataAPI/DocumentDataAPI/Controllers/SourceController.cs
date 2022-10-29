@@ -122,14 +122,14 @@ public class SourceController : ControllerBase
     /// Inserts a new source with the given name in the database.
     /// </summary>
     /// <response code="200">Success: The source that was inserted.</response>
-    /// <response code="400">Bad Request: A message.</response>
+    /// <response code="400">Bad Request: A message indicating that the source could not be added.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPut]
+    [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<SourceModel?>> PutSource(string name)
+    public async Task<ActionResult<SourceModel?>> InsertSource(string name)
     {
         try
         {
@@ -148,9 +148,9 @@ public class SourceController : ControllerBase
     /// Updates the source given in the request body in the database.
     /// </summary>
     /// <response code="200">Success: The source that was updated.</response>
-    /// <response code="404">Not Found: A message.</response>
+    /// <response code="404">Not Found: A message indicating that the source was not found.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPost]
+    [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -174,7 +174,7 @@ public class SourceController : ControllerBase
     /// Deletes the source given in the request body in the database.
     /// </summary>
     /// <response code="200">Success: The source that was deleted.</response>
-    /// <response code="404">Not Found: A message.</response>
+    /// <response code="404">Not Found: A message indicating that the source was not found.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
     [Consumes(MediaTypeNames.Application.Json)]
