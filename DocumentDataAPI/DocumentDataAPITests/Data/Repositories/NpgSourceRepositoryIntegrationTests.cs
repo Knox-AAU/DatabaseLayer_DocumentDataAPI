@@ -121,7 +121,7 @@ public class NpgSourceRepositoryIntegrationTests
         // Arrange
         NpgDataSourceRepository repository = new(_connectionFactory, _logger);
         DataSourceModel dataSource = new(1, "DR");
-        long expected = 3;
+        const long expected = 3;
 
         // Act
         long actual = await repository.GetCountFromId(dataSource.Id);

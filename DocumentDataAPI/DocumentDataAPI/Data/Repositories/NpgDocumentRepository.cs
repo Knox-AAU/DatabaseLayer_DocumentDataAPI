@@ -59,14 +59,14 @@ public class NpgDocumentRepository : IDocumentRepository
         return await con.QueryAsync<DocumentModel>(query.ToString(), args);
     }
 
-    public async Task<int> Add(DocumentModel entity)
+    public async Task<long> Add(DocumentModel entity)
     {
         _logger.LogDebug("Adding Document with id {Id} to database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
             "insert into documents(id, title, author, date, summary, path, total_words, data_sources_id, categories_id, publication, unique_words)" +
-            " values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @DataSourceId, @CategoryId, @Publication, @UniqueWords)",
+            "values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @DataSourceId, @CategoryId, @Publication, @UniqueWords)",
             new
             {
                 entity.Id,

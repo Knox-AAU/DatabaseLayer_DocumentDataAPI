@@ -124,21 +124,18 @@ public class DataSourceController : ControllerBase
     /// <summary>
     /// Inserts a new data source with the given name in the database.
     /// </summary>
-    /// <response code="200">Success: The data source that was inserted.</response>
-    /// <response code="400">Bad Request: A message.</response>
+    /// <response code="200">Success: The ID of the data source that was inserted.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DataSourceModel?>> PutDataSource(string name)
+    public async Task<ActionResult<long>> PutDataSource(string name)
     {
         try
         {
-            return await _repository.Add(new DataSourceModel { Name = name }) == 1
-                ? Ok((await _repository.GetByName(name)).Last())
-                : BadRequest("Could not add the data source with name: " + name);
+            long id = await _repository.Add(new DataSourceModel { Name = name });
+            return Ok(id);
         }
         catch (Exception e)
         {

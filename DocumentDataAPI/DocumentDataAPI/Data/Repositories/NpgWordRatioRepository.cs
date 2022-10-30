@@ -27,7 +27,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
         return await con.QueryAsync<WordRatioModel>($"select * from word_ratios");
     }
 
-    public async Task<int> Add(WordRatioModel entity)
+    public async Task<long> Add(WordRatioModel entity)
     {
         _logger.LogDebug("Adding WordRatio with id {DocumentId} and name {Word} to database", entity.DocumentId,
             entity.Word);
@@ -35,7 +35,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
             "insert into word_ratios(documents_id, word, amount, percent, rank, clustering_score)" +
-            " values (@DocumentId, @Word, @Amount, @Percent, @Rank, @ClusteringScore)",
+            "values (@DocumentId, @Word, @Amount, @Percent, @Rank, @ClusteringScore)",
             new
             {
                 entity.DocumentId,

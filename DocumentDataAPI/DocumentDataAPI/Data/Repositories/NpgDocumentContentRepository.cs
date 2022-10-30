@@ -25,7 +25,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id and index=@Index", new { id, index });
+        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id and index=@Index",
+            new { id, index });
     }
 
     public async Task<IEnumerable<DocumentContentModel>> GetAll()
@@ -35,14 +36,13 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         return await con.QueryAsync<DocumentContentModel>("select * from document_contents");
     }
 
-    public async Task<int> Add(DocumentContentModel entity)
+    public async Task<long> Add(DocumentContentModel entity)
     {
         _logger.LogDebug("Adding DocumentContent with id {DocumentId} to database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "insert into document_contents(documents_id, content, index, subheading)" +
-            " values (@DocumentId, @Content, @Index, @Subheading)",
+            "insert into document_contents(documents_id, content, index, subheading) values (@DocumentId, @Content, @Index, @Subheading)",
                         new
                         {
                             entity.DocumentId,
@@ -57,9 +57,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            "delete from document_contents " +
-            "where documents_id=@DocumentId and index=@Index", new { entity.DocumentId, entity.Index });
+        return await con.ExecuteAsync("delete from document_contents where documents_id=@DocumentId and index=@Index",
+            new { entity.DocumentId, entity.Index });
     }
 
     public async Task<int> Update(DocumentContentModel entity)
@@ -67,9 +66,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Updating DocumentContent with id {DocumentId} in database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            "update document_contents set content = @Content, subheading = @Subheading " +
-            "where documents_id = @DocumentId and index = @Index",
+        return await con.ExecuteAsync("update document_contents set content = @Content, subheading = @Subheading " +
+                                      "where documents_id = @DocumentId and index = @Index",
                         new
                         {
                             entity.Content,
