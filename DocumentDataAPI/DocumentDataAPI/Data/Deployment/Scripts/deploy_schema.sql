@@ -5,12 +5,12 @@ drop schema if exists ${schema} cascade;
 
 create schema ${schema};
 
-create table ${schema}.data_sources (
+create table ${schema}.sources (
     id     bigint generated always as identity primary key,
     name   varchar(100) not null
 );
 
-create index data_sources_name_idx on ${schema}.data_sources (name);
+create index sources_name_idx on ${schema}.sources (name);
 
 create table ${schema}.categories (
     id     integer generated always as identity primary key,
@@ -21,7 +21,7 @@ create index categories_name_idx on ${schema}.categories (name);
 
 create table ${schema}.documents (
     id              bigint primary key,
-    data_sources_id bigint not null references ${schema}.data_sources(id),
+    sources_id      bigint not null references ${schema}.sources(id),
     categories_id   bigint not null references ${schema}.categories(id),
     publication     varchar(100),
     title           varchar(400) not null,
@@ -33,7 +33,7 @@ create table ${schema}.documents (
     unique_words    bigint not null
 );
 
-create index documents_data_sources_id_idx on ${schema}.documents (data_sources_id);
+create index documents_sources_id_idx on ${schema}.documents (sources_id);
 create index documents_categories_id_idx on ${schema}.documents (categories_id);
 create index documents_author_idx on ${schema}.documents (author);
 create index documents_date_idx on ${schema}.documents (date);

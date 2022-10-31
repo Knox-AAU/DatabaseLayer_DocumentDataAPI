@@ -6,14 +6,14 @@ using DocumentDataAPI.Data.Repositories;
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
-[Route(RoutePrefixHelper.Prefix + "/data-sources")]
+[Route(RoutePrefixHelper.Prefix + "/sources")]
 [Produces(MediaTypeNames.Application.Json)]
-public class DataSourceController : ControllerBase
+public class SourceController : ControllerBase
 {
-    private readonly IDataSourceRepository _repository;
-    private readonly ILogger<DataSourceController> _logger;
+    private readonly ISourceRepository _repository;
+    private readonly ILogger<SourceController> _logger;
 
-    public DataSourceController(IDataSourceRepository repository, ILogger<DataSourceController> logger)
+    public SourceController(ISourceRepository repository, ILogger<SourceController> logger)
     {
         _repository = repository;
         _logger = logger;
@@ -29,26 +29,26 @@ public class DataSourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DataSourceModel>>> GetAll()
+    public async Task<ActionResult<IEnumerable<SourceModel>>> GetAll()
     {
         try
         {
-            IEnumerable<DataSourceModel> result = await _repository.GetAll();
+            IEnumerable<SourceModel> result = await _repository.GetAll();
             return result.Any()
                 ? Ok(result)
                 : NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get data sources");
+            _logger.LogError(e, "Unable to get sources");
             return Problem(e.Message);
         }
     }
 
     /// <summary>
-    /// Retrieves the data source with the given id.
+    /// Retrieves the source with the given id.
     /// </summary>
-    /// <response code="200">Success: The data source.</response>
+    /// <response code="200">Success: The source.</response>
     /// <response code="404">Not Found: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
@@ -56,11 +56,11 @@ public class DataSourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DataSourceModel>> GetById(long id)
+    public async Task<ActionResult<SourceModel>> GetById(long id)
     {
         try
         {
-            DataSourceModel? result = await _repository.Get(id);
+            SourceModel? result = await _repository.Get(id);
             return result == null
                 ? NotFound()
                 : Ok(result);
@@ -73,9 +73,9 @@ public class DataSourceController : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves all data sources with the given name.
+    /// Retrieves all sources with the given name.
     /// </summary>
-    /// <response code="200">Success: A list of data sources with the given name.</response>
+    /// <response code="200">Success: A list of sources with the given name.</response>
     /// <response code="404">Not Found: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
@@ -83,11 +83,11 @@ public class DataSourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DataSourceModel>>> GetByName(string name)
+    public async Task<ActionResult<IEnumerable<SourceModel>>> GetByName(string name)
     {
         try
         {
-            IEnumerable<DataSourceModel> result = await _repository.GetByName(name);
+            IEnumerable<SourceModel> result = await _repository.GetByName(name);
             return result.Any()
                 ? Ok(result)
                 : NotFound("No data source exists with name: " + name);
@@ -134,7 +134,7 @@ public class DataSourceController : ControllerBase
     {
         try
         {
-            long id = await _repository.Add(new DataSourceModel { Name = name });
+            long id = await _repository.Add(new SourceModel { Name = name });
             return Ok(id);
         }
         catch (Exception e)
@@ -155,17 +155,17 @@ public class DataSourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DataSourceModel?>> UpdateDataSource([FromBody] DataSourceModel dataSource)
+    public async Task<ActionResult<SourceModel?>> UpdateDataSource([FromBody] SourceModel source)
     {
         try
         {
-            return await _repository.Update(dataSource) == 1
-                ? Ok(await _repository.Get(dataSource.Id))
-                : NotFound("Could not find data source with id: " + dataSource.Id);
+            return await _repository.Update(source) == 1
+                ? Ok(await _repository.Get(source.Id))
+                : NotFound("Could not find data source with id: " + source.Id);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to update data source ({id}, {name})", dataSource.Id, dataSource.Name);
+            _logger.LogError(e, "Unable to update data source ({id}, {name})", source.Id, source.Name);
             return Problem(e.Message);
         }
     }
@@ -181,17 +181,17 @@ public class DataSourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DataSourceModel?>> DeleteDataSource([FromBody] DataSourceModel dataSource)
+    public async Task<ActionResult<SourceModel?>> DeleteDataSource([FromBody] SourceModel source)
     {
         try
         {
-            return await _repository.Delete(dataSource) == 1
-                ? Ok(dataSource)
-                : NotFound("Could not find data source with id: " + dataSource.Id);
+            return await _repository.Delete(source) == 1
+                ? Ok(source)
+                : NotFound("Could not find data source with id: " + source.Id);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete data source ({id}, {name})", dataSource.Id, dataSource.Name);
+            _logger.LogError(e, "Unable to delete data source ({id}, {name})", source.Id, source.Name);
             return Problem(e.Message);
         }
     }

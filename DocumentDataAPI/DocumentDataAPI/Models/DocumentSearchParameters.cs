@@ -10,9 +10,9 @@ public class DocumentSearchParameters : ISearchParameters
         Parameters = new();
     }
 
-    public DocumentSearchParameters AddDataSource(int dataSourceId)
+    public DocumentSearchParameters AddSource(int sourceId)
     {
-        Parameters.Add(new QueryParameter(new DocumentMap().MappedColumnName(nameof(DocumentModel.DataSourceId)), dataSourceId));
+        Parameters.Add(new QueryParameter(new DocumentMap().MappedColumnName(nameof(DocumentModel.SourceId)), sourceId));
         return this;
     }
 

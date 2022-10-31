@@ -10,12 +10,12 @@ namespace DocumentDataAPITests.Data.Repositories;
 public class NpgSourceRepositoryIntegrationTests
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
-    private readonly ILogger<NpgDataSourceRepository> _logger;
+    private readonly ILogger<NpgSourceRepository> _logger;
 
     public NpgSourceRepositoryIntegrationTests()
     {
         _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
-        _logger = new Logger<NpgDataSourceRepository>(new NullLoggerFactory());
+        _logger = new Logger<NpgSourceRepository>(new NullLoggerFactory());
         TestHelper.DeployDatabaseWithTestData();
     }
 
@@ -23,16 +23,16 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task GetAll_ReturnsAllSources()
     {
         // Arrange
-        NpgDataSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
 
         // Act
-        List<DataSourceModel> result = (await repository.GetAll()).ToList();
+        List<SourceModel> result = (await repository.GetAll()).ToList();
 
         // Assert
         result.Should().BeEquivalentTo(new[]
         {
-            new DataSourceModel(1, "DR"),
-            new DataSourceModel(2, "TV2")
+            new SourceModel(1, "DR"),
+            new SourceModel(2, "TV2")
         }, "because the test database contains (1, 'DR') and (2, 'TV2')");
     }
 
@@ -40,11 +40,11 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task Update_UpdatesRow()
     {
         // Arrange
-        NpgDataSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
         const string expected = "Test Source";
 
         // Act
-        await repository.Update(new DataSourceModel(1, expected));
+        await repository.Update(new SourceModel(1, expected));
         string? actual = (await repository.Get(1))?.Name;
 
         // Assert
@@ -56,14 +56,14 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
-        NpgDataSourceRepository repository = new(_connectionFactory, _logger);
-        IEnumerable<DataSourceModel> expected = new List<DataSourceModel>() { new(1, "DR"), new(2, "TV2") };
-        DataSourceModel newDataSource = new(3, "Test");
-        await repository.Add(newDataSource);
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        IEnumerable<SourceModel> expected = new List<SourceModel>() { new(1, "DR"), new(2, "TV2") };
+        SourceModel newSource = new(3, "Test");
+        await repository.Add(newSource);
 
         // Act
-        await repository.Delete(newDataSource);
-        IEnumerable<DataSourceModel> actual = await repository.GetAll();
+        await repository.Delete(newSource);
+        IEnumerable<SourceModel> actual = await repository.GetAll();
 
         // Assert
         actual.Should().BeEquivalentTo(expected);
@@ -73,12 +73,12 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task Add_AddsNewSource()
     {
         // Arrange
-        NpgDataSourceRepository repository = new(_connectionFactory, _logger);
-        DataSourceModel expected = new(3, "Test");
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        SourceModel expected = new(3, "Test");
         await repository.Add(expected);
 
         // Act
-        DataSourceModel? actual = await repository.Get(expected.Id);
+        SourceModel? actual = await repository.Get(expected.Id);
 
         // Assert
         actual.Should().NotBeNull("because it was added to the database")
@@ -89,11 +89,11 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task GetById_ReturnsSourceSpecifiedById()
     {
         // Arrange
-        NpgDataSourceRepository repository = new(_connectionFactory, _logger);
-        DataSourceModel expected = new(1, "DR");
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        SourceModel expected = new(1, "DR");
 
         // Act
-        DataSourceModel? actual = await repository.Get(expected.Id);
+        SourceModel? actual = await repository.Get(expected.Id);
 
         // Assert
         actual.Should().BeEquivalentTo(expected, "because the tuple (1, 'DR') is contained within the database");
@@ -103,12 +103,12 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task GetByName_ReturnsSourcesSpecifiedByName()
     {
         // Arrange
-        NpgDataSourceRepository repository = new(_connectionFactory, _logger);
-        DataSourceModel dataSource = new(1, "DR");
-        IEnumerable<DataSourceModel> expected = new List<DataSourceModel>() { dataSource };
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        SourceModel source = new(1, "DR");
+        IEnumerable<SourceModel> expected = new List<SourceModel>() { source };
 
         // Act
-        IEnumerable<DataSourceModel>? actual = await repository.GetByName(expected.First().Name);
+        IEnumerable<SourceModel>? actual = await repository.GetByName(expected.First().Name);
 
         // Assert
         actual.Should().NotBeNullOrEmpty("because it contains a source with specified name")
@@ -119,12 +119,12 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task GetCountFromId_ReturnsCountOfDocumentsFromSource()
     {
         // Arrange
-        NpgDataSourceRepository repository = new(_connectionFactory, _logger);
-        DataSourceModel dataSource = new(1, "DR");
+        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        SourceModel source = new(1, "DR");
         const long expected = 3;
 
         // Act
-        long actual = await repository.GetCountFromId(dataSource.Id);
+        long actual = await repository.GetCountFromId(source.Id);
 
         // Assert
         actual.Should().Be(expected, "because the DR source contains 3 entities");

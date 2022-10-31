@@ -60,7 +60,7 @@ public class DocumentController : ControllerBase
         try
         {
             DocumentSearchParameters parameters = new DocumentSearchParameters();
-            if (sourceId is not null) parameters.AddDataSource(sourceId.Value);
+            if (sourceId is not null) parameters.AddSource(sourceId.Value);
             if (author is not null) parameters.AddAuthor(author);
             if (categoryId is not null) parameters.AddCategory(categoryId.Value);
             if (beforeDate is not null) parameters.AddBeforeDate(beforeDate.Value);

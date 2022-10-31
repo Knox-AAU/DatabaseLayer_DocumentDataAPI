@@ -8,13 +8,13 @@ public class DocumentModel
     {
     }
 
-    public DocumentModel(string author, DateTime date, long id, string path, int dataSourceId, string? summary, string title, int totalWords, int categoryId, string? publication, int uniqueWords)
+    public DocumentModel(string author, DateTime date, long id, string path, int sourceId, string? summary, string title, int totalWords, int categoryId, string? publication, int uniqueWords)
     {
         Author = author;
         Date = date;
         Id = id;
         Path = path;
-        DataSourceId = dataSourceId;
+        SourceId = sourceId;
         Summary = summary;
         Title = title;
         TotalWords = totalWords;
@@ -26,7 +26,7 @@ public class DocumentModel
     [Required]
     public long Id { get; init; }
     [Required]
-    public int DataSourceId { get; init; }
+    public int SourceId { get; init; }
     [Required]
     public int CategoryId { get; init; }
     [Required(AllowEmptyStrings = true)]
