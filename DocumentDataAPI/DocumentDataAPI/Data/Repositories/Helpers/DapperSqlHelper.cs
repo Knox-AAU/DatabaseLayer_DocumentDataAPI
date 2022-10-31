@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Text;
+﻿using System.Text;
+using DocumentDataAPI.Models;
+using DocumentDataAPI.Models.Attributes;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DocumentDataAPI.Data.Repositories.Helpers;
@@ -23,7 +23,7 @@ public class DapperSqlHelper : ISqlHelper
 
         // Get all properties on the given generic class T with the [Required] attribute.
         List<string> properties = typeof(T).GetProperties()
-            .Where(x => x.HasAttribute<RequiredAttribute>())
+            .Where(x => !x.HasAttribute<ExcludeFromGeneratedInsertStatementAttribute>())
             .Select(x => x.Name)
             .ToList();
 
@@ -41,7 +41,7 @@ public class DapperSqlHelper : ISqlHelper
             foreach (string property in properties)
             {
                 // Uses reflection to get "value.property"
-                dynamic propertyValue = typeof(T).GetProperty(property)!.GetValue(model)!;
+                dynamic? propertyValue = typeof(T).GetProperty(property)!.GetValue(model);
                 parameterDictionary.Add(property + i, propertyValue);
             }
 
