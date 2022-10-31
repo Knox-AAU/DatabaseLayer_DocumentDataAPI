@@ -49,12 +49,12 @@ public class SourceController : ControllerBase
     /// Retrieves the source with the given id.
     /// </summary>
     /// <response code="200">Success: The source.</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{id:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<SourceModel>> GetById(long id)
     {
@@ -62,12 +62,12 @@ public class SourceController : ControllerBase
         {
             SourceModel? result = await _repository.Get(id);
             return result == null
-                ? NotFound()
+                ? NoContent()
                 : Ok(result);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get data source with id: {id}", id);
+            _logger.LogError(e, "Unable to get source with id: {id}", id);
             return Problem(e.Message);
         }
     }
@@ -76,12 +76,12 @@ public class SourceController : ControllerBase
     /// Retrieves all sources with the given name.
     /// </summary>
     /// <response code="200">Success: A list of sources with the given name.</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{name}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<SourceModel>>> GetByName(string name)
     {
@@ -90,19 +90,19 @@ public class SourceController : ControllerBase
             IEnumerable<SourceModel> result = await _repository.GetByName(name);
             return result.Any()
                 ? Ok(result)
-                : NotFound("No data source exists with name: " + name);
+                : NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get data source with name: {name}", name);
+            _logger.LogError(e, "Unable to get source with name: {name}", name);
             return Problem(e.Message);
         }
     }
 
     /// <summary>
-    /// Retrieves the total number of documents for the given data source id.
+    /// Retrieves the total number of documents for the given source id.
     /// </summary>
-    /// <response code="200">Success: The total number of documents for the given data source.</response>
+    /// <response code="200">Success: The total number of documents for the given source.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{id:long}/document-count")]
@@ -116,21 +116,22 @@ public class SourceController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get document count for data source with id: {id}", id);
+            _logger.LogError(e, "Unable to get document count for source with id: {id}", id);
             return Problem(e.Message);
         }
     }
 
     /// <summary>
-    /// Inserts a new data source with the given name in the database.
+    /// Inserts a new source with the given name in the database.
     /// </summary>
     /// <response code="200">Success: The ID of the data source that was inserted.</response>
+    /// <response code="400">Bad Request: A message indicating that the source could not be added.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPut]
+    [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<long>> PutDataSource(string name)
+    public async Task<ActionResult<long>> InsertSource(string name)
     {
         try
         {
@@ -139,59 +140,59 @@ public class SourceController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to add data source with name: {name})", name);
+            _logger.LogError(e, "Unable to add source with name: {name})", name);
             return Problem(e.Message);
         }
     }
 
     /// <summary>
-    /// Updates the data source given in the request body in the database.
+    /// Updates the source given in the request body in the database.
     /// </summary>
-    /// <response code="200">Success: The data source that was updated.</response>
-    /// <response code="404">Not Found: A message.</response>
+    /// <response code="200">Success: The source that was updated.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPost]
+    [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<SourceModel?>> UpdateDataSource([FromBody] SourceModel source)
+    public async Task<ActionResult<SourceModel?>> UpdateSource([FromBody] SourceModel source)
     {
         try
         {
             return await _repository.Update(source) == 1
                 ? Ok(await _repository.Get(source.Id))
-                : NotFound("Could not find data source with id: " + source.Id);
+                : NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to update data source ({id}, {name})", source.Id, source.Name);
+            _logger.LogError(e, "Unable to update source ({id}, {name})", source.Id, source.Name);
             return Problem(e.Message);
         }
     }
 
     /// <summary>
-    /// Deletes the data source given in the request body in the database.
+    /// Deletes the source given in the request body in the database.
     /// </summary>
-    /// <response code="200">Success: The data source that was deleted.</response>
-    /// <response code="404">Not Found: A message.</response>
+    /// <response code="200">Success: The source that was deleted.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<SourceModel?>> DeleteDataSource([FromBody] SourceModel source)
+    public async Task<ActionResult<SourceModel?>> DeleteSource([FromBody] SourceModel source)
     {
         try
         {
             return await _repository.Delete(source) == 1
                 ? Ok(source)
-                : NotFound("Could not find data source with id: " + source.Id);
+                : NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete data source ({id}, {name})", source.Id, source.Name);
+            _logger.LogError(e, "Unable to delete source ({id}, {name})", source.Id, source.Name);
             return Problem(e.Message);
         }
     }

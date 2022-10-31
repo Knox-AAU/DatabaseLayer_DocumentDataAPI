@@ -44,7 +44,7 @@ public class WordRatioController : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves a word ratio with a specific word and document.
+    /// Retrieves a word ratio with a specific word and document id.
     /// </summary>
     /// <response code="200">Success: The word ratio.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
@@ -154,7 +154,7 @@ public class WordRatioController : ControllerBase
     /// <response code="200">Success: The updated word ratio.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPost]
+    [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -180,12 +180,12 @@ public class WordRatioController : ControllerBase
     /// <response code="200">Success: The number of rows inserted.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPut]
+    [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<int>> PutWordRatios([FromBody] List<WordRatioModel> wordRatios)
+    public async Task<ActionResult<int>> InsertWordRatios([FromBody] List<WordRatioModel> wordRatios)
     {
         try
         {

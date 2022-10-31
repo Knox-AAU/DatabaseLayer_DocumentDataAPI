@@ -23,14 +23,14 @@ public class DocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Adds the document from the content body.
+    /// Adds the documents from the content body to the database.
     /// </summary>
     /// <response code="200">Success: The document that was added to the database.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPut]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DocumentModel>> PutDocument([FromBody] List<DocumentModel> documents)
+    public async Task<ActionResult<DocumentModel>> InsertDocument([FromBody] List<DocumentModel> documents)
     {
         try
         {
@@ -83,12 +83,12 @@ public class DocumentController : ControllerBase
     /// Retrieves a document based on the document id.
     /// </summary>
     /// <response code="200">Success: A document for the given id.</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<DocumentModel>> GetById(int id)
     {
@@ -96,7 +96,7 @@ public class DocumentController : ControllerBase
         {
             DocumentModel? result = await _repository.Get(id);
             return result == null
-                ? NotFound()
+                ? NoContent()
                 : Ok(result);
         }
         catch (Exception e)
@@ -109,13 +109,11 @@ public class DocumentController : ControllerBase
     /// <summary>
     /// Retrieves the number of documents in the database.
     /// </summary>
-    /// <response code="200">Success: A number</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="200">Success: The number of rows added.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("count")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<int>> GetTotalDocumentCount()
     {
@@ -135,11 +133,11 @@ public class DocumentController : ControllerBase
     /// Persists the changes to the given <paramref name="documentModel"/> in the database.
     /// </summary>
     /// <response code="200">Success: The updated document.</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPost]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<DocumentModel>> UpdateDocument([FromBody] DocumentModel documentModel)
     {
@@ -147,7 +145,7 @@ public class DocumentController : ControllerBase
         {
             return await _repository.Update(documentModel) == 1
                 ? Ok(_repository.Get(documentModel.Id))
-                : NotFound();
+                : NoContent();
         }
         catch (Exception e)
         {
@@ -160,11 +158,11 @@ public class DocumentController : ControllerBase
     /// Deletes the given <paramref name="documentModel"/> from the database.
     /// </summary>
     /// <response code="200">Success: Nothing is returned.</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<DocumentModel>> DeleteDocument([FromBody] DocumentModel documentModel)
     {
@@ -172,7 +170,7 @@ public class DocumentController : ControllerBase
         {
             return await _repository.Delete(documentModel) == 1
                 ? Ok()
-                : NotFound();
+                : NoContent();
         }
         catch (DbException e) when (e.SqlState != null && e.SqlState.StartsWith("23")) // integrity_constraint_violation, see https://docs.actian.com/ingres/11.0/index.html#page/OpenSQLRef/SQLSTATE_Values.htm
         {
