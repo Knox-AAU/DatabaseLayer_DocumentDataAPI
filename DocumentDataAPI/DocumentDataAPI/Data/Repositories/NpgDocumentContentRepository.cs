@@ -1,9 +1,11 @@
 using System.Data;
 using Dapper;
 using Dapper.Transaction;
+using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
+using static DocumentDataAPI.Data.Mappers.DocumentContentMap;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -25,7 +27,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id and index=@Index",
+        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>(
+            $"select * from document_contents where {DocumentId} = @Id and {DocumentContentMap.Index} = @Index",
             new { id, index });
     }
 
@@ -41,8 +44,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Adding DocumentContent with id {DocumentId} to database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            "insert into document_contents(documents_id, content, index, subheading) values (@DocumentId, @Content, @Index, @Subheading)",
+        return await con.ExecuteAsync("insert into document_contents values (@DocumentId, @Index, @Subheading, @Content)",
                         new
                         {
                             entity.DocumentId,
@@ -57,7 +59,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync("delete from document_contents where documents_id=@DocumentId and index=@Index",
+        return await con.ExecuteAsync(
+            $"delete from document_contents where {DocumentId} = @DocumentId and {DocumentContentMap.Index} = @Index",
             new { entity.DocumentId, entity.Index });
     }
 
@@ -66,8 +69,9 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogDebug("Updating DocumentContent with id {DocumentId} in database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync("update document_contents set content = @Content, subheading = @Subheading " +
-                                      "where documents_id = @DocumentId and index = @Index",
+        return await con.ExecuteAsync(
+            $"update document_contents set {Content} = @Content, {Subheading} = @Subheading " +
+            $"where {DocumentId} = @DocumentId and {DocumentContentMap.Index} = @Index",
                         new
                         {
                             entity.Content,
@@ -90,7 +94,7 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
             foreach (DocumentContentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                rowsAffected += await transaction.ExecuteAsync("insert into document_contents (documents_id, index, subheading, content) values " + parameterString, parameters);
+                rowsAffected += await transaction.ExecuteAsync("insert into document_contents values " + parameterString, parameters);
             }
 
             if (rowsAffected != models.Count)

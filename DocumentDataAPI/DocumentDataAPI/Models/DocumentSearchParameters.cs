@@ -12,31 +12,31 @@ public class DocumentSearchParameters : ISearchParameters
 
     public DocumentSearchParameters AddSource(int sourceId)
     {
-        Parameters.Add(new QueryParameter(new DocumentMap().MappedColumnName(nameof(DocumentModel.SourceId)), sourceId));
+        Parameters.Add(new QueryParameter(DocumentMap.SourceId, sourceId));
         return this;
     }
 
     public DocumentSearchParameters AddAuthor(string authorName)
     {
-        Parameters.Add(new QueryParameter(new DocumentMap().MappedColumnName(nameof(DocumentModel.Author)), authorName));
+        Parameters.Add(new QueryParameter(DocumentMap.Author, authorName));
         return this;
     }
 
     public DocumentSearchParameters AddCategory(int categoryId)
     {
-        Parameters.Add(new QueryParameter(new DocumentMap().MappedColumnName(nameof(DocumentModel.CategoryId)), categoryId));
+        Parameters.Add(new QueryParameter(DocumentMap.CategoryId, categoryId));
         return this;
     }
 
     public DocumentSearchParameters AddBeforeDate(DateTime date)
     {
-        Parameters.Add(new QueryParameter(new DocumentMap().MappedColumnName(nameof(DocumentModel.Date)), date, "<="));
+        Parameters.Add(new QueryParameter(DocumentMap.Date, date, "<="));
         return this;
     }
 
     public DocumentSearchParameters AddAfterDate(DateTime date)
     {
-        Parameters.Add(new QueryParameter(new DocumentMap().MappedColumnName(nameof(DocumentModel.Date)), date, ">="));
+        Parameters.Add(new QueryParameter(DocumentMap.Date, date, ">="));
         return this;
     }
 }
