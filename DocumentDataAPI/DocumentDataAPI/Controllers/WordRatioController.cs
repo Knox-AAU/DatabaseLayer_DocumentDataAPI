@@ -12,10 +12,12 @@ namespace DocumentDataAPI.Controllers;
 public class WordRatioController : ControllerBase
 {
     private readonly IWordRatioRepository _repository;
+    private readonly ILogger<WordRatioController> _logger;
 
-    public WordRatioController(IWordRatioRepository repository)
+    public WordRatioController(IWordRatioRepository repository, ILogger<WordRatioController> logger)
     {
         _repository = repository;
+        _logger = logger;
     }
 
     /// <summary>
@@ -200,6 +202,31 @@ public class WordRatioController : ControllerBase
         }
         catch (DbException e)
         {
+            return Problem(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Deletes an existing word ratio from the database matching the provided document id and word.
+    /// </summary>
+    /// <response code="200">Success: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> DeleteWordRatio(long documentId, string word)
+    {
+        try
+        {
+            return await _repository.Delete(documentId, word) == 1
+                ? Ok()
+                : NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to delete word ratio with document id: {documentId} and word: {word}", documentId, word);
             return Problem(e.Message);
         }
     }

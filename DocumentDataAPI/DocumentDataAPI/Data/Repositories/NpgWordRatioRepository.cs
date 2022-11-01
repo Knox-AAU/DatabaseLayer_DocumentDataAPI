@@ -112,7 +112,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
             });
     }
 
-    public async Task<WordRatioModel?> Get(int documentId, string word)
+    public async Task<WordRatioModel?> Get(long documentId, string word)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryFirstOrDefaultAsync<WordRatioModel>(
@@ -120,7 +120,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
             new { DocumentId = documentId, Word = word });
     }
 
-    public async Task<int> Delete(int id, string word)
+    public async Task<int> Delete(long id, string word)
     {
         _logger.LogDebug("Deleting WordRatio with id {DocumentId} and word {Word} from database", id,
             word);
