@@ -21,11 +21,19 @@ public class NpgDocumentRepository : IDocumentRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<DocumentModel?> Get(long id)
+    public async Task<DocumentModel?> Get(long documentId)
     {
-        _logger.LogDebug("Retrieving Document with id {id} from database", id);
+        _logger.LogDebug("Retrieving Document with id {id} from database", documentId);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentModel>($"select * from documents where {DocumentMap.Id} = @Id", new { id });
+        return await con.QueryFirstOrDefaultAsync<DocumentModel>($"select * from documents where {DocumentMap.Id} = @Id", new { id = documentId });
+    }
+
+    public async Task<int> Delete(long documentId)
+    {
+        _logger.LogDebug("Deleting Document with id {Id} from database", documentId);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync($"delete from documents where {DocumentMap.Id} = @Id",
+            new { id = documentId });
     }
 
     public async Task<IEnumerable<DocumentModel>> GetAll()
@@ -111,15 +119,6 @@ public class NpgDocumentRepository : IDocumentRepository
             throw;
         }
         return allInsertedIds;
-    }
-
-    public async Task<int> Delete(DocumentModel entity)
-    {
-        _logger.LogDebug("Deleting Document with id {Id} from database", entity.Id);
-        _logger.LogTrace("Document: {Document}", entity);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from documents where {DocumentMap.Id} = @Id",
-            new { entity.Id });
     }
 
     public async Task<int> Update(DocumentModel entity)

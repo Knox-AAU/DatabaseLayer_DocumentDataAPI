@@ -154,31 +154,26 @@ public class DocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes the given <paramref name="documentModel"/> from the database.
+    /// Deletes an existing document from the database matching the provided id.
     /// </summary>
     /// <response code="200">Success: Nothing is returned.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
-    /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DocumentModel>> DeleteDocument([FromBody] DocumentModel documentModel)
+    public async Task<ActionResult> DeleteDocument([FromQuery] long documentId)
     {
         try
         {
-            return await _repository.Delete(documentModel) == 1
+            return await _repository.Delete(documentId) == 1
                 ? Ok()
                 : NoContent();
         }
-        catch (DbException e) when (e.SqlState != null && e.SqlState.StartsWith("23")) // integrity_constraint_violation, see https://docs.actian.com/ingres/11.0/index.html#page/OpenSQLRef/SQLSTATE_Values.htm
-        {
-            _logger.LogWarning(e, "Rejected attempt to delete document with id: {id} due to constraint violations", documentModel.Id);
-            return Problem($"Could not delete document with id {documentModel.Id} due to constraint violations");
-        }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete document with id: {id}", documentModel.Id);
+            _logger.LogError(e, "Unable to delete document with id: {documentId}", documentId);
             return Problem(e.Message);
         }
     }

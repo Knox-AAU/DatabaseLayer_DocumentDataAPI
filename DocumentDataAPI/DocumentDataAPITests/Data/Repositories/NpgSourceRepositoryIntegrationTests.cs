@@ -62,7 +62,7 @@ public class NpgSourceRepositoryIntegrationTests
         await repository.Add(newSource);
 
         // Act
-        await repository.Delete(newSource);
+        await repository.Delete(newSource.Id);
         IEnumerable<SourceModel> actual = await repository.GetAll();
 
         // Assert
