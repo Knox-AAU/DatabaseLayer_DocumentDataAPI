@@ -187,10 +187,11 @@ public class WordRatioController : ControllerBase
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
+    [Route("documents/{documentId:long}/{word}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteWordRatio([FromQuery] long documentId, string word)
+    public async Task<ActionResult> DeleteWordRatio(long documentId, string word)
     {
         try
         {
