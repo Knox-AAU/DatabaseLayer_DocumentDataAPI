@@ -5,6 +5,5 @@ public interface IRepository<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAll();
     Task<long> Add(TEntity entity);
-    Task<int> Delete(TEntity entity);
     Task<int> Update(TEntity entity);
 }

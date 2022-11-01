@@ -18,9 +18,10 @@ create table ${schema}.categories (
 );
 
 create index categories_name_idx on ${schema}.categories (name);
+insert into ${schema}.categories(name) values ('Unknown');
 
 create table ${schema}.documents (
-    id              bigint primary key,
+    id              bigint generated always as identity primary key,
     sources_id      bigint not null references ${schema}.sources(id),
     categories_id   bigint not null references ${schema}.categories(id),
     publication     varchar(100),

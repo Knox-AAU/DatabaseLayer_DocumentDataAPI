@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DocumentDataAPI.Models.Attributes;
 
 namespace DocumentDataAPI.Models;
 
@@ -24,6 +25,7 @@ public class DocumentModel
     }
 
     [Required]
+    [ExcludeFromGeneratedInsertStatement]
     public long Id { get; init; }
     [Required]
     public int SourceId { get; init; }

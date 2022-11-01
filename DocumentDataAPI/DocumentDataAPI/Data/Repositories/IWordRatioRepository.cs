@@ -4,7 +4,8 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface IWordRatioRepository : IRepository<WordRatioModel>
 {
-    Task<WordRatioModel?> GetByDocumentIdAndWord(int id, string word);
+    Task<WordRatioModel?> Get(long id, string word);
+    Task<int> Delete(long documentId, string word);
     Task<IEnumerable<WordRatioModel>> GetByWord(string word);
     Task<IEnumerable<WordRatioModel>> GetByWords(IEnumerable<string> word);
     Task<IEnumerable<WordRatioModel>> GetByDocumentId(int id);

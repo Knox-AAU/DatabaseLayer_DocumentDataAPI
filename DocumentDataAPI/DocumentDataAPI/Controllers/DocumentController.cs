@@ -23,20 +23,19 @@ public class DocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Adds the documents from the content body to the database.
+    /// Adds the documents from the content body to the database and returns a sequential list of IDs for the inserted documents.
     /// </summary>
-    /// <response code="200">Success: The document that was added to the database.</response>
+    /// <response code="200">Success: A list of IDs for the added document (i.e., the last inserted ID is last in the list).</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DocumentModel>> InsertDocument([FromBody] List<DocumentModel> documents)
+    public async Task<ActionResult<List<long>>> InsertDocuments([FromBody] List<DocumentModel> documents)
     {
         try
         {
-            return await _repository.AddBatch(documents) == 0
-                ? Problem("No rows were added")
-                : Ok($"Added {documents.Count} documents.");
+            IEnumerable<long> insertedIds = await _repository.AddBatch(documents);
+            return Ok(insertedIds);
         }
         catch (Exception e)
         {
@@ -155,31 +154,27 @@ public class DocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes the given <paramref name="documentModel"/> from the database.
+    /// Deletes an existing document from the database matching the provided id.
     /// </summary>
     /// <response code="200">Success: Nothing is returned.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
-    /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
+    [Route("{documentId:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DocumentModel>> DeleteDocument([FromBody] DocumentModel documentModel)
+    public async Task<ActionResult> DeleteDocument(long documentId)
     {
         try
         {
-            return await _repository.Delete(documentModel) == 1
+            return await _repository.Delete(documentId) == 1
                 ? Ok()
                 : NoContent();
         }
-        catch (DbException e) when (e.SqlState != null && e.SqlState.StartsWith("23")) // integrity_constraint_violation, see https://docs.actian.com/ingres/11.0/index.html#page/OpenSQLRef/SQLSTATE_Values.htm
-        {
-            _logger.LogWarning(e, "Rejected attempt to delete document with id: {id} due to constraint violations", documentModel.Id);
-            return Problem($"Could not delete document with id {documentModel.Id} due to constraint violations");
-        }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete document with id: {id}", documentModel.Id);
+            _logger.LogError(e, "Unable to delete document with id: {documentId}", documentId);
             return Problem(e.Message);
         }
     }
