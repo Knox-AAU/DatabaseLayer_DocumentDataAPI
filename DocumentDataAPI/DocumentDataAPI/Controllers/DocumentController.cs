@@ -23,20 +23,19 @@ public class DocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Adds the documents from the content body to the database.
+    /// Adds the documents from the content body to the database and returns a sequential list of IDs for the inserted documents.
     /// </summary>
-    /// <response code="200">Success: The document that was added to the database.</response>
+    /// <response code="200">Success: A list of IDs for the added document (i.e., the last inserted ID is last in the list).</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<DocumentModel>> InsertDocument([FromBody] List<DocumentModel> documents)
+    public async Task<ActionResult<List<long>>> InsertDocuments([FromBody] List<DocumentModel> documents)
     {
         try
         {
-            return await _repository.AddBatch(documents) == 0
-                ? Problem("No rows were added")
-                : Ok($"Added {documents.Count} documents.");
+            IEnumerable<long> insertedIds = await _repository.AddBatch(documents);
+            return Ok(insertedIds);
         }
         catch (Exception e)
         {
