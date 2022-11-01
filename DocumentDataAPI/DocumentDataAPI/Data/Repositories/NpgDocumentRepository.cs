@@ -29,6 +29,14 @@ public class NpgDocumentRepository : IDocumentRepository
         return await con.QueryFirstOrDefaultAsync<DocumentModel>($"select * from documents where {DocumentMap.Id} = @Id", new { id });
     }
 
+    public async Task<int> Delete(long id)
+    {
+        _logger.LogDebug("Deleting Document with id {Id} from database", id);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync($"delete from documents where {DocumentMap.Id} = @Id",
+            new { id });
+    }
+
     public async Task<IEnumerable<DocumentModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all Documents from database");

@@ -31,6 +31,15 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
             new { id, index });
     }
 
+    public async Task<int> Delete(long id, int index)
+    {
+        _logger.LogDebug("Deleting DocumentContent with id {DocumentId} and index {Index} from database", id, index);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync(
+            $"delete from document_contents where {DocumentContentMap.DocumentId} = @DocumentId and {DocumentContentMap.Index} = @Index",
+            new { id, index });
+    }
+
     public async Task<IEnumerable<DocumentContentModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all DocumentContents from database");

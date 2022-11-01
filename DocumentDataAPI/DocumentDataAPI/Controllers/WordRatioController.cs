@@ -58,7 +58,7 @@ public class WordRatioController : ControllerBase
     {
         try
         {
-            WordRatioModel? result = await _repository.GetByDocumentIdAndWord(documentId, word);
+            WordRatioModel? result = await _repository.Get(documentId, word);
             return result != null
                 ? Ok(result)
                 : NoContent();

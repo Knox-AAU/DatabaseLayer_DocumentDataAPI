@@ -30,7 +30,7 @@ public class NpgWordRatioRepositoryIntegrationTests
         NpgWordRatioRepository repository = new(_connectionFactory, _logger, _sqlHelper);
 
         //Act
-        WordRatioModel? result = await repository.GetByDocumentIdAndWord(docID, word);
+        WordRatioModel? result = await repository.Get(docID, word);
 
         //Assert
         result.Should().BeEquivalentTo(expected);
@@ -120,7 +120,7 @@ public class NpgWordRatioRepositoryIntegrationTests
 
         //Act
         long result1 = await repository.Add(wordRatio);
-        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(5, "ass");
+        WordRatioModel? result2 = await repository.Get(5, "ass");
 
         //Assert
         result1.Should().Be(1L);
@@ -141,9 +141,9 @@ public class NpgWordRatioRepositoryIntegrationTests
 
         //Act
         int result1 = await repository.AddBatch(wordRatios);
-        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(5, "ass");
-        WordRatioModel? result3 = await repository.GetByDocumentIdAndWord(3, "babbi");
-        WordRatioModel? result4 = await repository.GetByDocumentIdAndWord(1, "lilo");
+        WordRatioModel? result2 = await repository.Get(5, "ass");
+        WordRatioModel? result3 = await repository.Get(3, "babbi");
+        WordRatioModel? result4 = await repository.Get(1, "lilo");
 
 
         //Assert
@@ -162,7 +162,7 @@ public class NpgWordRatioRepositoryIntegrationTests
 
         //Act
         int result1 = await repository.Update(wordRatio);
-        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(2, "dronningen");
+        WordRatioModel? result2 = await repository.Get(2, "dronningen");
 
         //Assert
         result1.Should().Be(1);
@@ -178,7 +178,7 @@ public class NpgWordRatioRepositoryIntegrationTests
 
         //Act
         int result1 = await repository.Delete(wordRatio);
-        WordRatioModel? result2 = await repository.GetByDocumentIdAndWord(2, "dronningen");
+        WordRatioModel? result2 = await repository.Get(2, "dronningen");
 
         //Assert
         result1.Should().Be(1);

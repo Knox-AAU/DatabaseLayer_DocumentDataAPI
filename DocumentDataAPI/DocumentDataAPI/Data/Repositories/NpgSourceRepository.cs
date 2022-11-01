@@ -24,6 +24,14 @@ public class NpgSourceRepository : ISourceRepository
             new { id });
     }
 
+    public async Task<int> Delete(long id)
+    {
+        _logger.LogDebug("Deleting Source with id {Id} from database", id);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync($"delete from sources where {SourceMap.Id} = @Id",
+            new { id });
+    }
+
     public async Task<IEnumerable<SourceModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all Sources from database");
