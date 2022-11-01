@@ -24,7 +24,6 @@ public class DocumentContentModel
     public long DocumentId { get; init; }
     [Required]
     public int Index { get; init; }
-    [Required(AllowEmptyStrings = true)]
     public string? Subheading { get; init; }
     [Required]
     public string Content { get; init; } = null!;

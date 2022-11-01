@@ -1,6 +1,7 @@
 using System.Data;
 using Dapper;
 using Dapper.Transaction;
+using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
@@ -25,7 +26,9 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
     {
         _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>("select * from document_contents where documents_id=@Id and index=@Index", new { id, index });
+        return await con.QueryFirstOrDefaultAsync<DocumentContentModel>(
+            $"select * from document_contents where {DocumentContentMap.DocumentId} = @Id and {DocumentContentMap.Index} = @Index",
+            new { id, index });
     }
 
     public async Task<IEnumerable<DocumentContentModel>> GetAll()
@@ -35,14 +38,14 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         return await con.QueryAsync<DocumentContentModel>("select * from document_contents");
     }
 
-    public async Task<int> Add(DocumentContentModel entity)
+    public async Task<long> Add(DocumentContentModel entity)
     {
         _logger.LogDebug("Adding DocumentContent with id {DocumentId} to database", entity.DocumentId);
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "insert into document_contents(documents_id, content, index, subheading)" +
-            " values (@DocumentId, @Content, @Index, @Subheading)",
+            $"insert into document_contents ({DocumentContentMap.DocumentId}, {DocumentContentMap.Content}, {DocumentContentMap.Index}, {DocumentContentMap.Subheading}) " +
+            "values (@DocumentId, @Index, @Subheading, @Content)",
                         new
                         {
                             entity.DocumentId,
@@ -58,8 +61,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "delete from document_contents " +
-            "where documents_id=@DocumentId and index=@Index", new { entity.DocumentId, entity.Index });
+            $"delete from document_contents where {DocumentContentMap.DocumentId} = @DocumentId and {DocumentContentMap.Index} = @Index",
+            new { entity.DocumentId, entity.Index });
     }
 
     public async Task<int> Update(DocumentContentModel entity)
@@ -68,8 +71,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            "update document_contents set content = @Content, subheading = @Subheading " +
-            "where documents_id = @DocumentId and index = @Index",
+            $"update document_contents set {DocumentContentMap.Content} = @Content, {DocumentContentMap.Subheading} = @Subheading " +
+            $"where {DocumentContentMap.DocumentId} = @DocumentId and {DocumentContentMap.Index} = @Index",
                         new
                         {
                             entity.Content,
@@ -92,7 +95,8 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
             foreach (DocumentContentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                rowsAffected += await transaction.ExecuteAsync("insert into document_contents (documents_id, index, subheading, content) values " + parameterString, parameters);
+                rowsAffected += await transaction.ExecuteAsync(
+                    $"insert into document_contents({DocumentContentMap.DocumentId}, {DocumentContentMap.Index}, {DocumentContentMap.Subheading}, {DocumentContentMap.Content}) values " + parameterString, parameters);
             }
 
             if (rowsAffected != models.Count)

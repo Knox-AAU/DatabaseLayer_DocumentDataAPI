@@ -1,5 +1,6 @@
 using System.Data;
 using Dapper;
+using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
@@ -19,24 +20,24 @@ public class NpgSourceRepository : ISourceRepository
     {
         _logger.LogDebug("Retrieving Source with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<SourceModel>("select * from data_sources where id=@Id", new { id });
+        return await con.QueryFirstOrDefaultAsync<SourceModel>($"select * from sources where {SourceMap.Id} = @Id",
+            new { id });
     }
 
     public async Task<IEnumerable<SourceModel>> GetAll()
     {
         _logger.LogDebug("Retrieving all Sources from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<SourceModel>($"select * from data_sources");
+        return await con.QueryAsync<SourceModel>("select * from sources");
     }
 
-    public async Task<int> Add(SourceModel entity)
+    public async Task<long> Add(SourceModel entity)
     {
         _logger.LogDebug("Adding Source with id {Id} to database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            "insert into data_sources(name) " +
-            "values (@Name)", new { entity.Name });
+        return await con.QuerySingleAsync<long>($"insert into sources({SourceMap.Name}) values (@Name) returning {SourceMap.Id}",
+            new { entity.Name });
     }
 
     public async Task<int> Delete(SourceModel entity)
@@ -44,9 +45,8 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Deleting Source with id {Id} from database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            "delete from data_sources " +
-            "where id=@Id", new { entity.Id });
+        return await con.ExecuteAsync($"delete from sources where {SourceMap.Id} = @Id",
+            new { entity.Id });
     }
 
     public async Task<int> Update(SourceModel entity)
@@ -54,9 +54,8 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Updating Source with id {Id} in database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            "update data_sources set name = @Name " +
-            "where id = @Id", new { entity.Name, entity.Id });
+        return await con.ExecuteAsync($"update sources set {SourceMap.Name} = @Name where {SourceMap.Id} = @Id",
+            new { entity.Name, entity.Id });
     }
 
     public async Task<long> GetCountFromId(long id)
@@ -64,14 +63,15 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Retrieving Document count with sources_id {id}", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QuerySingleOrDefaultAsync<int>(
-            "select COUNT(*) as document_count from documents " +
-            "where sources_id=@Id", new { id });
+            $"select COUNT(*) document_count from documents where {DocumentMap.SourceId} = @Id",
+            new { id });
     }
 
     public async Task<IEnumerable<SourceModel>> GetByName(string name)
     {
         _logger.LogDebug("Retrieving sources with name: {name}", name);
         using IDbConnection connection = _connectionFactory.CreateConnection();
-        return await connection.QueryAsync<SourceModel>("select * from data_sources where name = @Name", new { name });
+        return await connection.QueryAsync<SourceModel>($"select * from sources where {SourceMap.Name} = @Name",
+            new { name });
     }
 }
