@@ -208,7 +208,7 @@ public class NpgDocumentRepositoryIntegrationTests
 
         //Act
         _ = await _repository.Delete(model);
-        DocumentModel? result = await _repository.Get(1234);
+        DocumentModel? result = await _repository.Get(model.Id);
 
         //Assert
         result.Should().BeNull();
