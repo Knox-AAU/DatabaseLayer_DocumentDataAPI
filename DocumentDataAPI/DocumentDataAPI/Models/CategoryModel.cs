@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.ComponentModel.DataAnnotations;
+using DocumentDataAPI.Models.Attributes;
 
 namespace DocumentDataAPI.Models;
 
@@ -9,14 +10,14 @@ public class CategoryModel
 
     }
 
-    public CategoryModel(int categoryId)
+    public CategoryModel(int id)
     {
-        CategoryId = categoryId;
+        Id = id;
     }
 
-
     [Required]
-    public int CategoryId { get; init; }
+    [ExcludeFromGeneratedInsertStatement]
+    public int Id { get; init; }
     [Required]
     public string Name { get; init; } = null!;
 }

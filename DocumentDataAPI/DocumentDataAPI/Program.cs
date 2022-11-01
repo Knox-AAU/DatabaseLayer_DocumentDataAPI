@@ -9,7 +9,10 @@ using DocumentDataAPI.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
+}
 var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
 
 // Add services to the container.
@@ -43,6 +46,8 @@ FluentMapper.Initialize(config =>
     config.AddMap(new DocumentMap());
     config.AddMap(new WordRatioMap());
     config.AddMap(new SourceMap());
+    config.AddMap(new CategoryMap());
+    config.AddMap(new SimilarDocumentMap());
 });
 
 // Check for "deploy=true" command-line argument
