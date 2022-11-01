@@ -6,7 +6,6 @@ using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
-using static DocumentDataAPI.Data.Mappers.DocumentMap;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -27,7 +26,7 @@ public class NpgDocumentRepository : IDocumentRepository
     {
         _logger.LogDebug("Retrieving Document with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentModel>($"select * from documents where {Id} = @Id", new { id });
+        return await con.QueryFirstOrDefaultAsync<DocumentModel>($"select * from documents where {DocumentMap.Id} = @Id", new { id });
     }
 
     public async Task<IEnumerable<DocumentModel>> GetAll()
@@ -67,7 +66,7 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"insert into documents ({Id}, {Title}, {Author}, {Date}, {Summary}, {DocumentMap.Path}, {TotalWords}, {SourceId}, {CategoryId}, {Publication}, {UniqueWords})" +
+            $"insert into documents ({DocumentMap.Id}, {DocumentMap.Title}, {DocumentMap.Author}, {DocumentMap.Date}, {DocumentMap.Summary}, {DocumentMap.Path}, {DocumentMap.TotalWords}, {DocumentMap.SourceId}, {DocumentMap.CategoryId}, {DocumentMap.Publication}, {DocumentMap.UniqueWords})" +
             "values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId, @CategoryId, @Publication, @UniqueWords)",
             new
             {
@@ -99,7 +98,7 @@ public class NpgDocumentRepository : IDocumentRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 rowsAffected += await transaction.ExecuteAsync(
-                    $"insert into documents ({Id}, {SourceId}, {CategoryId}, {Publication}, {Title}, {DocumentMap.Path}, {Summary}, {Date}, {Author}, {TotalWords}, {UniqueWords}) " +
+                    $"insert into documents ({DocumentMap.Id}, {DocumentMap.SourceId}, {DocumentMap.CategoryId}, {DocumentMap.Publication}, {DocumentMap.Title}, {DocumentMap.Path}, {DocumentMap.Summary}, {DocumentMap.Date}, {DocumentMap.Author}, {DocumentMap.TotalWords}, {DocumentMap.UniqueWords}) " +
                      "values " + parameterString, parameters);
             }
 
@@ -123,7 +122,7 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogDebug("Deleting Document with id {Id} from database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from documents where {Id} = @Id",
+        return await con.ExecuteAsync($"delete from documents where {DocumentMap.Id} = @Id",
             new { entity.Id });
     }
 
@@ -133,10 +132,10 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"update documents set {Title} = @Title, {Author} = @Author, {Date} = @Date, {Summary} = @Summary, " +
-            $"{DocumentMap.Path} = @Path, {TotalWords} = @TotalWords, {SourceId} = @SourceId, {CategoryId} = @CategoryId, " +
-            $"{Publication} = @Publication, {UniqueWords} = @UniqueWords " +
-            $"where {Id} = @Id",
+            $"update documents set {DocumentMap.Title} = @Title, {DocumentMap.Author} = @Author, {DocumentMap.Date} = @Date, {DocumentMap.Summary} = @Summary, " +
+            $"{DocumentMap.Path} = @Path, {DocumentMap.TotalWords} = @TotalWords, {DocumentMap.SourceId} = @SourceId, {DocumentMap.CategoryId} = @CategoryId, " +
+            $"{DocumentMap.Publication} = @Publication, {DocumentMap.UniqueWords} = @UniqueWords " +
+            $"where {DocumentMap.Id} = @Id",
                         new
                         {
                             entity.Title,
@@ -157,6 +156,6 @@ public class NpgDocumentRepository : IDocumentRepository
     {
         _logger.LogDebug("Retrieving Document count from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QuerySingleAsync<int>($"select count({Id}) from documents");
+        return await con.QuerySingleAsync<int>($"select count({DocumentMap.Id}) from documents");
     }
 }

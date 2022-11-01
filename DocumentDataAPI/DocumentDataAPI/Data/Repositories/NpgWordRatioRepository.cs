@@ -5,7 +5,6 @@ using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
-using static DocumentDataAPI.Data.Mappers.WordRatioMap;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -36,7 +35,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"insert into word_ratios({DocumentId}, {Word}, {Amount}, {Percent}, {WordRatioMap.Rank}, {ClusteringScore}) " +
+            $"insert into word_ratios({WordRatioMap.DocumentId}, {WordRatioMap.Word}, {WordRatioMap.Amount}, {WordRatioMap.Percent}, {WordRatioMap.Rank}, {WordRatioMap.ClusteringScore}) " +
              "values (@DocumentId, @Word, @Amount, @Percent, @Rank, @ClusteringScore)",
             new
             {
@@ -62,7 +61,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 rowsAffected += await transaction.ExecuteAsync(
-                    $"insert into word_ratios({DocumentId}, {Word}, {Amount}, {Percent}, {WordRatioMap.Rank}, {ClusteringScore}) values " + parameterString,
+                    $"insert into word_ratios({WordRatioMap.DocumentId}, {WordRatioMap.Word}, {WordRatioMap.Amount}, {WordRatioMap.Percent}, {WordRatioMap.Rank}, {WordRatioMap.ClusteringScore}) values " + parameterString,
                     parameters);
             }
 
@@ -89,7 +88,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"delete from word_ratios where {DocumentId} = @DocumentId and {Word} = @Word",
+            $"delete from word_ratios where {WordRatioMap.DocumentId} = @DocumentId and {WordRatioMap.Word} = @Word",
             new { entity.DocumentId, entity.Word });
     }
 
@@ -100,8 +99,8 @@ public class NpgWordRatioRepository : IWordRatioRepository
         _logger.LogTrace("WordRatio: {WordRatio}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"update word_ratios set {Amount} = @Amount, {Percent} = @Percent, {WordRatioMap.Rank} = @Rank, {ClusteringScore} = @ClusteringScore " +
-            $"where {DocumentId} = @DocumentId and {Word} = @Word",
+            $"update word_ratios set {WordRatioMap.Amount} = @Amount, {WordRatioMap.Percent} = @Percent, {WordRatioMap.Rank} = @Rank, {WordRatioMap.ClusteringScore} = @ClusteringScore " +
+            $"where {WordRatioMap.DocumentId} = @DocumentId and {WordRatioMap.Word} = @Word",
             new
             {
                 entity.Word,
@@ -117,26 +116,28 @@ public class NpgWordRatioRepository : IWordRatioRepository
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryFirstOrDefaultAsync<WordRatioModel>(
-            $"select * from word_ratios where {Word} = @Word and {DocumentId} = @DocumentId",
+            $"select * from word_ratios where {WordRatioMap.Word} = @Word and {WordRatioMap.DocumentId} = @DocumentId",
             new { DocumentId = documentId, Word = word });
     }
 
     public async Task<IEnumerable<WordRatioModel>> GetByDocumentId(int id)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {DocumentId} = @DocumentId",
+        return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {WordRatioMap.DocumentId} = @DocumentId",
             new { DocumentId = id });
     }
 
     public async Task<IEnumerable<WordRatioModel>> GetByWord(string word)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {Word} = @Word", new { Word = word });
+        return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {WordRatioMap.Word} = @Word",
+            new { Word = word });
     }
 
     public async Task<IEnumerable<WordRatioModel>> GetByWords(IEnumerable<string> wordlist)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {Word} = any(@wordlist)", new { wordlist });
+        return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {WordRatioMap.Word} = any(@wordlist)",
+            new { wordlist });
     }
 }

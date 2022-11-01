@@ -2,7 +2,6 @@ using System.Data;
 using Dapper;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Models;
-using static DocumentDataAPI.Data.Mappers.SourceMap;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -21,7 +20,7 @@ public class NpgSourceRepository : ISourceRepository
     {
         _logger.LogDebug("Retrieving Source with id {id} from database", id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<SourceModel>($"select * from sources where {Id} = @Id",
+        return await con.QueryFirstOrDefaultAsync<SourceModel>($"select * from sources where {SourceMap.Id} = @Id",
             new { id });
     }
 
@@ -37,7 +36,7 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Adding Source with id {Id} to database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QuerySingleAsync<long>($"insert into sources({Name}) values (@Name) returning {Id}",
+        return await con.QuerySingleAsync<long>($"insert into sources({SourceMap.Name}) values (@Name) returning {SourceMap.Id}",
             new { entity.Name });
     }
 
@@ -46,7 +45,7 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Deleting Source with id {Id} from database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from sources where {Id} = @Id",
+        return await con.ExecuteAsync($"delete from sources where {SourceMap.Id} = @Id",
             new { entity.Id });
     }
 
@@ -55,7 +54,7 @@ public class NpgSourceRepository : ISourceRepository
         _logger.LogDebug("Updating Source with id {Id} in database", entity.Id);
         _logger.LogTrace("Source: {Source}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"update sources set {Name} = @Name where {Id} = @Id",
+        return await con.ExecuteAsync($"update sources set {SourceMap.Name} = @Name where {SourceMap.Id} = @Id",
             new { entity.Name, entity.Id });
     }
 
@@ -72,7 +71,7 @@ public class NpgSourceRepository : ISourceRepository
     {
         _logger.LogDebug("Retrieving sources with name: {name}", name);
         using IDbConnection connection = _connectionFactory.CreateConnection();
-        return await connection.QueryAsync<SourceModel>($"select * from sources where {Name} = @Name",
+        return await connection.QueryAsync<SourceModel>($"select * from sources where {SourceMap.Name} = @Name",
             new { name });
     }
 }
