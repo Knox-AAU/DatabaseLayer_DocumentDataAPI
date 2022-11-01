@@ -4,7 +4,6 @@ using Dapper;
 using Dapper.Transaction;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
-using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
@@ -22,11 +21,19 @@ public class NpgDocumentRepository : IDocumentRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<DocumentModel?> Get(long id)
+    public async Task<DocumentModel?> Get(long documentId)
     {
-        _logger.LogDebug("Retrieving Document with id {id} from database", id);
+        _logger.LogDebug("Retrieving Document with id {id} from database", documentId);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentModel>($"select * from documents where {DocumentMap.Id} = @Id", new { id });
+        return await con.QueryFirstOrDefaultAsync<DocumentModel>($"select * from documents where {DocumentMap.Id} = @Id", new { id = documentId });
+    }
+
+    public async Task<int> Delete(long documentId)
+    {
+        _logger.LogDebug("Deleting Document with id {Id} from database", documentId);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync($"delete from documents where {DocumentMap.Id} = @Id",
+            new { id = documentId });
     }
 
     public async Task<IEnumerable<DocumentModel>> GetAll()
@@ -65,12 +72,11 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogDebug("Adding Document with id {Id} to database", entity.Id);
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            $"insert into documents ({DocumentMap.Id}, {DocumentMap.Title}, {DocumentMap.Author}, {DocumentMap.Date}, {DocumentMap.Summary}, {DocumentMap.Path}, {DocumentMap.TotalWords}, {DocumentMap.SourceId}, {DocumentMap.CategoryId}, {DocumentMap.Publication}, {DocumentMap.UniqueWords})" +
-            "values (@Id, @Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId, @CategoryId, @Publication, @UniqueWords)",
+        return await con.QuerySingleAsync<long>(
+            $"insert into documents ({DocumentMap.Title}, {DocumentMap.Author}, {DocumentMap.Date}, {DocumentMap.Summary}, {DocumentMap.Path}, {DocumentMap.TotalWords}, {DocumentMap.SourceId}, {DocumentMap.CategoryId}, {DocumentMap.Publication}, {DocumentMap.UniqueWords})" +
+            $"values (@Title, @Author, @Date, @Summary, @Path, @TotalWords, @SourceId, @CategoryId, @Publication, @UniqueWords) returning {DocumentMap.Id}",
             new
             {
-                entity.Id,
                 entity.Title,
                 entity.Author,
                 entity.Date,
@@ -84,9 +90,9 @@ public class NpgDocumentRepository : IDocumentRepository
             });
     }
 
-    public async Task<int> AddBatch(List<DocumentModel> models)
+    public async Task<IEnumerable<long>> AddBatch(List<DocumentModel> models)
     {
-        int rowsAffected = 0;
+        IEnumerable<long> allInsertedIds = new List<long>();
         _logger.LogDebug("Adding {count} documents to database", models.Count);
         using IDbConnection con = _connectionFactory.CreateConnection();
         con.Open();
@@ -97,15 +103,13 @@ public class NpgDocumentRepository : IDocumentRepository
             foreach (DocumentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                rowsAffected += await transaction.ExecuteAsync(
-                    $"insert into documents ({DocumentMap.Id}, {DocumentMap.SourceId}, {DocumentMap.CategoryId}, {DocumentMap.Publication}, {DocumentMap.Title}, {DocumentMap.Path}, {DocumentMap.Summary}, {DocumentMap.Date}, {DocumentMap.Author}, {DocumentMap.TotalWords}, {DocumentMap.UniqueWords}) " +
-                     "values " + parameterString, parameters);
+                IEnumerable<long> insertedIds = await transaction.QueryAsync<long>(
+                    $"insert into documents ({DocumentMap.SourceId}, {DocumentMap.CategoryId}, {DocumentMap.Publication}, {DocumentMap.Title}, {DocumentMap.Path}, {DocumentMap.Summary}, {DocumentMap.Date}, {DocumentMap.Author}, {DocumentMap.TotalWords}, {DocumentMap.UniqueWords}) " +
+                    $"values {parameterString} returning {DocumentMap.Id}",
+                    parameters);
+                allInsertedIds = allInsertedIds.Concat(insertedIds);
             }
 
-            if (rowsAffected != models.Count)
-            {
-                throw new RowsAffectedMismatchException();
-            }
             transaction.Commit();
         }
         catch (Exception e)
@@ -114,16 +118,7 @@ public class NpgDocumentRepository : IDocumentRepository
             _logger.LogError(e, "Failed to insert documents");
             throw;
         }
-        return rowsAffected;
-    }
-
-    public async Task<int> Delete(DocumentModel entity)
-    {
-        _logger.LogDebug("Deleting Document with id {Id} from database", entity.Id);
-        _logger.LogTrace("Document: {Document}", entity);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from documents where {DocumentMap.Id} = @Id",
-            new { entity.Id });
+        return allInsertedIds;
     }
 
     public async Task<int> Update(DocumentModel entity)

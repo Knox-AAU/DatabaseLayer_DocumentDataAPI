@@ -124,26 +124,27 @@ public class DocumentContentController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes an existing document content from the request body in the database.
+    /// Deletes an existing document content from the database matching the provided id and index.
     /// </summary>
     /// <response code="200">Success: Nothing is returned.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
+    [Route("{documentId:long}/{documentIndex:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteDocumentContent([FromBody] DocumentContentModel documentContent)
+    public async Task<ActionResult> DeleteDocumentContent(long documentId, int documentIndex)
     {
         try
         {
-            return await _repository.Delete(documentContent) == 1
+            return await _repository.Delete(documentId, documentIndex) == 1
                 ? Ok()
                 : NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete document content with document id: {documentId}", documentContent.DocumentId);
+            _logger.LogError(e, "Unable to delete document content with document id: {documentId} and index: {documentIndex}", documentId, documentIndex);
             return Problem(e.Message);
         }
     }

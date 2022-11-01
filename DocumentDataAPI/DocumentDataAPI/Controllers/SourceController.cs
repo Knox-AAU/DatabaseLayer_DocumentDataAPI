@@ -172,27 +172,27 @@ public class SourceController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes the source given in the request body in the database.
+    /// Deletes an existing source from the database matching the provided id.
     /// </summary>
-    /// <response code="200">Success: The source that was deleted.</response>
+    /// <response code="200">Success: Nothing is returned.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
-    [Consumes(MediaTypeNames.Application.Json)]
+    [Route("{sourceId:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<SourceModel?>> DeleteSource([FromBody] SourceModel source)
+    public async Task<ActionResult> DeleteSource(long sourceId)
     {
         try
         {
-            return await _repository.Delete(source) == 1
-                ? Ok(source)
+            return await _repository.Delete(sourceId) == 1
+                ? Ok()
                 : NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete source ({id}, {name})", source.Id, source.Name);
+            _logger.LogError(e, "Unable to delete source with id: {sourceId}", sourceId);
             return Problem(e.Message);
         }
     }
