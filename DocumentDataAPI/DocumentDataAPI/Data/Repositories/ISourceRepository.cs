@@ -4,8 +4,8 @@ namespace DocumentDataAPI.Data.Repositories;
 
 public interface ISourceRepository : IRepository<SourceModel>
 {
-    Task<SourceModel?> Get(long id);
-    Task<int> Delete(long id);
+    Task<SourceModel?> Get(long sourceId);
+    Task<int> Delete(long sourceId);
     Task<long> GetCountFromId(long id);
     Task<IEnumerable<SourceModel>> GetByName(string name);
 }

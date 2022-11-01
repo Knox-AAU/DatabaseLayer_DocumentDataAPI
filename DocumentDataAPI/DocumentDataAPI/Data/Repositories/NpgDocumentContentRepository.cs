@@ -22,22 +22,22 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<DocumentContentModel?> Get(long id, int index)
+    public async Task<DocumentContentModel?> Get(long documentId, int index)
     {
-        _logger.LogDebug("Retrieving DocumentContent with id {id} from database", id);
+        _logger.LogDebug("Retrieving DocumentContent with id {id} from database", documentId);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryFirstOrDefaultAsync<DocumentContentModel>(
             $"select * from document_contents where {DocumentContentMap.DocumentId} = @Id and {DocumentContentMap.Index} = @Index",
-            new { id, index });
+            new { id = documentId, index });
     }
 
-    public async Task<int> Delete(long id, int index)
+    public async Task<int> Delete(long documentId, int index)
     {
-        _logger.LogDebug("Deleting DocumentContent with id {DocumentId} and index {Index} from database", id, index);
+        _logger.LogDebug("Deleting DocumentContent with id {DocumentId} and index {Index} from database", documentId, index);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
             $"delete from document_contents where {DocumentContentMap.DocumentId} = @DocumentId and {DocumentContentMap.Index} = @Index",
-            new { id, index });
+            new { documentId, index });
     }
 
     public async Task<IEnumerable<DocumentContentModel>> GetAll()
