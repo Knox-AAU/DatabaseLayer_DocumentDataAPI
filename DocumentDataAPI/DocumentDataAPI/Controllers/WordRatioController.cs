@@ -125,32 +125,6 @@ public class WordRatioController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes the word ratio that is given in the request body.
-    /// </summary>
-    /// <response code="200">Success: The deleted word ratio.</response>
-    /// <response code="204">No Content: Nothing is returned.</response>
-    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpDelete]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<int>> DeleteWordRatio([FromBody] WordRatioModel wordRatio)
-    {
-        try
-        {
-            int result = await _repository.Delete(wordRatio);
-            return result == 1
-                ? Ok(result)
-                : NoContent();
-        }
-        catch (DbException e)
-        {
-            return Problem(e.Message);
-        }
-    }
-
-    /// <summary>
     /// Updates the values of the word ratio that is given in the request body.
     /// </summary>
     /// <response code="200">Success: The updated word ratio.</response>
@@ -216,7 +190,7 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteWordRatio(long documentId, string word)
+    public async Task<ActionResult> DeleteWordRatio([FromQuery] long documentId, string word)
     {
         try
         {

@@ -48,15 +48,6 @@ public class NpgSourceRepository : ISourceRepository
             new { entity.Name });
     }
 
-    public async Task<int> Delete(SourceModel entity)
-    {
-        _logger.LogDebug("Deleting Source with id {Id} from database", entity.Id);
-        _logger.LogTrace("Source: {Source}", entity);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from sources where {SourceMap.Id} = @Id",
-            new { entity.Id });
-    }
-
     public async Task<int> Update(SourceModel entity)
     {
         _logger.LogDebug("Updating Source with id {Id} in database", entity.Id);

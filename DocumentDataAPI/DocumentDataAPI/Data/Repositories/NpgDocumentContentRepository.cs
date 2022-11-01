@@ -64,16 +64,6 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
                         });
     }
 
-    public async Task<int> Delete(DocumentContentModel entity)
-    {
-        _logger.LogDebug("Deleting DocumentContent with id {DocumentId} from database", entity.DocumentId);
-        _logger.LogTrace("DocumentContent: {DocumentContent}", entity);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            $"delete from document_contents where {DocumentContentMap.DocumentId} = @DocumentId and {DocumentContentMap.Index} = @Index",
-            new { entity.DocumentId, entity.Index });
-    }
-
     public async Task<int> Update(DocumentContentModel entity)
     {
         _logger.LogDebug("Updating DocumentContent with id {DocumentId} in database", entity.DocumentId);

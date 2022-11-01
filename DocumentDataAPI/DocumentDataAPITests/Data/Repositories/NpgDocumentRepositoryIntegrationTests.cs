@@ -193,7 +193,7 @@ public class NpgDocumentRepositoryIntegrationTests
         await _repository.Add(model);
 
         //Act
-        int result = await _repository.Delete(model);
+        int result = await _repository.Delete(model.Id);
 
         //Assert
         result.Should().Be(1, "because the add method should only update 1 row in the database");
@@ -207,7 +207,7 @@ public class NpgDocumentRepositoryIntegrationTests
         await _repository.Add(model);
 
         //Act
-        _ = await _repository.Delete(model);
+        _ = await _repository.Delete(model.Id);
         DocumentModel? result = await _repository.Get(model.Id);
 
         //Assert

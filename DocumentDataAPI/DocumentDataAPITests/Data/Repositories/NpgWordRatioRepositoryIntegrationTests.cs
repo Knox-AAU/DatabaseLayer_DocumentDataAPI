@@ -177,7 +177,7 @@ public class NpgWordRatioRepositoryIntegrationTests
         WordRatioModel wordRatio = new(2, 2, 1.6100000143051147, (Rank) 1, "dronningen");
 
         //Act
-        int result1 = await repository.Delete(wordRatio);
+        int result1 = await repository.Delete(wordRatio.DocumentId, wordRatio.Word);
         WordRatioModel? result2 = await repository.Get(2, "dronningen");
 
         //Assert

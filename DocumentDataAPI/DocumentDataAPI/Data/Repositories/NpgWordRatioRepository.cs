@@ -81,17 +81,6 @@ public class NpgWordRatioRepository : IWordRatioRepository
         return rowsAffected;
     }
 
-    public async Task<int> Delete(WordRatioModel entity)
-    {
-        _logger.LogDebug("Deleting WordRatio with id {DocumentId} and word {Word} from database", entity.DocumentId,
-            entity.Word);
-        _logger.LogTrace("WordRatio: {WordRatio}", entity);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            $"delete from word_ratios where {WordRatioMap.DocumentId} = @DocumentId and {WordRatioMap.Word} = @Word",
-            new { entity.DocumentId, entity.Word });
-    }
-
     public async Task<int> Update(WordRatioModel entity)
     {
         _logger.LogDebug("Updating WordRatio with id {DocumentId} and word {Word} in database", entity.DocumentId,

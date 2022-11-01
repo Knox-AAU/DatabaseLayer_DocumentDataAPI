@@ -125,15 +125,6 @@ public class NpgDocumentRepository : IDocumentRepository
         return rowsAffected;
     }
 
-    public async Task<int> Delete(DocumentModel entity)
-    {
-        _logger.LogDebug("Deleting Document with id {Id} from database", entity.Id);
-        _logger.LogTrace("Document: {Document}", entity);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from documents where {DocumentMap.Id} = @Id",
-            new { entity.Id });
-    }
-
     public async Task<int> Update(DocumentModel entity)
     {
         _logger.LogDebug("Updating Document with id {Id} in database", entity.Id);
