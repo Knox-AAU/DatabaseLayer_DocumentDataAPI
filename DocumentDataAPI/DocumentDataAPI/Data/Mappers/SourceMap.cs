@@ -1,5 +1,4 @@
 ﻿using Dapper.FluentMap.Mapping;
-using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Mappers;
