@@ -1,13 +1,18 @@
-﻿namespace DocumentDataAPI.Models.Lemmatizer;
+﻿using System.Text.Json.Serialization;
+
+namespace DocumentDataAPI.Models.Lemmatizer;
 
 public class LemmatizerRequestModel
 {
     public LemmatizerRequestModel(string input, string language)
     {
-        Input = input;
+        String = input;
         Language = language;
     }
 
-    public string Input { get; }
-    public string Language { get; }
+    [JsonPropertyName("string")]
+    public string String { get; set; }
+
+    [JsonPropertyName("language")]
+    public string Language { get; set; }
 }

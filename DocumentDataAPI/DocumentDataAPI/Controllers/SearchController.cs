@@ -37,9 +37,10 @@ public class SearchController : ControllerBase
     {
         try
         {
-            string lemmatizerInput = words.ToLowerInvariant().Replace(',', ' '); // Not sure if lemmatizer can handle a comma-separated list
+            string lemmatizerInput = words.Replace(',', ' ');
             string lemmatizedString = await _lemmatizerService.GetLemmatizedString(lemmatizerInput);
-            List<string> processedWords = lemmatizedString.Split(' ').ToList();
+            List<string> processedWords = lemmatizedString.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                .ToList();
 
             DocumentSearchParameters parameters = new(sourceId, author, categoryId, beforeDate, afterDate);
 

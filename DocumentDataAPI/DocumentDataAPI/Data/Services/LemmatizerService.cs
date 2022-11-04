@@ -21,9 +21,9 @@ public class LemmatizerService : ILemmatizerService
     {
         LemmatizerRequestModel requestModel = new(input, language);
         HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_lemmatizerApiUrl, requestModel);
-        LemmatizerResponseModel lemmatizedResponse = await response.Content.ReadFromJsonAsync<LemmatizerResponseModel>()
-            ?? throw new HttpRequestException("Could not parse the response from the Lemmatizer API");
+        LemmatizerResponseModel? lemmatizedResponse = await response.Content.ReadFromJsonAsync<LemmatizerResponseModel>();
 
-        return lemmatizedResponse.LemmatizedString;
+        return lemmatizedResponse?.LemmatizedString
+               ?? throw new HttpRequestException("Could not parse the response from the Lemmatizer API");
     }
 }

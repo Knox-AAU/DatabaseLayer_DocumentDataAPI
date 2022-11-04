@@ -1,6 +1,9 @@
-﻿namespace DocumentDataAPI.Models.Lemmatizer;
+﻿using System.Text.Json.Serialization;
+
+namespace DocumentDataAPI.Models.Lemmatizer;
 
 public class LemmatizerResponseModel
 {
-    public string LemmatizedString { get; } = null!;
+    [JsonPropertyName("lemmatized_string")]
+    public string LemmatizedString { get; set; } = null!;
 }
