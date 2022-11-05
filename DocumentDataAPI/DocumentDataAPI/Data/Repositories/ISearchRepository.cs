@@ -2,7 +2,7 @@
 
 namespace DocumentDataAPI.Data.Repositories;
 
-public interface ISearchRepository : IRepository<DocumentModel>
+public interface ISearchRepository
 {
     Task<IEnumerable<SearchResponseModel>> Get(List<string> processedWords, DocumentSearchParameters parameters);
 }
