@@ -35,7 +35,7 @@ public class StatusController : ControllerBase
                 return Ok();
             }
 
-            return Problem("Connection to the database could not be established", statusCode:500);
+            return Problem("Connection to the database could not be established", statusCode: 500);
         }
         catch (Exception e)
         {
