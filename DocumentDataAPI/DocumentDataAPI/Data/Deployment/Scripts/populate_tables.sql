@@ -1,18 +1,18 @@
 ﻿-- Populates the given document_data schema with test data.
 
-INSERT INTO ${schema}.data_sources ("name") VALUES
+INSERT INTO ${schema}.sources ("name") VALUES
     ('DR'),
     ('TV2');
 
 INSERT INTO ${schema}.categories (name) VALUES
     ('Nyhedsartikel');
 
-INSERT INTO ${schema}.documents (id,sources_id,title,"path",summary,"date",author,total_words, categories_id, unique_words) VALUES
-    (1,1,'Iran hævder, at Mahsa Amini døde af organsvigt','https://www.dr.dk/nyheder/seneste/iran-haevder-mahsa-amini-doede-af-organsvigt','','2022-10-07 13:40:00','Maja Lærke Maach',0, 1, 0),
-    (2,1,'Kongehuset: Dronningen har talt med prins Joachim på Fredensborg Slot','https://www.dr.dk/nyheder/seneste/kongehuset-dronningen-har-talt-med-prins-joachim-paa-fredensborg-slot','','2022-10-07 13:33:00','Maja Lærke Maach',0, 1, 0),
-    (3,1,'Radikale vil have nationalt kompromis om unges trivsel','https://www.dr.dk/nyheder/seneste/radikale-vil-have-nationalt-kompromis-om-unges-trivsel','','2022-10-06 23:55:00','Andreas Nygaard Just',0, 1, 0),
-    (4,2,'Eks-landsholdsatlet skal i fængsel for grov vold og voldtægt','https://nyheder.tv2.dk/live/2022-10-07-nyhedsoverblik#entry=3830920','','2022-10-07 05:01:00','Mette Stender Pedersen',0, 1, 0),
-    (5,2,'Folk stod i timelange køer for vacciner','https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner','','2022-10-03 09:01:00','Jonathan Kjær Troelsen',0, 1, 0);
+INSERT INTO ${schema}.documents (sources_id,title,"path",summary,"date",author,total_words, categories_id, unique_words) VALUES
+    (1,'Iran hævder, at Mahsa Amini døde af organsvigt','https://www.dr.dk/nyheder/seneste/iran-haevder-mahsa-amini-doede-af-organsvigt',null,'2022-10-07 13:40:00','Maja Lærke Maach',0, 2, 0),
+    (1,'Kongehuset: Dronningen har talt med prins Joachim på Fredensborg Slot','https://www.dr.dk/nyheder/seneste/kongehuset-dronningen-har-talt-med-prins-joachim-paa-fredensborg-slot',null,'2022-10-07 13:33:00','Maja Lærke Maach',0, 2, 0),
+    (1,'Radikale vil have nationalt kompromis om unges trivsel','https://www.dr.dk/nyheder/seneste/radikale-vil-have-nationalt-kompromis-om-unges-trivsel',null,'2022-10-06 23:55:00','Andreas Nygaard Just',0, 2, 0),
+    (2,'Eks-landsholdsatlet skal i fængsel for grov vold og voldtægt','https://nyheder.tv2.dk/live/2022-10-07-nyhedsoverblik#entry=3830920',null,'2022-10-07 05:01:00','Mette Stender Pedersen',0, 2, 0),
+    (2,'Folk stod i timelange køer for vacciner','https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner',null,'2022-10-03 09:01:00','Jonathan Kjær Troelsen',0, 2, 0);
 
 INSERT INTO ${schema}.document_contents (documents_id,"content",index) VALUES
     (1,'Den unge kvinde Mahsa Amini, som døde efter at være blevet banket af Irans moralpoliti, afgik ikke ved døden som følge af slag mod hovedet, arme og ben.

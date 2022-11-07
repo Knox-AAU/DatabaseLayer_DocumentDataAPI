@@ -1,0 +1,73 @@
+name: Docker Publish
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  push:
+    branches: [ master ]
+    # Publish /semver tags as releases.
+    tags: [ '*.*.*' ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Replace tokens in appsettings with values from the repository secrets
+      #- uses: cschleiden/replace-tokens@v1
+      #  with:
+      #    file: DocumentDataAPI/DocumentDataAPI/appsettings.json
+      #  env:
+      #    DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+      #    DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      #    DATABASE_DATABASE: ${{ secrets.DATABASE_DATABASE }}
+      #    DATABASE_SCHEMA: ${{ secrets.DATABASE_SCHEMA }}
+      #    DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+      #    DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Docker Metadata action
+        id: meta
+        uses: docker/metadata-action@v4.1.1
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v3.2.0
+        with:
+          context: DocumentDataAPI/DocumentDataAPI/
+          file: DocumentDataAPI/DocumentDataAPI/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

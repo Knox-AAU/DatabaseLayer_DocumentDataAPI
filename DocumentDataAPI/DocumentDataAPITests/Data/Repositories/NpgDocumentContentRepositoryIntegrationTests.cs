@@ -57,11 +57,12 @@ public class NpgDocumentContentRepositoryIntegrationTests
     {
         // Arrange
         NpgDocumentContentRepository repository = new(_connectionFactory, _logger, _sqlHelper);
-        DocumentContentModel toBeDeleted = (await repository.Get(5, 0))!;
-        await repository.Delete(toBeDeleted);
+        int documentId = 5;
+        int documentIndex = 0;
+        await repository.Delete(documentId, documentIndex);
 
         // Act
-        DocumentContentModel? actual = await repository.Get(5, 0);
+        DocumentContentModel? actual = await repository.Get(documentId, documentIndex);
 
         // Assert
         actual.Should().BeNull("because the document_content with id 5 was removed from the database");

@@ -62,7 +62,7 @@ public class NpgSourceRepositoryIntegrationTests
         await repository.Add(newSource);
 
         // Act
-        await repository.Delete(newSource);
+        await repository.Delete(newSource.Id);
         IEnumerable<SourceModel> actual = await repository.GetAll();
 
         // Assert
@@ -121,7 +121,7 @@ public class NpgSourceRepositoryIntegrationTests
         // Arrange
         NpgSourceRepository repository = new(_connectionFactory, _logger);
         SourceModel source = new(1, "DR");
-        long expected = 3;
+        const long expected = 3;
 
         // Act
         long actual = await repository.GetCountFromId(source.Id);

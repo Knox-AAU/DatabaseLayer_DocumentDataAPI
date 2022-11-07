@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.ComponentModel.DataAnnotations;
+using DocumentDataAPI.Models.Attributes;
 
 namespace DocumentDataAPI.Models;
 
@@ -15,6 +16,7 @@ public class SourceModel
     }
 
     [Required]
+    [ExcludeFromGeneratedInsertStatement]
     public long Id { get; init; }
     [Required]
     public string Name { get; init; } = null!;

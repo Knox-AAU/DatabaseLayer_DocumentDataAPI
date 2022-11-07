@@ -11,44 +11,42 @@ namespace DocumentDataAPITests.Data.Repositories;
 [Collection("DocumentDataApiIntegrationTests")]
 public class NpgDocumentRepositoryIntegrationTests
 {
-    private readonly NpgDbConnectionFactory _connectionFactory;
-    private readonly ILogger<NpgDocumentRepository> _logger;
     private readonly NpgDocumentRepository _repository;
 
     public NpgDocumentRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
-        _logger = new Logger<NpgDocumentRepository>(new NullLoggerFactory());
-        _repository = new NpgDocumentRepository(_connectionFactory, _logger, new DapperSqlHelper(TestHelper.Configuration));
+        NpgDbConnectionFactory connectionFactory = new(TestHelper.DatabaseOptions.ConnectionString);
+        ILogger<NpgDocumentRepository> logger = new Logger<NpgDocumentRepository>(new NullLoggerFactory());
+        _repository = new NpgDocumentRepository(connectionFactory, logger, new DapperSqlHelper(TestHelper.Configuration));
         TestHelper.DeployDatabaseWithTestData();
     }
 
-    private static List<DocumentModel> _documentData =>
+    private static List<DocumentModel> DocumentData =>
         new List<DocumentModel>
         {
-            new DocumentModel("author one", DateTime.Parse("01-01-2020 12:30:00"), (long)1234, "/path/to/document/document", 1, "summary one", "title one", 123456, 1, null, 0),
-            new DocumentModel("author two", DateTime.Parse("02-02-2020 13:40:00"), (long)2345, "/path/to/document/secondDocument", 2, "summary two", "title two", 550, 1, null, 0),
-            new DocumentModel("author three", DateTime.Parse("03-03-2020 14:50:00"), (long)3456, "path/to/document/thirdDocument", 1, "summary three", "title three", 600000, 1, null, 0),
-            new DocumentModel("Maja Lærke Maach", DateTime.Parse("2022-10-07T13:40:00"), 1, "https://www.dr.dk/nyheder/seneste/iran-haevder-mahsa-amini-doede-af-organsvigt", 1, "", "Iran hævder, at Mahsa Amini døde af organsvigt", 0, 1, null, 0),
-            new DocumentModel("Maja Lærke Maach", DateTime.Parse("2022-10-07T13:33:00"), 2, "https://www.dr.dk/nyheder/seneste/kongehuset-dronningen-har-talt-med-prins-joachim-paa-fredensborg-slot", 1, "", "Kongehuset: Dronningen har talt med prins Joachim på Fredensborg Slot", 0, 1, null, 0),
-            new DocumentModel("Mette Stender Pedersen", DateTime.Parse("2022-10-07 05:01:00"), 4, "https://nyheder.tv2.dk/live/2022-10-07-nyhedsoverblik#entry=3830920", 2, "", "Eks-landsholdsatlet skal i fængsel for grov vold og voldtægt", 0, 1, null, 0),
-            new DocumentModel("Jonathan Kjær Troelsen", DateTime.Parse("2022-10-03 09:01:00"), 5, "https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner", 2, "", "Folk stod i timelange køer for vacciner", 0, 1, null, 0),
-            new DocumentModel("Jonathan Kjær Troelsen", DateTime.Parse("2022-10-03 09:01:00"), 1234, "https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner", 2, "", "Folk stod i timelange køer for vacciner", 0, 1, null, 0),
+            new ("author one", DateTime.Parse("01-01-2020 12:30:00"), 0, "/path/to/document/document", 1, "summary one", "title one", 123456, 1, null, 0),
+            new ("author two", DateTime.Parse("02-02-2020 13:40:00"), 0, "/path/to/document/secondDocument", 2, "summary two", "title two", 550, 1, null, 0),
+            new ("author three", DateTime.Parse("03-03-2020 14:50:00"), 0, "path/to/document/thirdDocument", 1, "summary three", "title three", 600000, 1, null, 0),
+            new ("Maja Lærke Maach", DateTime.Parse("2022-10-07T13:40:00"), 1, "https://www.dr.dk/nyheder/seneste/iran-haevder-mahsa-amini-doede-af-organsvigt", 1, null, "Iran hævder, at Mahsa Amini døde af organsvigt", 0, 2, null, 0),
+            new ("Maja Lærke Maach", DateTime.Parse("2022-10-07T13:33:00"), 2, "https://www.dr.dk/nyheder/seneste/kongehuset-dronningen-har-talt-med-prins-joachim-paa-fredensborg-slot", 1, null, "Kongehuset: Dronningen har talt med prins Joachim på Fredensborg Slot", 0, 2, null, 0),
+            new ("Mette Stender Pedersen", DateTime.Parse("2022-10-07 05:01:00"), 4, "https://nyheder.tv2.dk/live/2022-10-07-nyhedsoverblik#entry=3830920", 2, null, "Eks-landsholdsatlet skal i fængsel for grov vold og voldtægt", 0, 2, null, 0),
+            new ("Jonathan Kjær Troelsen", DateTime.Parse("2022-10-03 09:01:00"), 5, "https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner", 2, null, "Folk stod i timelange køer for vacciner", 0, 2, null, 0),
+            new ("Jonathan Kjær Troelsen", DateTime.Parse("2022-10-03 09:01:00"), 1234, "https://nyheder.tv2.dk/lokalt/2022-10-03-folk-stod-i-timelange-koeer-for-vacciner", 2, null, "Folk stod i timelange køer for vacciner", 0, 2, null, 0),
         };
 
     [Fact]
     public async Task Get_ReturnsCorrectRows()
     {
         // Arrange
-        DocumentModel model = _documentData[3];
-        int id = 1;
+        DocumentModel model = DocumentData[3];
+        const int id = 1;
 
         // Act
         DocumentModel? result = await _repository.Get(id);
 
         // Assert
         result.Should().NotBeNull()
-            .And.BeEquivalentTo(model);
+            .And.Subject.As<DocumentModel>().Id.Should().Be(id);
     }
 
     [Theory]
@@ -82,7 +80,7 @@ public class NpgDocumentRepositoryIntegrationTests
     {
         // Arrange
         DocumentSearchParameters parameters = new();
-        string searchAuthor = "Maja Lærke Maach";
+        const string searchAuthor = "Maja Lærke Maach";
         parameters.AddAuthor(searchAuthor);
 
         // Act
@@ -115,87 +113,85 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
-    public async Task Add_addsRowsCorrect_ReturnRowsAffected()
+    public async Task Add_AddsRowsCorrect_ReturnInsertedId()
     {
         //Arrange
-        DocumentModel model = _documentData[0];
+        DocumentModel model = DocumentData[0];
 
         //Act
-        int result = await _repository.Add(model);
+        long id = await _repository.Add(model);
 
         //Assert
-        result.Should().Be(1, "because the add method should only update 1 row in the database");
+        id.Should().Be(6L, "because the next ID value is 6");
     }
 
     [Fact]
     public async Task Add_AddModelCompareResult_ReturnDocumentModel()
     {
         //Arrange
-        DocumentModel model = _documentData[0];
+        DocumentModel model = DocumentData[0];
 
         //Act
-        _ = await _repository.Add(model);
-        DocumentModel? result = await _repository.Get(1234);
+        long id = await _repository.Add(model);
+        DocumentModel? result = await _repository.Get(id);
 
         //Assert
         result.Should().NotBeNull()
-            .And.BeEquivalentTo(model);
+            .And.Match<DocumentModel>(x => x.Id == id && x.Author == model.Author && x.Title == model.Title);
     }
 
     [Fact]
-    public async Task AddBatch_addsRowsCorrect_ReturnRowsAffected()
+    public async Task AddBatch_AddsRowsCorrect_ReturnInsertedIds()
     {
         //Arrange
-        List<DocumentModel> documentModels = new List<DocumentModel>()
+        List<DocumentModel> documentModels = new()
         {
-            _documentData[0],
-            _documentData[1],
-            _documentData[2]
+            DocumentData[0],
+            DocumentData[1],
+            DocumentData[2]
         };
 
-
-
         //Act
-        int result = await _repository.AddBatch(documentModels);
+        IEnumerable<long> result = await _repository.AddBatch(documentModels);
 
         //Assert
-        result.Should().Be(3, "because the AddBatch method should update exactly 3 rows in the database");
+        result.Should().HaveCount(3, "because the AddBatch method should insert exactly 3 rows in the database");
     }
 
     [Fact]
-    public async Task AddBatch_CompareAddedDocuments_ReturnRowsAffected()
+    public async Task AddBatch_CompareAddedDocuments_ReturnInsertedIds()
     {
         //Arrange
-        List<DocumentModel> documentModels = new List<DocumentModel>()
+        List<DocumentModel> documentModels = new()
         {
-            _documentData[0],
-            _documentData[1],
-            _documentData[2]
+            DocumentData[0],
+            DocumentData[1],
+            DocumentData[2]
         };
 
         //Act
-        _ = await _repository.AddBatch(documentModels);
+        List<long> ids = (await _repository.AddBatch(documentModels)).ToList();
         List<DocumentModel?> result = new()
         {
-            await _repository.Get(1234),
-            await _repository.Get(2345),
-            await _repository.Get(3456)
+            await _repository.Get(ids[0]),
+            await _repository.Get(ids[1]),
+            await _repository.Get(ids[2])
         };
 
         //Assert
-        result.Should().NotBeNull()
-            .And.BeEquivalentTo(documentModels);
+        result.Should().NotBeNullOrEmpty()
+            .And.HaveCount(3);
     }
 
     [Fact]
     public async Task Delete_RemovesDocumentCorrect_ReturnRowsAffected()
     {
         //Arrange
-        DocumentModel model = _documentData[0];
-        await _repository.Add(model);
+        DocumentModel model = DocumentData[0];
+        long id = await _repository.Add(model);
 
         //Act
-        int result = await _repository.Delete(model);
+        int result = await _repository.Delete(id);
 
         //Assert
         result.Should().Be(1, "because the add method should only update 1 row in the database");
@@ -205,40 +201,22 @@ public class NpgDocumentRepositoryIntegrationTests
     public async Task Delete_RemovesDocumentCorrect_ReturnNull()
     {
         //Arrange
-        DocumentModel model = _documentData[0];
-        await _repository.Add(model);
+        DocumentModel model = DocumentData[0];
+        long id = await _repository.Add(model);
 
         //Act
-        _ = await _repository.Delete(model);
-        DocumentModel? result = await _repository.Get(1234);
+        _ = await _repository.Delete(id);
+        DocumentModel? result = await _repository.Get(id);
 
         //Assert
         result.Should().BeNull();
     }
 
     [Fact]
-    public async Task Update_UpdatesRowCorrect_ReturnRowsAffected()
-    {
-        //Arrange
-        DocumentModel modelOld = _documentData[0];
-        DocumentModel modelNew = _documentData[7];
-
-        await _repository.Add(modelOld);
-
-        //Act
-        _ = await _repository.Update(modelNew);
-        DocumentModel? result = await _repository.Get(1234);
-
-        //Assert
-        result.Should().NotBeNull()
-              .And.BeEquivalentTo(modelNew);
-    }
-
-    [Fact]
     public async Task GetTotalDocumentCount_GetTheNumberOfDocuments_ReturnInt()
     {
         //Arrange
-        int totalCount = 5;
+        const int totalCount = 5;
 
         //Act
         int result = await _repository.GetTotalDocumentCount();

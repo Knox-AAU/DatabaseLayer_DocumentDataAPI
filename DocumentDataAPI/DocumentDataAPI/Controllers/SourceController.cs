@@ -33,7 +33,10 @@ public class SourceController : ControllerBase
     {
         try
         {
-            return Ok(await _repository.GetAll());
+            IEnumerable<SourceModel> result = await _repository.GetAll();
+            return result.Any()
+                ? Ok(result)
+                : NoContent();
         }
         catch (Exception e)
         {
@@ -46,12 +49,12 @@ public class SourceController : ControllerBase
     /// Retrieves the source with the given id.
     /// </summary>
     /// <response code="200">Success: The source.</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{id:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<SourceModel>> GetById(long id)
     {
@@ -59,7 +62,7 @@ public class SourceController : ControllerBase
         {
             SourceModel? result = await _repository.Get(id);
             return result == null
-                ? NotFound()
+                ? NoContent()
                 : Ok(result);
         }
         catch (Exception e)
@@ -73,12 +76,12 @@ public class SourceController : ControllerBase
     /// Retrieves all sources with the given name.
     /// </summary>
     /// <response code="200">Success: A list of sources with the given name.</response>
-    /// <response code="404">Not Found: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
     [Route("{name}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<SourceModel>>> GetByName(string name)
     {
@@ -87,7 +90,7 @@ public class SourceController : ControllerBase
             IEnumerable<SourceModel> result = await _repository.GetByName(name);
             return result.Any()
                 ? Ok(result)
-                : NotFound("No source exists with name: " + name);
+                : NoContent();
         }
         catch (Exception e)
         {
@@ -121,21 +124,19 @@ public class SourceController : ControllerBase
     /// <summary>
     /// Inserts a new source with the given name in the database.
     /// </summary>
-    /// <response code="200">Success: The source that was inserted.</response>
-    /// <response code="400">Bad Request: A message.</response>
+    /// <response code="200">Success: The ID of the data source that was inserted.</response>
+    /// <response code="400">Bad Request: A message indicating that the source could not be added.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPut]
+    [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<SourceModel?>> PutSource(string name)
+    public async Task<ActionResult<long>> InsertSource(string name)
     {
         try
         {
-            return await _repository.Add(new SourceModel { Name = name }) == 1
-                ? Ok((await _repository.GetByName(name)).Last())
-                : BadRequest("Could not add the source with name: " + name);
+            long id = await _repository.Add(new SourceModel { Name = name });
+            return Ok(id);
         }
         catch (Exception e)
         {
@@ -148,12 +149,12 @@ public class SourceController : ControllerBase
     /// Updates the source given in the request body in the database.
     /// </summary>
     /// <response code="200">Success: The source that was updated.</response>
-    /// <response code="404">Not Found: A message.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpPost]
+    [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<SourceModel?>> UpdateSource([FromBody] SourceModel source)
     {
@@ -161,7 +162,7 @@ public class SourceController : ControllerBase
         {
             return await _repository.Update(source) == 1
                 ? Ok(await _repository.Get(source.Id))
-                : NotFound("Could not find source with id: " + source.Id);
+                : NoContent();
         }
         catch (Exception e)
         {
@@ -171,27 +172,27 @@ public class SourceController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes the source given in the request body in the database.
+    /// Deletes an existing source from the database matching the provided id.
     /// </summary>
-    /// <response code="200">Success: The source that was deleted.</response>
-    /// <response code="404">Not Found: A message.</response>
+    /// <response code="200">Success: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpDelete]
-    [Consumes(MediaTypeNames.Application.Json)]
+    [Route("{sourceId:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<SourceModel?>> DeleteSource([FromBody] SourceModel source)
+    public async Task<ActionResult> DeleteSource(long sourceId)
     {
         try
         {
-            return await _repository.Delete(source) == 1
-                ? Ok(source)
-                : NotFound("Could not find source with id: " + source.Id);
+            return await _repository.Delete(sourceId) == 1
+                ? Ok()
+                : NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete source ({id}, {name})", source.Id, source.Name);
+            _logger.LogError(e, "Unable to delete source with id: {sourceId}", sourceId);
             return Problem(e.Message);
         }
     }
