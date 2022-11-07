@@ -1,4 +1,4 @@
-﻿using DocumentDataAPI.Models;
+using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Algorithms;
 
