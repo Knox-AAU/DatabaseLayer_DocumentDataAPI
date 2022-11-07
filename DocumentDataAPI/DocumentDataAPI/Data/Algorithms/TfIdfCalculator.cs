@@ -15,20 +15,7 @@ public class TfIdfCalculator
         _wordRatios = wordRatios;
     }
 
-    public void CalculateTfIdf()
-    {
-        double wordRatioTfIdf = 0;
-        foreach (WordRatioModel wordRatio in _wordRatios)
-        {
-            wordRatioTfIdf = CalculateSingleTfIdf(wordRatio);
-
-            //Insert into db
-
-        }
-
-    }
-
-    private double CalculateSingleTfIdf(WordRatioModel wordRatio)
+    public double CalculateTfIdf(WordRatioModel wordRatio)
     {
         int termdocCount = _wordRatios.Where(x => x.Word == wordRatio.Word).Count();
 
