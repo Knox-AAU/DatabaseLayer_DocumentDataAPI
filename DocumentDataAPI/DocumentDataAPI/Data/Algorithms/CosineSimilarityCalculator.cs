@@ -29,6 +29,6 @@ public class CosineSimilarityCalculator : IRelevanceFunction
         //Only the entries with 1 are represented in the list and therefore count() suffices
         double queryVectorLength = Math.Sqrt(query.Distinct().Count());
 
-        return dotProduct/(documentVectorLength * queryVectorLength);
+        return dotProduct / (documentVectorLength * queryVectorLength);
     }
 }
