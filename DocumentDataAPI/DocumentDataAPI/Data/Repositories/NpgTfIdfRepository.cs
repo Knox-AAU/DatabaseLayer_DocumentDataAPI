@@ -10,7 +10,8 @@ namespace DocumentDataAPI.Data.Repositories
         private readonly ILogger<NpgTfIdfRepository> _logger;
         private readonly ISqlHelper _sqlHelper;
 
-        public NpgTfIdfRepository(IDbConnectionFactory connectionFactory, ILogger<NpgTfIdfRepository> logger, ISqlHelper sqlHelper)
+        public NpgTfIdfRepository(IDbConnectionFactory connectionFactory, ILogger<NpgTfIdfRepository> logger,
+            ISqlHelper sqlHelper)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
@@ -20,20 +21,19 @@ namespace DocumentDataAPI.Data.Repositories
         public async Task<int> UpdateTfIdfs()
         {
             _logger.LogDebug("Updating all TF-IDF scores in database");
-            string script = "update document_data.word_ratios w1" +
-                            "set tfidf = percent * ln(" +
-                                "(select count(1) from document_data.documents)" +
-                                "/" +
-                                "(select count(1) as docWithWordCount from document_data.documents" +
-                                "inner join document_data.word_ratios w2" +
-                                "on w2.documents_id = documents.id" +
-                                "and w2.word = w1.word)" +
-                            ")" +
-                            "where 1 = 1;";
+            string script = @"update document_data.word_ratios w1
+                            set tfidf = percent * ln(
+                                (select count(1) from document_data.documents)
+                                /
+                                (select count(1) as docWithWordCount from document_data.documents
+                                inner join document_data.word_ratios w2
+                                on w2.documents_id = documents.id
+                                and w2.word = w1.word)
+                            )
+                            where 1 = 1;";
             using IDbConnection con = _connectionFactory.CreateConnection();
 
             return await con.ExecuteAsync(script);
-
         }
     }
 }

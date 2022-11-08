@@ -12,6 +12,7 @@ public class WordRatioMap : EntityMap<WordRatioModel>
     public const string Rank = "rank";
     public const string TfIdf = "tf-idf";
     public const string Word = "word";
+
     public WordRatioMap()
     {
         Map(x => x.DocumentId).ToColumn(DocumentId);

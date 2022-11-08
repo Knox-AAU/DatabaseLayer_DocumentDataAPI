@@ -2,6 +2,7 @@ using DocumentDataAPI.Data.Algorithms;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data;
+
 //Not in use
 public class TfIdfUpdater
 {
@@ -25,7 +26,6 @@ public class TfIdfUpdater
             wordRatioTfIdf = _calc.CalculateTfIdf(wordRatio);
 
             //Insert into db
-
         }
     }
 }

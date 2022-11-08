@@ -8,10 +8,10 @@ namespace DocumentDataAPI.Controllers;
 [Route(RoutePrefixHelper.Prefix + "/tf-idf/update")]
 public class TfIdfController : ControllerBase
 {
-    private readonly ILogger<Tf_IdfController> _logger;
-    private readonly ITf_IdfRepository _repository;
+    private readonly ILogger<TfIdfController> _logger;
+    private readonly ITfIdfRepository _repository;
 
-    public Tf_IdfController(ITf_IdfRepository repository, ILogger<Tf_IdfController> logger)
+    public TfIdfController(ITfIdfRepository repository, ILogger<TfIdfController> logger)
     {
         _repository = repository;
         _logger = logger;
@@ -31,7 +31,7 @@ public class TfIdfController : ControllerBase
     {
         try
         {
-            int result = await _repository.UpdateTf_Idfs();
+            int result = await _repository.UpdateTfIdfs();
             return result > 0
                 ? Ok(result)
                 : NoContent();

@@ -5,7 +5,6 @@ namespace DocumentDataAPI.Data.Algorithms;
 //Not in use
 public class TfIdfCalculator
 {
-
     private readonly int _docCount;
     private readonly IEnumerable<WordRatioModel> _wordRatios;
 
@@ -24,7 +23,6 @@ public class TfIdfCalculator
 
     private double IdfCalculator(int termdocCount)
     {
-        return Math.Log(_docCount / termdocCount;
+        return Math.Log(_docCount / termdocCount);
     }
-
 }

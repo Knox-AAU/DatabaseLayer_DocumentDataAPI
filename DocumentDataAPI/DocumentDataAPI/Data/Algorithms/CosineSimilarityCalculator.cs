@@ -8,7 +8,7 @@ public class CosineSimilarityCalculator : IRelevanceFunction
     {
         double dotProduct = 0;
         double documentVectorLengthHelper = 0;
-        
+
         foreach (WordRatioModel wordRatio in docWordRatios)
         {
             // Since the query can be interpreted as a vector containing 1 and 0,
@@ -18,17 +18,18 @@ public class CosineSimilarityCalculator : IRelevanceFunction
             {
                 dotProduct += wordRatio.Amount;
             }
+
             //Squaring and summing the values, so that the length of the document vector can be found later
             documentVectorLengthHelper += Math.Pow(wordRatio.Amount, 2);
         }
 
         double documentVectorLength = Math.Sqrt(documentVectorLengthHelper);
-        
+
         //The length of the query vector can be found simply be using count(),
         //since the query can be interpreted as a vector with entries 0 and 1.
         //Only the entries with 1 are represented in the list and therefore count() suffices 
         double queryVectorLength = Math.Sqrt(query.Distinct().Count());
-        
-        return dotProduct/(documentVectorLength * queryVectorLength);
+
+        return dotProduct / (documentVectorLength * queryVectorLength);
     }
 }
