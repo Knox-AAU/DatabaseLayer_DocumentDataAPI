@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
-[Route(RoutePrefixHelper.Prefix + "/tf-idf-update")]
+[Route(RoutePrefixHelper.Prefix + "/tf-idf/update")]
 public class Tf_IdfController : ControllerBase
 {
     private readonly ILogger<Tf_IdfController> _logger;
