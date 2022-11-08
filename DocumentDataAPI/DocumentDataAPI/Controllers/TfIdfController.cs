@@ -27,7 +27,7 @@ public class TfIdfController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<int>> UpdateTf_Idfs()
+    public async Task<ActionResult<int>> UpdateTfIdfs()
     {
         try
         {
