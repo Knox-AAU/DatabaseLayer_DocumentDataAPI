@@ -119,7 +119,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
             new { documentId, word });
     }
 
-    public async Task<IEnumerable<WordRatioModel>> GetByDocumentId(int id)
+    public async Task<IEnumerable<WordRatioModel>> GetByDocumentId(long id)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {WordRatioMap.DocumentId} = @DocumentId",
