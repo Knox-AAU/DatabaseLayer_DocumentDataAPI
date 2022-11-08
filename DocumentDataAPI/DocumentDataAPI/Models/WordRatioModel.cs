@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using DocumentDataAPI.Models.Attributes;
 
 namespace DocumentDataAPI.Models;
 
@@ -28,6 +29,7 @@ public class WordRatioModel
     {
         ClusteringScore = clusteringScore;
     }
+
     [Required]
     public long DocumentId { get; init; }
     [Required]
@@ -40,4 +42,6 @@ public class WordRatioModel
     public Rank Rank { get; init; }
     [Required]
     public float ClusteringScore { get; init; }
+    [ExcludeFromGeneratedInsertStatement]
+    public float TfIdf { get; set; }
 }

@@ -2,8 +2,8 @@ using System.Reflection;
 using Dapper.FluentMap;
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
-using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Data.Services;
 using DocumentDataAPI.Options;
@@ -25,6 +25,7 @@ builder.Services
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
     .AddScoped<ISourceRepository, NpgSourceRepository>()
     .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
+    .AddScoped<IWordRelevanceRepository, NpgWordRelevanceRepository>()
     .AddScoped<ISearchRepository, NpgSearchRepository>()
     .AddHttpClient<ILemmatizerService, LemmatizerService>()
     ;

@@ -47,6 +47,7 @@ create table ${schema}.word_ratios (
     percent             real not null,
     rank                integer not null,
     clustering_score    float default 0 not null,
+    tf_idf              float default 0 not null,
     constraint pk_files_id_word primary key (word, documents_id)
 );
 
