@@ -21,6 +21,7 @@ namespace DocumentDataAPI.Data.Repositories
         public async Task<int> UpdateWordRelevances()
         {
             _logger.LogDebug("Updating all TF-IDF scores in database");
+            // Cast a value to avoid integer division (default behavior in postgres)
             const string script = @"update document_data.word_ratios w1
                             set tf_idf = percent * ln(
                                 (select cast(count(1) as decimal) from document_data.documents)
