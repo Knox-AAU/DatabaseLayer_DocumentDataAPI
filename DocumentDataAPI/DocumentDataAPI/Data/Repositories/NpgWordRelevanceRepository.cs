@@ -4,13 +4,13 @@ using DocumentDataAPI.Data.Repositories.Helpers;
 
 namespace DocumentDataAPI.Data.Repositories
 {
-    public class NpgTfIdfRepository : ITfIdfRepository
+    public class NpgWordRelevanceRepository : IWordRelevanceRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
-        private readonly ILogger<NpgTfIdfRepository> _logger;
+        private readonly ILogger<NpgWordRelevanceRepository> _logger;
         private readonly ISqlHelper _sqlHelper;
 
-        public NpgTfIdfRepository(IDbConnectionFactory connectionFactory, ILogger<NpgTfIdfRepository> logger,
+        public NpgWordRelevanceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRelevanceRepository> logger,
             ISqlHelper sqlHelper)
         {
             _connectionFactory = connectionFactory;

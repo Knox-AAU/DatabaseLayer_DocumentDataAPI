@@ -1,6 +1,6 @@
 namespace DocumentDataAPI.Data.Repositories
 {
-    public interface ITfIdfRepository
+    public interface IWordRelevanceRepository
     {
         Task<int> UpdateTfIdfs();
     }

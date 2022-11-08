@@ -6,12 +6,12 @@ namespace DocumentDataAPI.Controllers;
 
 [ApiController]
 [Route(RoutePrefixHelper.Prefix + "/tf-idf/update")]
-public class TfIdfController : ControllerBase
+public class WordRelevanceController : ControllerBase
 {
-    private readonly ILogger<TfIdfController> _logger;
-    private readonly ITfIdfRepository _repository;
+    private readonly ILogger<WordRelevanceController> _logger;
+    private readonly IWordRelevanceRepository _repository;
 
-    public TfIdfController(ITfIdfRepository repository, ILogger<TfIdfController> logger)
+    public WordRelevanceController(IWordRelevanceRepository repository, ILogger<WordRelevanceController> logger)
     {
         _repository = repository;
         _logger = logger;

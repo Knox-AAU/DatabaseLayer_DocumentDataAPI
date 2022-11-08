@@ -25,7 +25,7 @@ builder.Services
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
     .AddScoped<ISourceRepository, NpgSourceRepository>()
     .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
-    .AddScoped<ITfIdfRepository, NpgTfIdfRepository>()
+    .AddScoped<IWordRelevanceRepository, NpgWordRelevanceRepository>()
     .AddScoped<ISearchRepository, NpgSearchRepository>()
     .AddHttpClient<ILemmatizerService, LemmatizerService>()
     ;
