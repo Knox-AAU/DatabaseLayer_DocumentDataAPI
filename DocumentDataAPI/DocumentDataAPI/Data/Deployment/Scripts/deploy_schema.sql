@@ -55,7 +55,7 @@ create index word_ratios_documents_id_idx on ${schema}.word_ratios (documents_id
 create table ${schema}.document_contents (
     documents_id    bigint not null references ${schema}.documents(id),
     index           integer not null,
-    subheading      varchar(500),
+    subheading      text,
     content         text not null,
     constraint pk_document_contents primary key (documents_id, index)
 );
