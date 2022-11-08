@@ -21,13 +21,6 @@ public class NpgWordRatioRepository : IWordRatioRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<IEnumerable<WordRatioModel>> GetAll()
-    {
-        _logger.LogDebug("Retrieving all WordRatios from database");
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<WordRatioModel>("select * from word_ratios");
-    }
-
     public async Task<long> Add(WordRatioModel entity)
     {
         _logger.LogDebug("Adding WordRatio with id {DocumentId} and name {Word} to database", entity.DocumentId,
@@ -81,24 +74,14 @@ public class NpgWordRatioRepository : IWordRatioRepository
         return rowsAffected;
     }
 
-    public async Task<int> Update(WordRatioModel entity)
+    public async Task<int> Delete(long documentId, string word)
     {
-        _logger.LogDebug("Updating WordRatio with id {DocumentId} and word {Word} in database", entity.DocumentId,
-            entity.Word);
-        _logger.LogTrace("WordRatio: {WordRatio}", entity);
+        _logger.LogDebug("Deleting WordRatio with id {DocumentId} and word {Word} from database", documentId,
+            word);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"update word_ratios set {WordRatioMap.Amount} = @Amount, {WordRatioMap.Percent} = @Percent, {WordRatioMap.Rank} = @Rank, {WordRatioMap.ClusteringScore} = @ClusteringScore " +
-            $"where {WordRatioMap.DocumentId} = @DocumentId and {WordRatioMap.Word} = @Word",
-            new
-            {
-                entity.Word,
-                entity.Amount,
-                entity.Percent,
-                entity.Rank,
-                entity.DocumentId,
-                entity.ClusteringScore
-            });
+            $"delete from word_ratios where {WordRatioMap.DocumentId} = @DocumentId and {WordRatioMap.Word} = @Word",
+            new { documentId, word });
     }
 
     public async Task<WordRatioModel?> Get(long documentId, string word)
@@ -109,14 +92,11 @@ public class NpgWordRatioRepository : IWordRatioRepository
             new { DocumentId = documentId, Word = word });
     }
 
-    public async Task<int> Delete(long documentId, string word)
+    public async Task<IEnumerable<WordRatioModel>> GetAll()
     {
-        _logger.LogDebug("Deleting WordRatio with id {DocumentId} and word {Word} from database", documentId,
-            word);
+        _logger.LogDebug("Retrieving all WordRatios from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            $"delete from word_ratios where {WordRatioMap.DocumentId} = @DocumentId and {WordRatioMap.Word} = @Word",
-            new { documentId, word });
+        return await con.QueryAsync<WordRatioModel>("select * from word_ratios");
     }
 
     public async Task<IEnumerable<WordRatioModel>> GetByDocumentId(int id)
@@ -138,5 +118,25 @@ public class NpgWordRatioRepository : IWordRatioRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {WordRatioMap.Word} = any(@wordlist)",
             new { wordlist });
+    }
+
+    public async Task<int> Update(WordRatioModel entity)
+    {
+        _logger.LogDebug("Updating WordRatio with id {DocumentId} and word {Word} in database", entity.DocumentId,
+            entity.Word);
+        _logger.LogTrace("WordRatio: {WordRatio}", entity);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync(
+            $"update word_ratios set {WordRatioMap.Amount} = @Amount, {WordRatioMap.Percent} = @Percent, {WordRatioMap.Rank} = @Rank, {WordRatioMap.ClusteringScore} = @ClusteringScore " +
+            $"where {WordRatioMap.DocumentId} = @DocumentId and {WordRatioMap.Word} = @Word",
+            new
+            {
+                entity.Word,
+                entity.Amount,
+                entity.Percent,
+                entity.Rank,
+                entity.DocumentId,
+                entity.ClusteringScore
+            });
     }
 }

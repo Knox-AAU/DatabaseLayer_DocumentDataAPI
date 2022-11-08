@@ -1,0 +1,44 @@
+using System.Data.Common;
+using DocumentDataAPI.Data.Repositories;
+using Microsoft.AspNetCore.Mvc;
+
+namespace DocumentDataAPI.Controllers;
+
+[ApiController]
+[Route(RoutePrefixHelper.Prefix + "/tf-idf-update")]
+public class Tf_IdfController : ControllerBase
+{
+    private readonly ILogger<Tf_IdfController> _logger;
+    private readonly ITf_IdfRepository _repository;
+
+    public Tf_IdfController(ITf_IdfRepository repository, ILogger<Tf_IdfController> logger)
+    {
+        _repository = repository;
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Updates the Tf-Idf values of all word ratios.
+    /// </summary>
+    /// <response code="200">Success: The updated word ratio.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<int>> UpdateTf_Idfs()
+    {
+        try
+        {
+            int result = await _repository.UpdateTf_Idfs();
+            return result > 0
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (DbException e)
+        {
+            return Problem(e.Message);
+        }
+    }
+}

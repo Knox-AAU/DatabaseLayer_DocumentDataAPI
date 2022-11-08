@@ -5,12 +5,13 @@ namespace DocumentDataAPI.Data.Mappers;
 
 public class WordRatioMap : EntityMap<WordRatioModel>
 {
-    public const string DocumentId = "documents_id";
-    public const string Word = "word";
     public const string Amount = "amount";
+    public const string ClusteringScore = "clustering_score";
+    public const string DocumentId = "documents_id";
     public const string Percent = "percent";
     public const string Rank = "rank";
-    public const string ClusteringScore = "clustering_score";
+    public const string Tf_Idf = "tf-idf";
+    public const string Word = "word";
     public WordRatioMap()
     {
         Map(x => x.DocumentId).ToColumn(DocumentId);
@@ -19,5 +20,6 @@ public class WordRatioMap : EntityMap<WordRatioModel>
         Map(x => x.Percent).ToColumn(Percent);
         Map(x => x.Rank).ToColumn(Rank);
         Map(x => x.ClusteringScore).ToColumn(ClusteringScore);
+        Map(x => x.Tf_Idf).ToColumn(Tf_Idf);
     }
 }

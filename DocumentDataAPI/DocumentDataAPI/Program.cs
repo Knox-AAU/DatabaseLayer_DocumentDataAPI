@@ -2,8 +2,8 @@ using System.Reflection;
 using Dapper.FluentMap;
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
-using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Options;
 using Serilog;
@@ -24,6 +24,7 @@ builder.Services
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
     .AddScoped<ISourceRepository, NpgSourceRepository>()
     .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
+    .AddScoped<ITf_IdfRepository, NpgTf_IdfRepository>()
     ;
 
 builder.Services.AddControllers();

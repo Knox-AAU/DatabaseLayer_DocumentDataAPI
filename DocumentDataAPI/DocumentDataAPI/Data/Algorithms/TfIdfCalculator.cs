@@ -2,6 +2,7 @@ using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Algorithms;
 
+//Not in use
 public class TfIdfCalculator
 {
 
