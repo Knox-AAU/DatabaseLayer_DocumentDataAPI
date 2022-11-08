@@ -38,7 +38,10 @@ public class NpgWordRelevanceRepositoryIntegrationTests
     }
 
     [Theory]
-    [InlineData("ikke", 1, 0.6895)]
+    [InlineData("ikke", 1, 0.68951356)]
+    [InlineData("og", 3, 0)]
+    [InlineData("mette", 3, 1.04613464)]
+    [InlineData("daniel", 4, 4.12016106)]
     public async Task UpdateWordRelevancesCorrectlyCalculatesAndInsertsIntoDB(string word, int docId, float expected)
     {
         //Arrange
@@ -51,7 +54,7 @@ public class NpgWordRelevanceRepositoryIntegrationTests
         float result = wordRatio.TfIdf;
 
         //Assert
-        result.Should().Be(expected, "the tf is 3.09 and the idf is ln(5/4)");
+        result.Should().Be(expected);
     }
     
 }
