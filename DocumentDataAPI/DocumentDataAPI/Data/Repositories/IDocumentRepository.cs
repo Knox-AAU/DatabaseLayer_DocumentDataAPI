@@ -1,5 +1,4 @@
-﻿using DocumentDataAPI.Controllers;
-using DocumentDataAPI.Models;
+﻿using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
 

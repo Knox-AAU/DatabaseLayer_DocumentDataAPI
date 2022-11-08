@@ -2,8 +2,6 @@
 using DocumentDataAPI.Models;
 
 using Microsoft.AspNetCore.Mvc;
-
-using System.Data.Common;
 using System.Net.Mime;
 
 namespace DocumentDataAPI.Controllers;
