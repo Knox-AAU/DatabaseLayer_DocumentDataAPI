@@ -24,7 +24,7 @@ public class TfIdfCalculator
 
     private double IdfCalculator(int termdocCount)
     {
-        return Math.Log(_docCount / termdocCount, 10);
+        return Math.Log(_docCount / termdocCount;
     }
 
 }

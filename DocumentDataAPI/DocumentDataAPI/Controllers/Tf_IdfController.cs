@@ -6,7 +6,7 @@ namespace DocumentDataAPI.Controllers;
 
 [ApiController]
 [Route(RoutePrefixHelper.Prefix + "/tf-idf/update")]
-public class Tf_IdfController : ControllerBase
+public class TfIdfController : ControllerBase
 {
     private readonly ILogger<Tf_IdfController> _logger;
     private readonly ITf_IdfRepository _repository;
@@ -20,8 +20,8 @@ public class Tf_IdfController : ControllerBase
     /// <summary>
     /// Updates the Tf-Idf values of all word ratios.
     /// </summary>
-    /// <response code="200">Success: The updated word ratio.</response>
-    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="200">Success: All word ratios have been updated.</response>
+    /// <response code="204">No Content: No word ratios were updated.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]

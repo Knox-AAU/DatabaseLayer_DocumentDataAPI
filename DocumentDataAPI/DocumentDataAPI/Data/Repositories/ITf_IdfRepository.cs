@@ -1,7 +1,7 @@
 namespace DocumentDataAPI.Data.Repositories
 {
-    public interface ITf_IdfRepository
+    public interface ITfIdfRepository
     {
-        Task<int> UpdateTf_Idfs();
+        Task<int> UpdateTfIdfs();
     }
 }

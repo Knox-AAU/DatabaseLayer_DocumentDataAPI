@@ -4,22 +4,22 @@ using DocumentDataAPI.Data.Repositories.Helpers;
 
 namespace DocumentDataAPI.Data.Repositories
 {
-    public class NpgTf_IdfRepository : ITf_IdfRepository
+    public class NpgTfIdfRepository : ITfIdfRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
-        private readonly ILogger<NpgTf_IdfRepository> _logger;
+        private readonly ILogger<NpgTfIdfRepository> _logger;
         private readonly ISqlHelper _sqlHelper;
 
-        public NpgTf_IdfRepository(IDbConnectionFactory connectionFactory, ILogger<NpgTf_IdfRepository> logger, ISqlHelper sqlHelper)
+        public NpgTfIdfRepository(IDbConnectionFactory connectionFactory, ILogger<NpgTfIdfRepository> logger, ISqlHelper sqlHelper)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
             _sqlHelper = sqlHelper;
         }
 
-        public async Task<int> UpdateTf_Idfs()
+        public async Task<int> UpdateTfIdfs()
         {
-            _logger.LogDebug("Updating all Tf-Idf scores in database");
+            _logger.LogDebug("Updating all TF-IDF scores in database");
             string script = "update document_data.word_ratios w1" +
                             "set tfidf = percent * ln(" +
                                 "(select count(1) from document_data.documents)" +

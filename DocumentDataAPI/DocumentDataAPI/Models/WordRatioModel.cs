@@ -40,7 +40,7 @@ public class WordRatioModel
     [Required]
     public Rank Rank { get; init; }
 
-    public float Tf_Idf { get; set; }
+    public float TfIdf { get; set; }
     [Required]
     public string Word { get; init; } = null!;
 }
