@@ -4,6 +4,7 @@ using DocumentDataAPI.Models;
 namespace DocumentDataAPI.Data;
 
 //Not in use
+[Obsolete("Use NpgWordRelevanceRepository to update TF-IDF values in db", true)]
 public class TfIdfUpdater
 {
     private readonly TfIdfCalculator _calc;

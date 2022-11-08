@@ -44,5 +44,4 @@ public class WordRatioModel
     public float ClusteringScore { get; init; }
     [ExcludeFromGeneratedInsertStatement]
     public float TfIdf { get; set; }
-    public float TfIdf { get; set; }
 }
