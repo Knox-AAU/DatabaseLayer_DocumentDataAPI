@@ -16,11 +16,11 @@ public class CosineSimilarityCalculator : IRelevanceFunction
             // calculated by summing the amount of the words that occur in both the query and the document
             if (query.Contains(wordRatio.Word))
             {
-                dotProduct += wordRatio.Amount;
+                dotProduct += wordRatio.TfIdf;
             }
 
             //Squaring and summing the values, so that the length of the document vector can be found later
-            documentVectorLengthHelper += Math.Pow(wordRatio.Amount, 2);
+            documentVectorLengthHelper += Math.Pow(wordRatio.TfIdf, 2);
         }
 
         double documentVectorLength = Math.Sqrt(documentVectorLengthHelper);

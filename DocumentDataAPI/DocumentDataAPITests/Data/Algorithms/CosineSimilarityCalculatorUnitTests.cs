@@ -14,7 +14,7 @@ public class CosineSimilarityCalculatorUnitTests
         double result = new CosineSimilarityCalculator().CalculateRelevance(docWordRatios, query);
         
         //Assert
-        result.Should().Be(expected);
+        result.Should().BeApproximately(expected, 0.001);
     }
     
     public static IEnumerable<object[]> TestData =>
@@ -22,86 +22,86 @@ public class CosineSimilarityCalculatorUnitTests
         {
             new object[] { 
                 new List<WordRatioModel>() {
-                    new WordRatioModel() {Word = "test1", Amount = 1},
-                    new WordRatioModel() {Word = "test2", Amount = 5},
-                    new WordRatioModel() {Word = "test3", Amount = 10}},
+                    new WordRatioModel() {Word = "test1", TfIdf = 0.5F},
+                    new WordRatioModel() {Word = "test2", TfIdf = 0.8F},
+                    new WordRatioModel() {Word = "test3", TfIdf = 0.2F}},
                 new List<string>()
                 {
                     "test1"
                 }, 
-                1/Math.Sqrt(Math.Pow(1,2)+Math.Pow(5,2)+Math.Pow(10,2))},
+                0.5F/Math.Sqrt(Math.Pow(0.5F,2)+Math.Pow(0.8F,2)+Math.Pow(0.2F,2))},
             new object[] { 
                 new List<WordRatioModel>() {
-                    new WordRatioModel() {Word = "test1", Amount = 1},
-                    new WordRatioModel() {Word = "test2", Amount = 5},
-                    new WordRatioModel() {Word = "test3", Amount = 10}},
+                    new WordRatioModel() {Word = "test1", TfIdf = 0.5F},
+                    new WordRatioModel() {Word = "test2", TfIdf = 0.8F},
+                    new WordRatioModel() {Word = "test3", TfIdf = 0.2F}},
                 new List<string>()
                 {
                     "test2"
                 }, 
-                5/Math.Sqrt(Math.Pow(1,2)+Math.Pow(5,2)+Math.Pow(10,2))},
+                0.8F/Math.Sqrt(Math.Pow(0.5F,2)+Math.Pow(0.8F,2)+Math.Pow(0.2F,2))},
             new object[] { 
                 new List<WordRatioModel>() {
-                    new WordRatioModel() {Word = "test1", Amount = 1},
-                    new WordRatioModel() {Word = "test2", Amount = 5},
-                    new WordRatioModel() {Word = "test3", Amount = 10}},
+                    new WordRatioModel() {Word = "test1", TfIdf = 0.5F},
+                    new WordRatioModel() {Word = "test2", TfIdf = 0.8F},
+                    new WordRatioModel() {Word = "test3", TfIdf = 0.2F}},
                 new List<string>()
                 {
                     "test2", "test10"
                 }, 
-                5/(Math.Sqrt(Math.Pow(1,2)+Math.Pow(5,2)+Math.Pow(10,2)) * Math.Sqrt(2))},
+                0.8F/(Math.Sqrt(Math.Pow(0.5F,2)+Math.Pow(0.8F,2)+Math.Pow(0.2F,2)) * Math.Sqrt(2))},
             new object[] { 
                 new List<WordRatioModel>() {
-                    new WordRatioModel() {Word = "test1", Amount = 1},
-                    new WordRatioModel() {Word = "test2", Amount = 5},
-                    new WordRatioModel() {Word = "test3", Amount = 10}},
+                    new WordRatioModel() {Word = "test1", TfIdf = 0.5F},
+                    new WordRatioModel() {Word = "test2", TfIdf = 0.8F},
+                    new WordRatioModel() {Word = "test3", TfIdf = 0.2F}},
                 new List<string>()
                 {
                     "test3"
                 }, 
-                10/Math.Sqrt(Math.Pow(1,2)+Math.Pow(5,2)+Math.Pow(10,2))},
+                0.2F/Math.Sqrt(Math.Pow(0.5F,2)+Math.Pow(0.8F,2)+Math.Pow(0.2F,2))},
             new object[] { 
                 new List<WordRatioModel>() {
-                    new WordRatioModel() {Word = "test1", Amount = 1},
-                    new WordRatioModel() {Word = "test2", Amount = 5},
-                    new WordRatioModel() {Word = "test3", Amount = 10}},
+                    new WordRatioModel() {Word = "test1", TfIdf = 0.5F},
+                    new WordRatioModel() {Word = "test2", TfIdf = 0.8F},
+                    new WordRatioModel() {Word = "test3", TfIdf = 0.2F}},
                 new List<string>()
                 {
                     "test1", "test2"
                 }, 
-                6/(Math.Sqrt(Math.Pow(1,2)+Math.Pow(5,2)+Math.Pow(10,2)) * Math.Sqrt(2))},
+                1.3F/(Math.Sqrt(Math.Pow(0.5F,2)+Math.Pow(0.8F,2)+Math.Pow(0.2F,2)) * Math.Sqrt(2))},
             new object[] { 
                 new List<WordRatioModel>() {
-                    new WordRatioModel() {Word = "test1", Amount = 10},
-                    new WordRatioModel() {Word = "test2", Amount = 15},
-                    new WordRatioModel() {Word = "test3", Amount = 10},
-                    new WordRatioModel() {Word = "test4", Amount = 25},
-                    new WordRatioModel() {Word = "test5", Amount = 20}},
+                    new WordRatioModel() {Word = "test1", TfIdf = 0.1F},
+                    new WordRatioModel() {Word = "test2", TfIdf = 0.2F},
+                    new WordRatioModel() {Word = "test3", TfIdf = 1.1F},
+                    new WordRatioModel() {Word = "test4", TfIdf = 1.5F},
+                    new WordRatioModel() {Word = "test5", TfIdf = 2F}},
                 new List<string>()
                 {
                     "test3", "test4"
                 }, 
-                35/(Math.Sqrt(Math.Pow(10,2)+Math.Pow(15,2)+Math.Pow(10,2)+Math.Pow(25,2)+Math.Pow(20,2)) * Math.Sqrt(2))},
+                2.6F/(Math.Sqrt(Math.Pow(0.1F,2)+Math.Pow(0.2F,2)+Math.Pow(1.1F,2)+Math.Pow(1.5F,2)+Math.Pow(2F,2)) * Math.Sqrt(2))},
             new object[] { 
                 new List<WordRatioModel>() {
-                    new WordRatioModel() {Word = "test1", Amount = 10},
-                    new WordRatioModel() {Word = "test2", Amount = 15},
-                    new WordRatioModel() {Word = "test3", Amount = 10},
-                    new WordRatioModel() {Word = "test4", Amount = 25},
-                    new WordRatioModel() {Word = "test5", Amount = 20}},
+                    new WordRatioModel() {Word = "test1", TfIdf = 0.1F},
+                    new WordRatioModel() {Word = "test2", TfIdf = 0.2F},
+                    new WordRatioModel() {Word = "test3", TfIdf = 1.1F},
+                    new WordRatioModel() {Word = "test4", TfIdf = 1.5F},
+                    new WordRatioModel() {Word = "test5", TfIdf = 2F}},
                 new List<string>()
                 {
                     "test3", "test4", "test10", "test11", "test12"
                 }, 
-                35/(Math.Sqrt(Math.Pow(10,2)+Math.Pow(15,2)+Math.Pow(10,2)+Math.Pow(25,2)+Math.Pow(20,2)) * Math.Sqrt(5))},
+                2.6F/(Math.Sqrt(Math.Pow(0.1F,2)+Math.Pow(0.2F,2)+Math.Pow(1.1F,2)+Math.Pow(1.5F,2)+Math.Pow(2F,2)) * Math.Sqrt(5))},
             new object[] { 
                 new List<WordRatioModel>() {
-                    new WordRatioModel() {Word = "test1", Amount = 10}},
+                    new WordRatioModel() {Word = "test1", TfIdf = 1.3F}},
                 new List<string>()
                 {
                     "test1"
                 }, 
-                10/(Math.Sqrt(Math.Pow(10,2)) * Math.Sqrt(1))},
+                1.3F/(Math.Sqrt(Math.Pow(1.3F,2)) * Math.Sqrt(1))},
         };
         
     
