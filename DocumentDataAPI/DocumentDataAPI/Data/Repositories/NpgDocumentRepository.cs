@@ -48,6 +48,7 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogDebug("Retrieving all Documents that the given search parameters from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
         StringBuilder query = new("select * from documents");
+        DynamicParameters args = new();
         if (parameters.Parameters.Any())
         {
             QueryParameter firstParam = parameters.Parameters.First();
@@ -55,13 +56,8 @@ public class NpgDocumentRepository : IDocumentRepository
             foreach (QueryParameter param in parameters.Parameters.Skip(1))
             {
                 query.Append($" and {param.Key} {param.ComparisonOperator} @{param.Key}");
+                args.Add(param.Key, param.Value);
             }
-        }
-
-        DynamicParameters args = new();
-        foreach (QueryParameter param in parameters.Parameters)
-        {
-            args.Add(param.Key, param.Value);
         }
 
         return await con.QueryAsync<DocumentModel>(query.ToString(), args);
