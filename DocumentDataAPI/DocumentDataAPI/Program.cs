@@ -5,6 +5,7 @@ using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Repositories.Helpers;
+using DocumentDataAPI.Data.Services;
 using DocumentDataAPI.Options;
 using Serilog;
 
@@ -25,6 +26,8 @@ builder.Services
     .AddScoped<ISourceRepository, NpgSourceRepository>()
     .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
     .AddScoped<ITf_IdfRepository, NpgTf_IdfRepository>()
+    .AddScoped<ISearchRepository, NpgSearchRepository>()
+    .AddHttpClient<ILemmatizerService, LemmatizerService>()
     ;
 
 builder.Services.AddControllers();
