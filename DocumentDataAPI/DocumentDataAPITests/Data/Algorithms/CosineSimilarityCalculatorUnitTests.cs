@@ -14,7 +14,7 @@ public class CosineSimilarityCalculatorUnitTests
         double result = new CosineSimilarityCalculator().CalculateRelevance(docWordRatios, query);
         
         //Assert
-        result.Should().BeApproximately(expected, 0.001);
+        result.Should().BeApproximately(expected, 0.001, "because the values may vary by a very tiny amount");
     }
     
     public static IEnumerable<object[]> TestData =>
