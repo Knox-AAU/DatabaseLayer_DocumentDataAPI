@@ -48,17 +48,17 @@ public class NpgSearchRepositoryIntegrationTests
         // Arrange
         List<string> query = new() { "dronningen", "døde", "og"};
         List<long> expected = new()
-            { 2, 1, 3, 5, 4 };
+            { 2, 1, 3, 4, 5 };
         // Explanation: Document 2 contains the word "dronningen" 10 times, which has the highest TF-IDF value.
         // Then, document 1 contains a high TF-IDF valued word "døde" 3 times
-        // Finally, the remaining documents contain the word "og" which has a low TF-IdF value, and are ordered by the quantity of the word.
+        // Finally, the remaining documents contain the word "og" which has a low TF-IdF value, and are ordered by the term frequency of the word.
 
         // Act
         IEnumerable<SearchResponseModel> result = await _repository.Get(query, new DocumentSearchParameters());
         IEnumerable<long> resultIds = result.Select(d => d.DocumentModel.Id);
 
         // Assert
-        resultIds.Should().BeEquivalentTo(expected, "because document 2 is more relevant than document 1");
+        resultIds.Should().BeEquivalentTo(expected, options => options.WithStrictOrdering(), "because document 2 is more relevant than document 1");
     }
 
     [Fact]

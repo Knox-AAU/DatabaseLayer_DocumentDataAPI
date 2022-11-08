@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Concurrent;
+using System.Data;
 using System.Text;
 using Dapper;
 using DocumentDataAPI.Data.Algorithms;
@@ -23,8 +24,6 @@ public class NpgSearchRepository : ISearchRepository
 
     public async Task<IEnumerable<SearchResponseModel>> Get(List<string> processedWords, DocumentSearchParameters parameters)
     {
-        _logger.LogDebug("Retrieving most relevant documents from database, given the search query {searchWords}", parameters);
-        using IDbConnection con = _connectionFactory.CreateConnection();
         DynamicParameters args = new();
         args.Add("words", processedWords);
         StringBuilder query = new($"select distinct d.* from documents d, word_ratios w where w.{WordRatioMap.Word} = any(@words) and w.{WordRatioMap.DocumentId} = d.{DocumentMap.Id}");
@@ -37,14 +36,21 @@ public class NpgSearchRepository : ISearchRepository
             }
         }
 
-        IEnumerable<DocumentModel> documents = await con.QueryAsync<DocumentModel>(query.ToString(), args);
-        List<SearchResponseModel> searchResponses = new();
-        foreach (DocumentModel document in documents)
+        _logger.LogDebug("Retrieving most relevant documents from database, given the search query {searchWords}", parameters);
+        IEnumerable<DocumentModel> documents;
+        IDbConnection con = _connectionFactory.CreateConnection();
+        using (con)
         {
-            IEnumerable<WordRatioModel> documentWordRatios = await GetWordRatiosByDocumentId(document.Id);
-            double documentRelevance = _relevanceFunction.CalculateRelevance(documentWordRatios, processedWords);
-            searchResponses.Add(new SearchResponseModel(document, documentRelevance));
+            documents = await con.QueryAsync<DocumentModel>(query.ToString(), args);
         }
+
+        ConcurrentBag<SearchResponseModel> searchResponses = new();
+        await Parallel.ForEachAsync(documents, async (model, token) =>
+        {
+            IEnumerable<WordRatioModel> documentWordRatios = await GetWordRatiosByDocumentId(model.Id);
+            double documentRelevance = _relevanceFunction.CalculateRelevance(documentWordRatios, processedWords);
+            searchResponses.Add(new SearchResponseModel(model, documentRelevance));
+        });
 
         return searchResponses.OrderByDescending(s => s.Relevance).ThenBy(s => s.DocumentModel.Id);
     }
