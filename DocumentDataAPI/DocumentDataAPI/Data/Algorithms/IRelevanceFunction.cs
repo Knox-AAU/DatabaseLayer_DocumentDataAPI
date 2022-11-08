@@ -1,5 +1,6 @@
 using DocumentDataAPI.Models;
 
+
 namespace DocumentDataAPI.Data.Algorithms;
 
 public interface IRelevanceFunction

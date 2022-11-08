@@ -8,6 +8,6 @@ public interface IWordRatioRepository : IRepository<WordRatioModel>
     Task<int> Delete(long documentId, string word);
     Task<IEnumerable<WordRatioModel>> GetByWord(string word);
     Task<IEnumerable<WordRatioModel>> GetByWords(IEnumerable<string> word);
-    Task<IEnumerable<WordRatioModel>> GetByDocumentId(int id);
+    Task<IEnumerable<WordRatioModel>> GetByDocumentId(long id);
     Task<int> AddBatch(List<WordRatioModel> models);
 }

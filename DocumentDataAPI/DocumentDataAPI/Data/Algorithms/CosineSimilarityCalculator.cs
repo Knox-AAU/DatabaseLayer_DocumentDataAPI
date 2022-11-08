@@ -1,5 +1,6 @@
 using DocumentDataAPI.Models;
 
+
 namespace DocumentDataAPI.Data.Algorithms;
 
 public class CosineSimilarityCalculator : IRelevanceFunction
@@ -21,13 +22,14 @@ public class CosineSimilarityCalculator : IRelevanceFunction
 
             //Squaring and summing the values, so that the length of the document vector can be found later
             documentVectorLengthHelper += Math.Pow(wordRatio.TfIdf, 2);
+
         }
 
         double documentVectorLength = Math.Sqrt(documentVectorLengthHelper);
 
         //The length of the query vector can be found simply be using count(),
         //since the query can be interpreted as a vector with entries 0 and 1.
-        //Only the entries with 1 are represented in the list and therefore count() suffices 
+        //Only the entries with 1 are represented in the list and therefore count() suffices
         double queryVectorLength = Math.Sqrt(query.Distinct().Count());
 
         return dotProduct / (documentVectorLength * queryVectorLength);
