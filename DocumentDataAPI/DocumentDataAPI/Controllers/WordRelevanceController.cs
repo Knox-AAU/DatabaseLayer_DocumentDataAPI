@@ -27,11 +27,11 @@ public class WordRelevanceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<int>> UpdateTfIdfs()
+    public async Task<ActionResult<int>> UpdateWordRelevances()
     {
         try
         {
-            int result = await _repository.UpdateTfIdfs();
+            int result = await _repository.UpdateWordRelevances();
             return result > 0
                 ? Ok(result)
                 : NoContent();

@@ -18,12 +18,12 @@ namespace DocumentDataAPI.Data.Repositories
             _sqlHelper = sqlHelper;
         }
 
-        public async Task<int> UpdateTfIdfs()
+        public async Task<int> UpdateWordRelevances()
         {
             _logger.LogDebug("Updating all TF-IDF scores in database");
-            string script = @"update document_data.word_ratios w1
-                            set tfidf = percent * ln(
-                                (select count(1) from document_data.documents)
+            const string script = @"update document_data.word_ratios w1
+                            set tf_idf = percent * ln(
+                                (select cast(count(1) as decimal) from document_data.documents)
                                 /
                                 (select count(1) as docWithWordCount from document_data.documents
                                 inner join document_data.word_ratios w2

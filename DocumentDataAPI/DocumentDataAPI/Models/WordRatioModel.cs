@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DocumentDataAPI.Models.Attributes;
 
 namespace DocumentDataAPI.Models;
 
@@ -29,12 +30,12 @@ public class WordRatioModel
         ClusteringScore = clusteringScore;
     }
 
-    [Required] public int Amount { get; init; }
-    [Required] public float ClusteringScore { get; init; }
     [Required] public long DocumentId { get; init; }
+    [Required] public string Word { get; init; } = null!;
+    [Required] public int Amount { get; init; }
     [Required] public double Percent { get; init; }
     [Required] public Rank Rank { get; init; }
-
+    [Required] public float ClusteringScore { get; init; }
+    [ExcludeFromGeneratedInsertStatement]
     public float TfIdf { get; set; }
-    [Required] public string Word { get; init; } = null!;
 }

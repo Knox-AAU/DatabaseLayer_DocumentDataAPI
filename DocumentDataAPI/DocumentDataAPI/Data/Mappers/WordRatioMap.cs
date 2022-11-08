@@ -10,7 +10,7 @@ public class WordRatioMap : EntityMap<WordRatioModel>
     public const string DocumentId = "documents_id";
     public const string Percent = "percent";
     public const string Rank = "rank";
-    public const string TfIdf = "tf-idf";
+    public const string TfIdf = "tf_idf";
     public const string Word = "word";
 
     public WordRatioMap()
