@@ -30,7 +30,7 @@ public class WordRatioModel
         ClusteringScore = clusteringScore;
     }
 
-    [Required] 
+    [Required]
     public long DocumentId { get; init; }
     [Required]
     public string Word { get; init; } = null!;
