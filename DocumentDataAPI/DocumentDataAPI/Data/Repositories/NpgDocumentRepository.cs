@@ -52,6 +52,7 @@ public class NpgDocumentRepository : IDocumentRepository
         if (parameters.Parameters.Any())
         {
             QueryParameter firstParam = parameters.Parameters.First();
+            args.Add(firstParam.Key, firstParam.Value);
             query.Append($" where {firstParam.Key} {firstParam.ComparisonOperator} @{firstParam.Key}");
             foreach (QueryParameter param in parameters.Parameters.Skip(1))
             {
