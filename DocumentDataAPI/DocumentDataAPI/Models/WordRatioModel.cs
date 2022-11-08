@@ -32,15 +32,15 @@ public class WordRatioModel
 
     [Required] 
     public long DocumentId { get; init; }
-    [Required] 
+    [Required]
     public string Word { get; init; } = null!;
-    [Required] 
+    [Required]
     public int Amount { get; init; }
-    [Required] 
+    [Required]
     public double Percent { get; init; }
-    [Required] 
+    [Required]
     public Rank Rank { get; init; }
-    [Required] 
+    [Required]
     public float ClusteringScore { get; init; }
     [ExcludeFromGeneratedInsertStatement]
     public float TfIdf { get; set; }
