@@ -14,7 +14,7 @@ public class CosineSimilarityCalculator : IRelevanceFunction
         {
             // Since the query can be interpreted as a vector containing 1 and 0,
             // with a 1 for words in the query and 0 otherwise, the dot product can be
-            // calculated by summing the amount of the words that occur in both the query and the document
+            // calculated by summing the TF-IDF of the words that occur in both the query and the document
             if (query.Contains(wordRatio.Word))
             {
                 dotProduct += wordRatio.TfIdf;
