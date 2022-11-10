@@ -99,7 +99,7 @@ public class CategoryController : ControllerBase
     /// <summary>
     /// Updates the category given in the request body in the database.
     /// </summary>
-    /// <response code="200">Success: The category that was updated.</response>
+    /// <response code="200">Success: The number of rows affected.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPut]
@@ -107,12 +107,13 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<CategoryModel?>> UpdateCategory([FromBody] CategoryModel category)
+    public async Task<ActionResult<int>> UpdateCategory([FromBody] CategoryModel category)
     {
         try
         {
-            return await _repository.Update(category) == 1
-                ? Ok(await _repository.Get(category.Id))
+            int rowsAffected = await _repository.Update(category);
+            return rowsAffected == 1
+                ? Ok(rowsAffected)
                 : NoContent();
         }
         catch (Exception e)
