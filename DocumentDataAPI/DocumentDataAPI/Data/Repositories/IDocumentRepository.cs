@@ -10,5 +10,4 @@ public interface IDocumentRepository : IRepository<DocumentModel>
     Task<int> GetTotalDocumentCount();
     Task<IEnumerable<long>> AddBatch(List<DocumentModel> models);
     Task<IEnumerable<string>> GetAuthors();
-    Task<IEnumerable<CategoryModel>> GetCategories();
 }

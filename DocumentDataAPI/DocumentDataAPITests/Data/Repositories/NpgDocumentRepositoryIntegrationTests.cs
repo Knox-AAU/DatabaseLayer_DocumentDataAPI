@@ -242,20 +242,4 @@ public class NpgDocumentRepositoryIntegrationTests
         //Assert
         result.Should().BeEquivalentTo(authors);
     }
-    
-    [Fact]
-    public async Task GetCategory_GetAllCategories_ReturnList()
-    {
-        //Arrange
-        List<CategoryModel> categories = new()
-        {
-            new(0),
-        };
-
-        //Act
-        List<CategoryModel> result = (await _repository.GetCategories()).ToList();
-
-        //Assert
-        result.Should().BeEquivalentTo(categories);
-    }
 }

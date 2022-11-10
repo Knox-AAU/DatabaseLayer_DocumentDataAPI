@@ -157,11 +157,4 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<string>($"select distinct {DocumentMap.Author} from documents");
     }
-
-    public async Task<IEnumerable<CategoryModel>> GetCategories()
-    {
-        _logger.LogDebug("Retrieving all categories from database");
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<CategoryModel>($"select distinct {DocumentMap.CategoryId} from documents");
-    }
 }

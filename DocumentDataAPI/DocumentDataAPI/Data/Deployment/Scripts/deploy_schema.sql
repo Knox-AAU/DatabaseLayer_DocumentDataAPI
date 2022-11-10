@@ -14,11 +14,11 @@ create index sources_name_idx on ${schema}.sources (name);
 
 create table ${schema}.categories (
     id     integer generated always as identity primary key,
-    name   varchar(100) not null
+    name   varchar(100) not null unique
 );
 
 create index categories_name_idx on ${schema}.categories (name);
-insert into ${schema}.categories(name) values ('Unknown');
+insert into ${schema}.categories(name) values ('Uncategorized');
 
 create table ${schema}.documents (
     id              bigint generated always as identity primary key,
