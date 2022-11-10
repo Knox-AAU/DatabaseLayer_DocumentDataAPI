@@ -123,7 +123,7 @@ public class DocumentController : ControllerBase
             return Problem(e.Message);
         }
     }
-    
+
     [HttpGet]
     [Route("categories")]
     [ProducesResponseType(StatusCodes.Status200OK)]
