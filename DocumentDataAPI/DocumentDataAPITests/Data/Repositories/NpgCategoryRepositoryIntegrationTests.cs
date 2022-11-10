@@ -73,7 +73,7 @@ public class NpgCategoryRepositoryIntegrationTests
     }
 
     [Fact]
-    public async Task Add_AddsNewSource()
+    public async Task Add_AddsNewCategory()
     {
         // Arrange
         NpgCategoryRepository repository = new(_connectionFactory, _logger);
@@ -91,7 +91,7 @@ public class NpgCategoryRepositoryIntegrationTests
     }
 
     [Fact]
-    public async Task GetById_ReturnsSourceSpecifiedById()
+    public async Task GetById_ReturnsCategorySpecifiedById()
     {
         // Arrange
         NpgCategoryRepository repository = new(_connectionFactory, _logger);

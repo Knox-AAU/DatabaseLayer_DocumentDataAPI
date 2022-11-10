@@ -11,10 +11,10 @@ namespace DocumentDataAPI.Controllers;
 [Produces(MediaTypeNames.Application.Json)]
 public class CategoryController : ControllerBase
 {
-    private readonly ILogger<SearchController> _logger;
+    private readonly ILogger<CategoryController> _logger;
     private readonly ICategoryRepository _repository;
 
-    public CategoryController(ILogger<SearchController> logger, ICategoryRepository repository)
+    public CategoryController(ILogger<CategoryController> logger, ICategoryRepository repository)
     {
         _logger = logger;
         _repository = repository;
