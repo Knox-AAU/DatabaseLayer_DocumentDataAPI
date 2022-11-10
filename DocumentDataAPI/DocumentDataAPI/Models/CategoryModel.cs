@@ -10,9 +10,9 @@ public class CategoryModel
 
     }
 
-    public CategoryModel(int id)
+    public CategoryModel(string name)
     {
-        Id = id;
+        Name = name;
     }
 
     [Required]

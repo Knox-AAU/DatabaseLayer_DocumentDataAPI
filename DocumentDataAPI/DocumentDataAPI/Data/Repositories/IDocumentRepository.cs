@@ -9,4 +9,5 @@ public interface IDocumentRepository : IRepository<DocumentModel>
     Task<IEnumerable<DocumentModel>> GetAll(DocumentSearchParameters parameters);
     Task<int> GetTotalDocumentCount();
     Task<IEnumerable<long>> AddBatch(List<DocumentModel> models);
+    Task<IEnumerable<string>> GetAuthors();
 }

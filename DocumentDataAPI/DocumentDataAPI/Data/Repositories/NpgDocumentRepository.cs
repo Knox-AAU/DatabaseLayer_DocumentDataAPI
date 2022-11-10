@@ -150,4 +150,11 @@ public class NpgDocumentRepository : IDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QuerySingleAsync<int>($"select count({DocumentMap.Id}) from documents");
     }
+
+    public async Task<IEnumerable<string>> GetAuthors()
+    {
+        _logger.LogDebug("Retrieving all authors from database");
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.QueryAsync<string>($"select distinct {DocumentMap.Author} from documents");
+    }
 }
