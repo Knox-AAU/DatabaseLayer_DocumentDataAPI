@@ -103,6 +103,48 @@ public class DocumentController : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Route("authors")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<string>>> GetAuthors()
+    {
+        try
+        {
+            IEnumerable<string> result = await _repository.GetAuthors();
+            return result.Any()
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to get authors.");
+            return Problem(e.Message);
+        }
+    }
+    
+    [HttpGet]
+    [Route("categories")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<CategoryModel>>> GetCategories()
+    {
+        try
+        {
+            IEnumerable<CategoryModel> result = await _repository.GetCategories();
+            return result.Any()
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to get categories.");
+            return Problem(e.Message);
+        }
+    }
+
     /// <summary>
     /// Retrieves the number of documents in the database.
     /// </summary>

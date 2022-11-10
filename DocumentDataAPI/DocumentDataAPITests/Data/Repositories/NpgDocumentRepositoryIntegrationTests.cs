@@ -223,4 +223,39 @@ public class NpgDocumentRepositoryIntegrationTests
         //Assert
         result.Should().Be(totalCount);
     }
+    
+    [Fact]
+    public async Task GetAuthors_GetAllAuthors_ReturnList()
+    {
+        //Arrange
+        List<string> authors = new()
+        {
+            "Andreas Nygaard Just",
+            "Mette Stender Pedersen",
+            "Maja Lærke Maach",
+            "Jonathan Kjær Troelsen"
+        };
+
+        //Act
+        List<string> result = (await _repository.GetAuthors()).ToList();
+
+        //Assert
+        result.Should().BeEquivalentTo(authors);
+    }
+    
+    [Fact]
+    public async Task GetCategory_GetAllCategories_ReturnList()
+    {
+        //Arrange
+        List<CategoryModel> categories = new()
+        {
+            new(0),
+        };
+
+        //Act
+        List<CategoryModel> result = (await _repository.GetCategories()).ToList();
+
+        //Assert
+        result.Should().BeEquivalentTo(categories);
+    }
 }
