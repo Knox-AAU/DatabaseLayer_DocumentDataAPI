@@ -48,20 +48,17 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogDebug("Retrieving all Documents that the given search parameters from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
         StringBuilder query = new("select * from documents");
+        DynamicParameters args = new();
         if (parameters.Parameters.Any())
         {
             QueryParameter firstParam = parameters.Parameters.First();
+            args.Add(firstParam.Key, firstParam.Value);
             query.Append($" where {firstParam.Key} {firstParam.ComparisonOperator} @{firstParam.Key}");
             foreach (QueryParameter param in parameters.Parameters.Skip(1))
             {
                 query.Append($" and {param.Key} {param.ComparisonOperator} @{param.Key}");
+                args.Add(param.Key, param.Value);
             }
-        }
-
-        DynamicParameters args = new();
-        foreach (QueryParameter param in parameters.Parameters)
-        {
-            args.Add(param.Key, param.Value);
         }
 
         return await con.QueryAsync<DocumentModel>(query.ToString(), args);
@@ -152,5 +149,12 @@ public class NpgDocumentRepository : IDocumentRepository
         _logger.LogDebug("Retrieving Document count from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QuerySingleAsync<int>($"select count({DocumentMap.Id}) from documents");
+    }
+
+    public async Task<IEnumerable<string>> GetAuthors()
+    {
+        _logger.LogDebug("Retrieving all authors from database");
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.QueryAsync<string>($"select distinct {DocumentMap.Author} from documents");
     }
 }

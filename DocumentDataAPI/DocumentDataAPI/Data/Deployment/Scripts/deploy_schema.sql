@@ -14,11 +14,11 @@ create index sources_name_idx on ${schema}.sources (name);
 
 create table ${schema}.categories (
     id     integer generated always as identity primary key,
-    name   varchar(100) not null
+    name   varchar(100) not null unique
 );
 
 create index categories_name_idx on ${schema}.categories (name);
-insert into ${schema}.categories(name) values ('Unknown');
+insert into ${schema}.categories(name) values ('Uncategorized');
 
 create table ${schema}.documents (
     id              bigint generated always as identity primary key,
@@ -47,6 +47,7 @@ create table ${schema}.word_ratios (
     percent             real not null,
     rank                integer not null,
     clustering_score    float default 0 not null,
+    tf_idf              float default 0 not null,
     constraint pk_files_id_word primary key (word, documents_id)
 );
 
@@ -55,7 +56,7 @@ create index word_ratios_documents_id_idx on ${schema}.word_ratios (documents_id
 create table ${schema}.document_contents (
     documents_id    bigint not null references ${schema}.documents(id),
     index           integer not null,
-    subheading      varchar(500),
+    subheading      text,
     content         text not null,
     constraint pk_document_contents primary key (documents_id, index)
 );
