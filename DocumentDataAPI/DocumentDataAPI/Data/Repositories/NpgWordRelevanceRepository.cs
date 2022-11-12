@@ -34,7 +34,7 @@ namespace DocumentDataAPI.Data.Repositories
                             where 1 = 1;";
             using IDbConnection con = _connectionFactory.CreateConnection();
 
-            return await con.ExecuteAsync(script);
+            return await con.ExecuteAsync(script, commandTimeout: 0);
         }
     }
 }
