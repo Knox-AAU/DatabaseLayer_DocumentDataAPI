@@ -48,7 +48,7 @@ create table ${schema}.word_ratios (
     rank                integer not null,
     clustering_score    float default 0 not null,
     tf_idf              float default 0 not null,
-    constraint pk_files_id_word primary key (word, documents_id)
+    constraint word_ratios_pkey primary key (word, documents_id)
 );
 
 create index word_ratios_documents_id_idx on ${schema}.word_ratios (documents_id);
@@ -58,14 +58,14 @@ create table ${schema}.document_contents (
     index           integer not null,
     subheading      text,
     content         text not null,
-    constraint pk_document_contents primary key (documents_id, index)
+    constraint document_contents_pkey primary key (documents_id, index)
 );
 
 create table ${schema}.similar_documents (
     main_document_id    bigint not null references ${schema}.documents(id),
     similar_document_id bigint not null references ${schema}.documents(id),
     similarity          float not null,
-    constraint pk_similar_documents primary key (main_document_id, similar_document_id)
+    constraint similar_documents_pkey primary key (main_document_id, similar_document_id)
 );
 
 -- Create roles if they do not already exist. Looks convoluted due to the lack of a "create role if not exists" command.
@@ -85,5 +85,6 @@ grant usage on schema ${schema} to readonly, read_write;
 grant usage on all sequences in schema ${schema} to readonly, read_write;
 grant execute on all functions in schema ${schema} to readonly, read_write;
 grant select on all tables in schema ${schema} to readonly, read_write;
+grant temporary on database ${database} to readonly, read_write;
 
 grant insert, update, delete on all tables in schema ${schema} to read_write;

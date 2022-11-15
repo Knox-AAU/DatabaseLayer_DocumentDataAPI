@@ -1,40 +1,44 @@
 using System.Data;
 using Dapper;
+using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 
-namespace DocumentDataAPI.Data.Repositories
+namespace DocumentDataAPI.Data.Repositories;
+
+public class NpgWordRelevanceRepository : IWordRelevanceRepository
 {
-    public class NpgWordRelevanceRepository : IWordRelevanceRepository
+    private readonly IDbConnectionFactory _connectionFactory;
+    private readonly ILogger<NpgWordRelevanceRepository> _logger;
+        
+    public NpgWordRelevanceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRelevanceRepository> logger)
     {
-        private readonly IDbConnectionFactory _connectionFactory;
-        private readonly ILogger<NpgWordRelevanceRepository> _logger;
-        private readonly ISqlHelper _sqlHelper;
+        _connectionFactory = connectionFactory;
+        _logger = logger;
+    }
 
-        public NpgWordRelevanceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRelevanceRepository> logger,
-            ISqlHelper sqlHelper)
-        {
-            _connectionFactory = connectionFactory;
-            _logger = logger;
-            _sqlHelper = sqlHelper;
-        }
-
-        public async Task<int> UpdateWordRelevances()
-        {
-            _logger.LogDebug("Updating all TF-IDF scores in database");
-            // Cast a value to avoid integer division (default behavior in postgres)
-            const string script = @"update document_data.word_ratios w1
-                            set tf_idf = percent * ln(
-                                (select cast(count(1) as decimal) from document_data.documents)
-                                /
-                                (select count(1) as docWithWordCount from document_data.documents
-                                inner join document_data.word_ratios w2
-                                on w2.documents_id = documents.id
-                                and w2.word = w1.word)
-                            )
-                            where 1 = 1;";
-            using IDbConnection con = _connectionFactory.CreateConnection();
-
-            return await con.ExecuteAsync(script, commandTimeout: 0);
-        }
+    public async Task<int> UpdateWordRelevances()
+    {
+        _logger.LogInformation("Updating all TF-IDF scores in database");
+        // Create temporary table with the IDF value of each distinct word
+        // Then set TF-IDF of each word_ratio to the TF of the word (Percent) times the IDF value for the word.
+        const string script = $@"drop table if exists temp_idf_values;
+select q1.word, ln(q2.total_documents::decimal / q1.documents_for_word) idf
+into temp_idf_values
+from (
+    select {WordRatioMap.Word}, count(distinct {WordRatioMap.DocumentId}) documents_for_word
+    from word_ratios
+    group by {WordRatioMap.Word}
+)q1
+join (
+    select count(1) total_documents
+    from documents
+)q2 on 1=1;
+update word_ratios wr
+    set {WordRatioMap.TfIdf} = {WordRatioMap.Percent} * temp.idf
+from temp_tf_idf_values temp
+    where wr.{WordRatioMap.Word} = temp.word";
+            
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync(script, commandTimeout: 0);
     }
 }
