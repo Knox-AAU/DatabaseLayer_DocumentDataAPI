@@ -9,7 +9,7 @@ public class NpgWordRelevanceRepository : IWordRelevanceRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgWordRelevanceRepository> _logger;
-        
+
     public NpgWordRelevanceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRelevanceRepository> logger)
     {
         _connectionFactory = connectionFactory;
@@ -39,7 +39,7 @@ update word_ratios wr
     from temp_idf_values temp
     where wr.{WordRatioMap.Word} = temp.word;
     ";
-        
+
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(updateSql, commandTimeout: 0);
     }
