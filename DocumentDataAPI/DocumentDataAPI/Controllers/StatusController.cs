@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Net.NetworkInformation;
 using DocumentDataAPI.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,20 +28,25 @@ public class StatusController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult Status()
     {
+        IDbConnection con = _connectionFactory.CreateConnection();
         try
         {
-            using IDbConnection con = _connectionFactory.CreateConnection();
-            if (con.State is ConnectionState.Open)
+            con.Open();
+            if (con.State is not ConnectionState.Open)
             {
-                return Ok();
+                return Problem($"Problems connecting to database, current state: {con.State}", statusCode: 500);
             }
 
-            return Problem("Connection to the database could not be established", statusCode: 500);
+            return Ok();
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Connection to the database could not be established");
-            return Problem(e.Message);
+            return Problem("Connection to the database could not be established: " + e.Message);
+        }
+        finally
+        {
+            con.Close();
         }
     }
 }

@@ -39,10 +39,10 @@ public class NpgWordRatioRepositoryIntegrationTests
     public static IEnumerable<object[]> WordRatioData =>
         new List<object[]>
         {
-            new object[] { 5, "kunne", new WordRatioModel(1, 5, 0.5199999809265137, (Rank) 0, "kunne") },
-            new object[] { 3, "et", new WordRatioModel(3, 3, 1.9600000381469727, (Rank) 0, "et") },
-            new object[] { 4, "sag", new WordRatioModel(1, 4, 2.559999942779541, (Rank) 0, "sag") },
-            new object[] { 2, "dronningen", new WordRatioModel(2, 2, 1.6100000143051147, (Rank) 1, "dronningen") },
+            new object[] { 5, "kunne", new WordRatioModel { DocumentId = 5, Percent = 0.5199999809265137, Amount = 1, Rank = Rank.Body, Word = "kunne", TfIdf = 0.8369076837681403F } },
+            new object[] { 3, "et", new WordRatioModel { DocumentId = 3, Percent = 1.9600000381469727, Amount = 3, Rank = Rank.Body, Word = "et", TfIdf = 1.0012182420677929F } },
+            new object[] { 4, "sag", new WordRatioModel { DocumentId = 4, Percent = 2.559999942779541, Amount = 1, Rank = Rank.Body, Word = "sag", TfIdf = 4.120160963738521F } },
+            new object[] { 2, "dronningen", new WordRatioModel { DocumentId = 2, Percent = 1.6100000143051147, Amount = 2, Rank = Rank.Synopsis, Word = "dronningen", TfIdf = 2.591195062042096F } },
         };
 
     [Fact]
@@ -63,18 +63,14 @@ public class NpgWordRatioRepositoryIntegrationTests
     {
         //Arrange
         NpgWordRatioRepository repository = new(_connectionFactory, _logger, _sqlHelper);
+        const string word = "til";
 
         //Act
-        List<WordRatioModel> results = (await repository.GetByWord("til")).ToList();
+        IEnumerable<WordRatioModel> results = await repository.GetByWord(word);
 
         //Assert
-        results.Should().BeEquivalentTo(new List<WordRatioModel>
-        {
-            new(2, 1, 2.059999942779541, (Rank) 0, "til"),
-            new(3, 2, 2.4200000762939453, (Rank) 0, "til"),
-            new(2, 3, 1.309999942779541, (Rank) 0, "til"),
-            new(1, 5, 0.5199999809265137, (Rank) 0, "til")
-        });
+        results.Should().HaveCount(4)
+            .And.AllSatisfy(x => x.Word.Should().Be(word));
     }
 
     [Fact]
@@ -88,14 +84,8 @@ public class NpgWordRatioRepositoryIntegrationTests
         List<WordRatioModel> results = (await repository.GetByWords(words)).ToList();
 
         //Assert
-        results.Should().BeEquivalentTo(new List<WordRatioModel>
-        {
-            new(2, 1, 2.059999942779541, (Rank) 0, "til"),
-            new(3, 2, 2.4200000762939453, (Rank) 0, "til"),
-            new(2, 3, 1.309999942779541, (Rank) 0, "til"),
-            new(1, 5, 0.5199999809265137, (Rank) 0, "til"),
-            new(2, 2, 1.6100000143051147, (Rank) 1, "dronningen")
-        });
+        results.Should().HaveCount(5)
+            .And.AllSatisfy(x => x.Word.Should().BeOneOf(words));
     }
 
     [Fact]
@@ -158,15 +148,20 @@ public class NpgWordRatioRepositoryIntegrationTests
     {
         //Arrange
         NpgWordRatioRepository repository = new(_connectionFactory, _logger, _sqlHelper);
-        WordRatioModel wordRatio = new(10, 2, 5, (Rank) 2, "dronningen");
+        const long documentId = 2L;
+        const string word = "dronningen";
+        const int expectedAmount = 10;
+        WordRatioModel wordRatio = new WordRatioModel { DocumentId = documentId, Percent = 1.6100000143051147, Amount = expectedAmount, Rank = Rank.Synopsis, Word = word, TfIdf = 2.591195062042096F };
 
         //Act
-        int result1 = await repository.Update(wordRatio);
-        WordRatioModel? result2 = await repository.Get(2, "dronningen");
+        int rowsAffected = await repository.Update(wordRatio);
+        WordRatioModel? result = await repository.Get(documentId, word);
 
         //Assert
-        result1.Should().Be(1);
-        result2.Should().BeEquivalentTo(wordRatio);
+        rowsAffected.Should().Be(1);
+        result.Should().NotBeNull()
+            .And.Subject.As<WordRatioModel>()
+            .Amount.Should().Be(expectedAmount);
     }
 
     [Fact]

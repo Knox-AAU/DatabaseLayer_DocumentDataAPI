@@ -28,7 +28,7 @@ public class NpgWordRelevanceRepositoryIntegrationTests
     public async Task UpdateWordRelevancesChangesAllRows()
     {
         //Arrange
-        NpgWordRelevanceRepository repository = new(_connectionFactory, _relevanceLogger, _sqlHelper);
+        NpgWordRelevanceRepository repository = new(_connectionFactory, _relevanceLogger);
 
         //Act
         int rowsChanged = await repository.UpdateWordRelevances();
@@ -45,16 +45,16 @@ public class NpgWordRelevanceRepositoryIntegrationTests
     public async Task UpdateWordRelevancesCorrectlyCalculatesAndInsertsIntoDB(string word, int docId, float expected)
     {
         //Arrange
-        NpgWordRelevanceRepository relevanceRepository = new(_connectionFactory, _relevanceLogger, _sqlHelper);
+        NpgWordRelevanceRepository relevanceRepository = new(_connectionFactory, _relevanceLogger);
         NpgWordRatioRepository ratioRepository = new(_connectionFactory, _ratioLogger, _sqlHelper);
         
         //Act
         _ = await relevanceRepository.UpdateWordRelevances();
-        WordRatioModel wordRatio = await ratioRepository.Get(docId, word);
-        float result = wordRatio.TfIdf;
+        WordRatioModel? wordRatio = await ratioRepository.Get(docId, word);
 
         //Assert
-        result.Should().Be(expected);
+        wordRatio.Should().NotBeNull()
+            .And.Subject.As<WordRatioModel>()
+            .TfIdf.Should().Be(expected);
     }
-    
 }

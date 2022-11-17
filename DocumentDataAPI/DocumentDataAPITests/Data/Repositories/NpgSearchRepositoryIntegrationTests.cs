@@ -1,7 +1,6 @@
 ﻿using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Algorithms;
 using DocumentDataAPI.Data.Repositories;
-using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -47,18 +46,23 @@ public class NpgSearchRepositoryIntegrationTests
     {
         // Arrange
         List<string> query = new() { "dronningen", "døde", "og"};
-        List<long> expected = new()
-            { 1, 2, 3, 4, 5 };
-        // Explanation: Document 2 contains the word "dronningen" 10 times, which has the highest TF-IDF value.
-        // Then, document 1 contains a high TF-IDF valued word "døde" 3 times
-        // Finally, the remaining documents contain the word "og" which has a low TF-IdF value, and are ordered by the term frequency of the word.
 
         // Act
         IEnumerable<SearchResponseModel> result = await _repository.Get(query, new DocumentSearchParameters());
-        IEnumerable<long> resultIds = result.Select(d => d.DocumentModel.Id);
 
         // Assert
-        resultIds.Should().BeEquivalentTo(expected, options => options.WithStrictOrdering(), "because document 1 is more relevant than document 2");
+        result.Should().BeInDescendingOrder(x => x.Relevance, "because document 1 is more relevant than document 2")
+            .And.SatisfyRespectively(
+                x => x.DocumentModel.Id.Should().Be(1L),
+                x => x.DocumentModel.Id.Should().Be(2L),
+                x => x.Relevance.Should().Be(0L),
+                x => x.Relevance.Should().Be(0L),
+                x => x.Relevance.Should().Be(0L)
+            );
+        // Explanation:
+        // Document 1 contains the word "døde" 3 times (TF-IDF = 4.96)
+        // Document 2 contains the word "dronningen" 2 times (TF-IDF = 2.59)
+        // The other documents only contain the word "og" (TF-IDF = 0, i.e. it is irrelevant to the search since all documents contain this word)
     }
 
     [Fact]

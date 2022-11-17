@@ -52,7 +52,7 @@ public class NpgSearchRepository : ISearchRepository
             searchResponses.Add(new SearchResponseModel(model, documentRelevance));
         });
 
-        return searchResponses.OrderByDescending(s => s.Relevance).ThenBy(s => s.DocumentModel.Id);
+        return searchResponses.OrderByDescending(s => s.Relevance);
     }
 
     private async Task<IEnumerable<WordRatioModel>> GetWordRatiosByDocumentId(long id)

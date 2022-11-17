@@ -32,9 +32,10 @@ public class DatabaseDeployHelper
         try
         {
             string script = File.ReadAllText(path)
-                .Replace("${schema}", _databaseOptions.Schema);
+                .Replace("${schema}", _databaseOptions.Schema)
+                .Replace("${database}", _databaseOptions.Database);
 
-            _logger.LogInformation("Executing script: {path}", path);
+            _logger.LogInformation("Executing script: {Path}", path);
             using IDbConnection connection = _connectionFactory.CreateConnection();
             connection.Execute(script);
         }
