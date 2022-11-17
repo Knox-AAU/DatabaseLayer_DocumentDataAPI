@@ -1,6 +1,7 @@
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
@@ -9,18 +10,21 @@ public class NpgCategoryRepository : ICategoryRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgCategoryRepository> _logger;
+    private readonly ISqlHelper _sqlHelper;
 
-    public NpgCategoryRepository(IDbConnectionFactory connectionFactory, ILogger<NpgCategoryRepository> logger)
+    public NpgCategoryRepository(IDbConnectionFactory connectionFactory, ILogger<NpgCategoryRepository> logger, ISqlHelper sqlHelper)
     {
         _connectionFactory = connectionFactory;
         _logger = logger;
+        _sqlHelper = sqlHelper;
     }
 
-    public async Task<IEnumerable<CategoryModel>> GetAll()
+    public async Task<IEnumerable<CategoryModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all categories");
+        string sql = _sqlHelper.GetPaginatedQuery("select * from categories", limit, offset, CategoryMap.Id);
         using IDbConnection connection = _connectionFactory.CreateConnection();
-        return await connection.QueryAsync<CategoryModel>("select * from categories");
+        return await connection.QueryAsync<CategoryModel>(sql);
     }
 
     public async Task<long> Add(CategoryModel entity)
