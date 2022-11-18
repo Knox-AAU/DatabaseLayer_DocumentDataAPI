@@ -47,6 +47,11 @@ public class DocumentController : ControllerBase
     /// </summary>
     /// <param name="limit">The maximum number of rows to get.</param>
     /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
+    /// <param name="sourceId">A source ID used to delimit the search.</param>
+    /// <param name="author">The name of an author, used to delimit the search.</param>
+    /// <param name="categoryId">The ID of a category, used to delimit the search.</param>
+    /// <param name="beforeDate">A minimum date for documents.</param>
+    /// <param name="afterDate">A maximum date for documents.</param>
     /// <response code="200">Success: A list of all documents</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
