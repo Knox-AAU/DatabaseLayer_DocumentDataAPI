@@ -102,6 +102,7 @@ public class WordRatioController : ControllerBase
     /// <summary>
     /// Retrieves all word ratios that contain a word in the given <paramref name="wordListString"/>, which is a comma-separated string of words.
     /// </summary>
+    /// <param name="wordListString">a comma-separated string of words.</param>
     /// <param name="limit">The maximum number of rows to get.</param>
     /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
     /// <response code="200">Success: All word ratios with the specified word.</response>

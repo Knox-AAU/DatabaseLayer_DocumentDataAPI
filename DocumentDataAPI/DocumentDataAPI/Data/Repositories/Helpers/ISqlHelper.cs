@@ -21,11 +21,12 @@ public interface ISqlHelper
     /// <example>string sqlQuery = "insert into document_contents (documents_id, content) values " + GetBatchInsertParameters(models, out Dictionary params);</example>
     string GetBatchInsertParameters<T>(T[] models, out Dictionary<string, dynamic> parameterDictionary);
 
+    /// <summary>
     /// Builds a string of SQL parameters for document searches, which may involve filters on several different attributes.
     /// This method should be used for each parameter, and the calling method should handle whether the filter should start with "where" or "and".
     /// </summary>
     /// <param name="param">A query parameter containing a key, value and comparison operator</param>
-    /// <returns>A filtering (projection) string for a sql query.</returns>
+    /// <returns>A filtering condition string for a sql query.</returns>
     /// <example>string sqlQuery = "where " + GetParameterString(param);</example>
     string GetParameterString(QueryParameter param);
 
