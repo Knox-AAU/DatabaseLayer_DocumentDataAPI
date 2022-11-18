@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DocumentDataAPITests.Data.Repositories;
 
 [Collection("DocumentDataApiIntegrationTests")]
-public class NpgWordRatioRepositoryIntegrationTests
+public class NpgWordRatioRepositoryIntegrationTests : IntegrationTestBase
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgWordRatioRepository> _logger;
@@ -16,10 +16,9 @@ public class NpgWordRatioRepositoryIntegrationTests
 
     public NpgWordRatioRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgWordRatioRepository>(new NullLoggerFactory());
-        _sqlHelper = new DapperSqlHelper(TestHelper.Configuration);
-        TestHelper.DeployDatabaseWithTestData();
+        _sqlHelper = new DapperSqlHelper(Configuration);
     }
 
     [Theory]
@@ -178,5 +177,41 @@ public class NpgWordRatioRepositoryIntegrationTests
         //Assert
         result1.Should().Be(1);
         result2.Should().BeNull();
+    }
+
+    [Theory] // The test data contains 410 word_ratios in total.
+    [InlineData(0, null, 0)]
+    [InlineData(null, null, 410)]
+    [InlineData(100, null, 100)]
+    [InlineData(500, null, 410)]
+    [InlineData(100, 400, 10)]
+    public async Task GetAll_WithVariousLimitAndOffsets_ReturnsExpectedAmounts(int? limit, int? offset, int expected)
+    {
+        //Arrange
+        NpgWordRatioRepository repository = new(_connectionFactory, _logger, _sqlHelper);
+
+        //Act
+        IEnumerable<WordRatioModel> result = await repository.GetAll(limit, offset);
+
+        //Assert
+        result.Count().Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task GetAll_WithSpecificLimitAndOffset_ReturnsConsistentResults()
+    {
+        //Arrange
+        NpgWordRatioRepository repository = new(_connectionFactory, _logger, _sqlHelper);
+        const int limit = 4;
+        const int firstOffset = 64,
+            nextOffset = 68;
+
+        //Act
+        IEnumerable<WordRatioModel> firstResult = await repository.GetAll(limit, firstOffset);
+        IEnumerable<WordRatioModel> nextResult = await repository.GetAll(limit, nextOffset);
+
+        //Assert
+        firstResult.Should().AllSatisfy(x => x.DocumentId.Should().Be(1L));
+        nextResult.Should().AllSatisfy(x => x.DocumentId.Should().Be(2L));
     }
 }

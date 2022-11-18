@@ -8,16 +8,15 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DocumentDataAPITests.Data.Repositories;
 
 [Collection("DocumentDataApiIntegrationTests")]
-public class NpgDocumentRepositoryIntegrationTests
+public class NpgDocumentRepositoryIntegrationTests : IntegrationTestBase
 {
     private readonly NpgDocumentRepository _repository;
 
     public NpgDocumentRepositoryIntegrationTests()
     {
-        NpgDbConnectionFactory connectionFactory = new(TestHelper.DatabaseOptions.ConnectionString);
+        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions.ConnectionString);
         ILogger<NpgDocumentRepository> logger = new Logger<NpgDocumentRepository>(new NullLoggerFactory());
-        _repository = new NpgDocumentRepository(connectionFactory, logger, new DapperSqlHelper(TestHelper.Configuration));
-        TestHelper.DeployDatabaseWithTestData();
+        _repository = new NpgDocumentRepository(connectionFactory, logger, new DapperSqlHelper(Configuration));
     }
 
     private static List<DocumentModel> DocumentData =>
@@ -279,7 +278,7 @@ public class NpgDocumentRepositoryIntegrationTests
         //Assert
         result.Should().Be(totalCount);
     }
-    
+
     [Fact]
     public async Task GetAuthors_GetAllAuthors_ReturnList()
     {
@@ -297,5 +296,20 @@ public class NpgDocumentRepositoryIntegrationTests
 
         //Assert
         result.Should().BeEquivalentTo(authors);
+    }
+
+    [Theory] // The test data contains 5 documents in total.
+    [InlineData(0, null, 0)]
+    [InlineData(null, null, 5)]
+    [InlineData(2, null, 2)]
+    [InlineData(2, 4, 1)]
+    [InlineData(1, 6, 0)]
+    public async Task GetAll_WithVariousLimitAndOffsets_ReturnsExpectedAmounts(int? limit, int? offset, int expected)
+    {
+        //Act
+        IEnumerable<DocumentModel> result = await _repository.GetAll(limit, offset);
+
+        //Assert
+        result.Count().Should().Be(expected);
     }
 }

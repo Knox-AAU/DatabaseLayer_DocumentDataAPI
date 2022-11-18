@@ -1,6 +1,7 @@
 using System.Data;
 using Dapper;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 
 namespace DocumentDataAPI.Data.Repositories;
@@ -9,11 +10,13 @@ public class NpgSourceRepository : ISourceRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgSourceRepository> _logger;
+    private readonly ISqlHelper _sqlHelper;
 
-    public NpgSourceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgSourceRepository> logger)
+    public NpgSourceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgSourceRepository> logger, ISqlHelper sqlHelper)
     {
         _connectionFactory = connectionFactory;
         _logger = logger;
+        _sqlHelper = sqlHelper;
     }
 
     public async Task<SourceModel?> Get(long sourceId)
@@ -32,11 +35,12 @@ public class NpgSourceRepository : ISourceRepository
             new { id = sourceId });
     }
 
-    public async Task<IEnumerable<SourceModel>> GetAll()
+    public async Task<IEnumerable<SourceModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all Sources from database");
+        string sql = _sqlHelper.GetPaginatedQuery("select * from sources", limit, offset, SourceMap.Id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<SourceModel>("select * from sources");
+        return await con.QueryAsync<SourceModel>(sql);
     }
 
     public async Task<long> Add(SourceModel entity)

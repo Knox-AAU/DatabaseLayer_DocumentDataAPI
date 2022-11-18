@@ -1,6 +1,6 @@
 ﻿using DocumentDataAPI.Data;
-using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -8,23 +8,24 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DocumentDataAPITests.Data.Repositories;
 
 [Collection("DocumentDataApiIntegrationTests")]
-public class NpgCategoryRepositoryIntegrationTests
+public class NpgCategoryRepositoryIntegrationTests : IntegrationTestBase
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgCategoryRepository> _logger;
+    private readonly ISqlHelper _sqlHelper;
 
     public NpgCategoryRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgCategoryRepository>(new NullLoggerFactory());
-        TestHelper.DeployDatabaseWithTestData();
+        _sqlHelper = new DapperSqlHelper(Configuration);
     }
 
     [Fact]
     public async Task GetAll_ReturnsAllCategories()
     {
         // Arrange
-        NpgCategoryRepository repository = new(_connectionFactory, _logger);
+        NpgCategoryRepository repository = new(_connectionFactory, _logger, _sqlHelper);
 
         // Act
         IEnumerable<CategoryModel> result = await repository.GetAll();
@@ -39,7 +40,7 @@ public class NpgCategoryRepositoryIntegrationTests
     public async Task Update_UpdatesRow()
     {
         // Arrange
-        NpgCategoryRepository repository = new(_connectionFactory, _logger);
+        NpgCategoryRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         const string expected = "Test Category";
         CategoryModel category = new()
         {
@@ -61,7 +62,7 @@ public class NpgCategoryRepositoryIntegrationTests
     public async Task DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
-        NpgCategoryRepository repository = new(_connectionFactory, _logger);
+        NpgCategoryRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         const int id = 1;
         await repository.Delete(id);
 
@@ -76,7 +77,7 @@ public class NpgCategoryRepositoryIntegrationTests
     public async Task Add_AddsNewCategory()
     {
         // Arrange
-        NpgCategoryRepository repository = new(_connectionFactory, _logger);
+        NpgCategoryRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         const string name = "Test Category";
         CategoryModel category = new(name);
         long id = await repository.Add(category);
@@ -94,7 +95,7 @@ public class NpgCategoryRepositoryIntegrationTests
     public async Task GetById_ReturnsCategorySpecifiedById()
     {
         // Arrange
-        NpgCategoryRepository repository = new(_connectionFactory, _logger);
+        NpgCategoryRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         const string expected = "Uncategorized";
 
         // Act

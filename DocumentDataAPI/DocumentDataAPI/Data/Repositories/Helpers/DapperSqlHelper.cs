@@ -55,11 +55,36 @@ public class DapperSqlHelper : ISqlHelper
         return stringBuilder.ToString();
     }
 
+    /// <inheritdoc/>
     public string GetParameterString(QueryParameter param)
     {
         string paramString = $"{param.Key} {param.ComparisonOperator} ";
         if (param.Value is IEnumerable) paramString += $"any(@{param.Key})";
         else paramString += $"@{param.Key}";
         return paramString;
+    }
+
+    /// <inheritdoc/>
+    public string GetPaginatedQuery(string sql, int? limit = null, int? offset = null, params string[] orderByColumns)
+    {
+        if (limit == null && offset == null || orderByColumns.Length == 0)
+        {
+            return sql;
+        }
+        StringBuilder stringBuilder = new(sql);
+
+        stringBuilder.Append(" order by ")
+            .AppendJoin(',', orderByColumns);
+        if (limit != null)
+        {
+            stringBuilder.Append(" limit ").Append(limit);
+        }
+        if (offset != null)
+        {
+            stringBuilder.Append(" offset ").Append(offset);
+        }
+
+        return stringBuilder.ToString();
+
     }
 }

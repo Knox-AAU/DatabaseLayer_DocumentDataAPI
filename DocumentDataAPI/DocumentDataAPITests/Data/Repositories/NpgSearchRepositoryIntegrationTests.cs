@@ -9,16 +9,16 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DocumentDataAPITests.Data.Repositories;
 
 [Collection("DocumentDataApiIntegrationTests")]
-public class NpgSearchRepositoryIntegrationTests
+public class NpgSearchRepositoryIntegrationTests : IntegrationTestBase
 {
     private readonly NpgSearchRepository _repository;
 
     public NpgSearchRepositoryIntegrationTests()
     {
-        NpgDbConnectionFactory connectionFactory = new(TestHelper.DatabaseOptions.ConnectionString);
+        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions.ConnectionString);
         ILogger<NpgSearchRepository> logger = new Logger<NpgSearchRepository>(new NullLoggerFactory());
         IRelevanceFunction relevanceFunction = new CosineSimilarityCalculator();
-        _repository = new NpgSearchRepository(connectionFactory, logger, relevanceFunction, new DapperSqlHelper(TestHelper.Configuration));
+        _repository = new NpgSearchRepository(connectionFactory, logger, relevanceFunction, new DapperSqlHelper(Configuration));
     }
 
     [Fact]
@@ -77,5 +77,46 @@ public class NpgSearchRepositoryIntegrationTests
 
         // Assert
         result.Should().BeEmpty("because no documents contain the term \"videnskab\"");
+    }
+
+    [Fact]
+    public async Task GetAll_WithSpecificLimitAndOffset_ReturnsConsistentResults()
+    {
+        //Arrange
+        List<string> query = new() { "dronningen", "døde", "og" };
+        const int limit = 3;
+        const int firstOffset = 0,
+            nextOffset = 3;
+
+        //Act
+        IEnumerable<SearchResponseModel> firstResult = await _repository.Get(query, new DocumentSearchParameters(), limit, firstOffset);
+        IEnumerable<SearchResponseModel> nextResult = await _repository.Get(query, new DocumentSearchParameters(), limit, nextOffset);
+
+        //Assert
+        firstResult.Should().SatisfyRespectively(
+            x => x.DocumentModel.Id.Should().Be(1L),
+            x => x.DocumentModel.Id.Should().Be(2L),
+            x => x.Relevance.Should().Be(0)
+        );
+        nextResult.Should().HaveCount(2)
+            .And.AllSatisfy(x => x.Relevance.Should().Be(0));
+    }
+
+    [Fact]
+    public async Task GetAll_WithLimitAndOffset_ReturnsResultsInConsistentOrder()
+    {
+        //Arrange
+        List<string> query = new() { "er", "i", "unge", "vaccine", "danmark", "kø", "døde", "dronningen", "organsvigt" };
+        const int limit = 3;
+        const int firstOffset = 0,
+            nextOffset = 3;
+
+        //Act
+        IEnumerable<SearchResponseModel> firstResult = await _repository.Get(query, new DocumentSearchParameters(), limit, firstOffset);
+        IEnumerable<SearchResponseModel> nextResult = await _repository.Get(query, new DocumentSearchParameters(), limit, nextOffset);
+
+        //Assert
+        firstResult.Concat(nextResult).Should().HaveCount(5)
+            .And.BeInDescendingOrder(x => x.Relevance);
     }
 }

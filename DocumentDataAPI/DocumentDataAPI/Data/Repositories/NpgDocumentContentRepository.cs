@@ -40,11 +40,13 @@ public class NpgDocumentContentRepository : IDocumentContentRepository
             new { documentId, index });
     }
 
-    public async Task<IEnumerable<DocumentContentModel>> GetAll()
+    public async Task<IEnumerable<DocumentContentModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all DocumentContents from database");
+        string sql = _sqlHelper.GetPaginatedQuery("select * from document_contents", limit, offset,
+            DocumentContentMap.DocumentId, DocumentContentMap.Index);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<DocumentContentModel>("select * from document_contents");
+        return await con.QueryAsync<DocumentContentModel>(sql);
     }
 
     public async Task<long> Add(DocumentContentModel entity)
