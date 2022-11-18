@@ -56,6 +56,35 @@ public sealed class SqlHelperTests
     }
 
     [Fact]
+    public void GetPaginatedQuery_OnlyOffset_AddsOnlyOrderingAndOffset()
+    {
+        // Arrange
+        DapperSqlHelper helper = new (_configuration);
+        const string sql = "select * from test";
+
+        // Act
+        string result = helper.GetPaginatedQuery(sql, null, 2, "id");
+
+        // Assert
+        result.Should().EndWith("order by id offset 2");
+    }
+
+    [Fact]
+    public void GetPaginatedQuery_NoOrderByColumns_ReturnsOriginalSql()
+    {
+        // Arrange
+        DapperSqlHelper helper = new (_configuration);
+        const string sql = "select * from test";
+
+        // Act
+        string result = helper.GetPaginatedQuery(sql, 10, 2);
+
+        // Assert
+        result.Should().Be(sql);
+    }
+
+
+    [Fact]
     public void GetPaginatedQuery_MultipleOrderingColumns_ReturnsOrderByAllColumnsInOrder()
     {
         // Arrange
