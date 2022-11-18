@@ -63,6 +63,7 @@ public class DocumentController : ControllerBase
     {
         try
         {
+            limit ??= 100;
             DocumentSearchParameters parameters = new DocumentSearchParameters();
             if (sourceIds.Any()) parameters.AddSources(sourceIds);
             if (authors.Any()) parameters.AddAuthors(authors);
