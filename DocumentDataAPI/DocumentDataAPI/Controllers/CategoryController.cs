@@ -23,6 +23,8 @@ public class CategoryController : ControllerBase
     /// <summary>
     /// Retrieves a list of all categories in the database.
     /// </summary>
+    /// <param name="limit">The maximum number of rows to get.</param>
+    /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
     /// <response code="200">Success: A list of categories.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
@@ -30,11 +32,11 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<CategoryModel>>> GetAll()
+    public async Task<ActionResult<IEnumerable<CategoryModel>>> GetAll(int? limit, int? offset)
     {
         try
         {
-            IEnumerable<CategoryModel> result = await _repository.GetAll();
+            IEnumerable<CategoryModel> result = await _repository.GetAll(limit, offset);
             return result.Any()
                 ? Ok(result)
                 : NoContent();

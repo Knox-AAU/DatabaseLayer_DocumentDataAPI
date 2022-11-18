@@ -22,7 +22,7 @@ public class NpgSearchRepository : ISearchRepository
         _relevanceFunction = relevanceFunction;
     }
 
-    public async Task<IEnumerable<SearchResponseModel>> Get(List<string> processedWords, DocumentSearchParameters parameters)
+    public async Task<IEnumerable<SearchResponseModel>> Get(List<string> processedWords, DocumentSearchParameters parameters, int? limit = null, int? offset = null)
     {
         DynamicParameters args = new();
         args.Add("words", processedWords);
@@ -52,7 +52,9 @@ public class NpgSearchRepository : ISearchRepository
             searchResponses.Add(new SearchResponseModel(model, documentRelevance));
         });
 
-        return searchResponses.OrderByDescending(s => s.Relevance);
+        return searchResponses.OrderByDescending(s => s.Relevance)
+            .Skip(offset ?? 0)
+            .Take(limit ?? searchResponses.Count);
     }
 
     private async Task<IEnumerable<WordRatioModel>> GetWordRatiosByDocumentId(long id)

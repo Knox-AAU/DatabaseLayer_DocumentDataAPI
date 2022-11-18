@@ -22,6 +22,8 @@ public class DocumentContentController : ControllerBase
     /// <summary>
     /// Retrieves all document contents.
     /// </summary>
+    /// <param name="limit">The maximum number of rows to get.</param>
+    /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
     /// <response code="200">Success: A list of document contents.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
@@ -29,11 +31,11 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DocumentContentModel>>> GetAll()
+    public async Task<ActionResult<IEnumerable<DocumentContentModel>>> GetAll(int? limit, int? offset)
     {
         try
         {
-            IEnumerable<DocumentContentModel> result = await _repository.GetAll();
+            IEnumerable<DocumentContentModel> result = await _repository.GetAll(limit, offset);
             return result.Any()
                 ? Ok(result)
                 : NoContent();
