@@ -7,34 +7,34 @@ public class DocumentSearchParameters : ISearchParameters
     public List<QueryParameter> Parameters { get; }
     public DocumentSearchParameters()
     {
-        Parameters = new();
+        Parameters = new List<QueryParameter>();
     }
 
-    public DocumentSearchParameters(long? sourceId, string? author, int? categoryId, DateTime? beforeDate, DateTime? afterDate)
+    public DocumentSearchParameters(List<long> sourceIds, List<string> authors, List<int> categoryIds, DateTime? beforeDate, DateTime? afterDate)
         : this()
     {
-        if (sourceId is not null) AddSource(sourceId.Value);
-        if (author is not null) AddAuthor(author);
-        if (categoryId is not null) AddCategory(categoryId.Value);
+        if (sourceIds.Any()) AddSources(sourceIds);
+        if (authors.Any()) AddAuthors(authors);
+        if (categoryIds.Any()) AddCategories(categoryIds);
         if (beforeDate is not null) AddBeforeDate(beforeDate.Value);
         if (afterDate is not null) AddAfterDate(afterDate.Value);
     }
 
-    public DocumentSearchParameters AddSource(long sourceId)
+    public DocumentSearchParameters AddSources(List<long> sourceIds)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.SourceId, sourceId));
+        Parameters.Add(new QueryParameter(DocumentMap.SourceId, sourceIds));
         return this;
     }
 
-    public DocumentSearchParameters AddAuthor(string authorName)
+    public DocumentSearchParameters AddAuthors(List<string> authorName)
     {
         Parameters.Add(new QueryParameter(DocumentMap.Author, authorName));
         return this;
     }
 
-    public DocumentSearchParameters AddCategory(int categoryId)
+    public DocumentSearchParameters AddCategories(List<int> categoryIds)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.CategoryId, categoryId));
+        Parameters.Add(new QueryParameter(DocumentMap.CategoryId, categoryIds));
         return this;
     }
 

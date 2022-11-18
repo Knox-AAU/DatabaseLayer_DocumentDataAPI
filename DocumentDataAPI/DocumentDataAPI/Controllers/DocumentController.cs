@@ -47,9 +47,9 @@ public class DocumentController : ControllerBase
     /// </summary>
     /// <param name="limit">The maximum number of rows to get.</param>
     /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
-    /// <param name="sourceId">A source ID used to delimit the search.</param>
-    /// <param name="author">The name of an author, used to delimit the search.</param>
-    /// <param name="categoryId">The ID of a category, used to delimit the search.</param>
+    /// <param name="sourceIds">A list of source IDs used to delimit the search.</param>
+    /// <param name="authors">The names of authors, used to delimit the search.</param>
+    /// <param name="categoryIds">The IDs of categories, used to delimit the search.</param>
     /// <param name="beforeDate">A minimum date for documents.</param>
     /// <param name="afterDate">A maximum date for documents.</param>
     /// <response code="200">Success: A list of all documents</response>
@@ -59,14 +59,14 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll(int? sourceId, string? author, int? categoryId, DateTime? beforeDate, DateTime? afterDate, int? limit, int? offset)
+    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll([FromQuery] List<long> sourceIds, [FromQuery] List<string> authors, [FromQuery] List<int> categoryIds, DateTime? beforeDate, DateTime? afterDate, int? limit, int? offset)
     {
         try
         {
             DocumentSearchParameters parameters = new DocumentSearchParameters();
-            if (sourceId is not null) parameters.AddSource(sourceId.Value);
-            if (author is not null) parameters.AddAuthor(author);
-            if (categoryId is not null) parameters.AddCategory(categoryId.Value);
+            if (sourceIds.Any()) parameters.AddSources(sourceIds);
+            if (authors.Any()) parameters.AddAuthors(authors);
+            if (categoryIds.Any()) parameters.AddCategories(categoryIds);
             if (beforeDate is not null) parameters.AddBeforeDate(beforeDate.Value);
             if (afterDate is not null) parameters.AddAfterDate(afterDate.Value);
 
