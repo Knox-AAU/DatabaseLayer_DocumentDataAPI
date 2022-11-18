@@ -36,6 +36,7 @@ public class WordRatioController : ControllerBase
     {
         try
         {
+            limit ??= 100; // TODO: fix this
             IEnumerable<WordRatioModel> result = await _repository.GetAll(limit, offset);
             return result.Any()
                 ? Ok(result)
@@ -115,6 +116,7 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<WordRatioModel>>> GetByWord(string wordListString, int? limit, int? offset)
     {
+        limit ??= 100; // TODO: fix this
         List<string> wordList = wordListString.Split(',').ToList();
         try
         {
