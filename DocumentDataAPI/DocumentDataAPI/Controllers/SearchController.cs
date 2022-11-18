@@ -33,7 +33,7 @@ public class SearchController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<SearchResponseModel>>> Get(string words, int? sourceId, string? author, int? categoryId, DateTime? beforeDate, DateTime? afterDate)
+    public async Task<ActionResult<IEnumerable<SearchResponseModel>>> Get(string words, [FromQuery]List<long> sourceIds, [FromQuery]List<string> authors, [FromQuery]List<int> categoryIds, DateTime? beforeDate, DateTime? afterDate)
     {
         try
         {
@@ -42,7 +42,7 @@ public class SearchController : ControllerBase
             List<string> processedWords = lemmatizedString.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
                 .ToList();
 
-            DocumentSearchParameters parameters = new(sourceId, author, categoryId, beforeDate, afterDate);
+            DocumentSearchParameters parameters = new(sourceIds, authors, categoryIds, beforeDate, afterDate);
 
             IEnumerable<SearchResponseModel> result = await _repository.Get(processedWords, parameters);
             return result.Any()

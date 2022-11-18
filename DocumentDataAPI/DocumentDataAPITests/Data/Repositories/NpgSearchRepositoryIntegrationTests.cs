@@ -1,6 +1,7 @@
 ﻿using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Algorithms;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -17,7 +18,7 @@ public class NpgSearchRepositoryIntegrationTests
         NpgDbConnectionFactory connectionFactory = new(TestHelper.DatabaseOptions.ConnectionString);
         ILogger<NpgSearchRepository> logger = new Logger<NpgSearchRepository>(new NullLoggerFactory());
         IRelevanceFunction relevanceFunction = new CosineSimilarityCalculator();
-        _repository = new NpgSearchRepository(connectionFactory, logger, relevanceFunction);
+        _repository = new NpgSearchRepository(connectionFactory, logger, relevanceFunction, new DapperSqlHelper(TestHelper.Configuration));
     }
 
     [Fact]

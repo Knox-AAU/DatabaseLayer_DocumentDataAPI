@@ -14,12 +14,14 @@ public class NpgSearchRepository : ISearchRepository
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgSearchRepository> _logger;
     private readonly IRelevanceFunction _relevanceFunction;
+    private readonly ISqlHelper _sqlHelper;
 
-    public NpgSearchRepository(IDbConnectionFactory connectionFactory, ILogger<NpgSearchRepository> logger, IRelevanceFunction relevanceFunction)
+    public NpgSearchRepository(IDbConnectionFactory connectionFactory, ILogger<NpgSearchRepository> logger, IRelevanceFunction relevanceFunction, ISqlHelper sqlHelper)
     {
         _connectionFactory = connectionFactory;
         _logger = logger;
         _relevanceFunction = relevanceFunction;
+        _sqlHelper = sqlHelper;
     }
 
     public async Task<IEnumerable<SearchResponseModel>> Get(List<string> processedWords, DocumentSearchParameters parameters)
@@ -31,7 +33,7 @@ public class NpgSearchRepository : ISearchRepository
         {
             foreach (QueryParameter param in parameters.Parameters)
             {
-                query.Append($" and {param.Key} {param.ComparisonOperator} @{param.Key}");
+                query.Append($" and " + _sqlHelper.GetParameterString(param));
                 args.Add(param.Key, param.Value);
             }
         }

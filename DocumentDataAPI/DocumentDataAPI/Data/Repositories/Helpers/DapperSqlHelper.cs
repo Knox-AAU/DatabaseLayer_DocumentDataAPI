@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Text;
+using DocumentDataAPI.Models;
 using DocumentDataAPI.Models.Attributes;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -51,5 +53,13 @@ public class DapperSqlHelper : ISqlHelper
             }
         }
         return stringBuilder.ToString();
+    }
+
+    public string GetParameterString(QueryParameter param)
+    {
+        string paramString = $"{param.Key} {param.ComparisonOperator} ";
+        if (param.Value is IEnumerable) paramString += $"any(@{param.Key})";
+        else paramString += $"@{param.Key}";
+        return paramString;
     }
 }

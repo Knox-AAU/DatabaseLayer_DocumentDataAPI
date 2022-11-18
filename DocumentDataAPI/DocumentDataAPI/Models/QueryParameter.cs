@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Text;
+
 namespace DocumentDataAPI.Models;
 
 public class QueryParameter
