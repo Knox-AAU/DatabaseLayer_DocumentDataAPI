@@ -47,9 +47,9 @@ public class DocumentController : ControllerBase
     /// </summary>
     /// <param name="limit">The maximum number of rows to get.</param>
     /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
-    /// <param name="sourceId">A source ID used to delimit the search.</param>
-    /// <param name="author">The name of an author, used to delimit the search.</param>
-    /// <param name="categoryId">The ID of a category, used to delimit the search.</param>
+    /// <param name="sourceIds">A list of source IDs used to delimit the search.</param>
+    /// <param name="authors">The names of authors, used to delimit the search.</param>
+    /// <param name="categoryIds">The IDs of categories, used to delimit the search.</param>
     /// <param name="beforeDate">A minimum date for documents.</param>
     /// <param name="afterDate">A maximum date for documents.</param>
     /// <response code="200">Success: A list of all documents</response>
