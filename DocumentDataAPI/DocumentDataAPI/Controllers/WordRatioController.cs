@@ -23,6 +23,8 @@ public class WordRatioController : ControllerBase
     /// <summary>
     /// Retrieves all word ratios.
     /// </summary>
+    /// <param name="limit">The maximum number of rows to get.</param>
+    /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
     /// <response code="200">Success: A list of word ratios.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
@@ -30,11 +32,11 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<WordRatioModel>>> GetAll()
+    public async Task<ActionResult<IEnumerable<WordRatioModel>>> GetAll(int? limit, int? offset)
     {
         try
         {
-            IEnumerable<WordRatioModel> result = await _repository.GetAll();
+            IEnumerable<WordRatioModel> result = await _repository.GetAll(limit, offset);
             return result.Any()
                 ? Ok(result)
                 : NoContent();
@@ -100,6 +102,8 @@ public class WordRatioController : ControllerBase
     /// <summary>
     /// Retrieves all word ratios that contain a word in the given <paramref name="wordListString"/>, which is a comma-separated string of words.
     /// </summary>
+    /// <param name="limit">The maximum number of rows to get.</param>
+    /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
     /// <response code="200">Success: All word ratios with the specified word.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
@@ -108,12 +112,12 @@ public class WordRatioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<WordRatioModel>>> GetByWord(string wordListString)
+    public async Task<ActionResult<IEnumerable<WordRatioModel>>> GetByWord(string wordListString, int? limit, int? offset)
     {
         List<string> wordList = wordListString.Split(',').ToList();
         try
         {
-            IEnumerable<WordRatioModel> result = await _repository.GetByWords(wordList);
+            IEnumerable<WordRatioModel> result = await _repository.GetByWords(wordList, limit, offset);
             return result.Any()
                 ? Ok(result)
                 : NoContent();

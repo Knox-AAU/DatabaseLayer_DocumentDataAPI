@@ -45,6 +45,8 @@ public class DocumentController : ControllerBase
     /// <summary>
     /// Retrieves a list of all documents from the database.
     /// </summary>
+    /// <param name="limit">The maximum number of rows to get.</param>
+    /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
     /// <response code="200">Success: A list of all documents</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
@@ -52,7 +54,7 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll(int? sourceId, string? author, int? categoryId, DateTime? beforeDate, DateTime? afterDate)
+    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll(int? sourceId, string? author, int? categoryId, DateTime? beforeDate, DateTime? afterDate, int? limit, int? offset)
     {
         try
         {
@@ -63,7 +65,7 @@ public class DocumentController : ControllerBase
             if (beforeDate is not null) parameters.AddBeforeDate(beforeDate.Value);
             if (afterDate is not null) parameters.AddAfterDate(afterDate.Value);
 
-            IEnumerable<DocumentModel> result = await _repository.GetAll(parameters);
+            IEnumerable<DocumentModel> result = await _repository.GetAll(parameters, limit, offset);
             return result.Any()
                 ? Ok(result)
                 : NoContent();
