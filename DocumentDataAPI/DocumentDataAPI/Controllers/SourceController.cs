@@ -22,6 +22,8 @@ public class SourceController : ControllerBase
     /// <summary>
     /// Retrieves all sources.
     /// </summary>
+    /// <param name="limit">The maximum number of rows to get.</param>
+    /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
     /// <response code="200">Success: A list of all sources.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
@@ -29,11 +31,11 @@ public class SourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<SourceModel>>> GetAll()
+    public async Task<ActionResult<IEnumerable<SourceModel>>> GetAll(int? limit, int? offset)
     {
         try
         {
-            IEnumerable<SourceModel> result = await _repository.GetAll();
+            IEnumerable<SourceModel> result = await _repository.GetAll(limit, offset);
             return result.Any()
                 ? Ok(result)
                 : NoContent();

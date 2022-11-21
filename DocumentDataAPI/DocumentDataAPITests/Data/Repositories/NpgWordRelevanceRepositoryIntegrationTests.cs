@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DocumentDataAPITests.Data.Repositories;
 
 [Collection("DocumentDataApiIntegrationTests")]
-public class NpgWordRelevanceRepositoryIntegrationTests
+public class NpgWordRelevanceRepositoryIntegrationTests : IntegrationTestBase
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgWordRelevanceRepository> _relevanceLogger;
@@ -17,11 +17,10 @@ public class NpgWordRelevanceRepositoryIntegrationTests
 
     public NpgWordRelevanceRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
         _relevanceLogger = new Logger<NpgWordRelevanceRepository>(new NullLoggerFactory());
         _ratioLogger = new Logger<NpgWordRatioRepository>(new NullLoggerFactory());
-        _sqlHelper = new DapperSqlHelper(TestHelper.Configuration);
-        TestHelper.DeployDatabaseWithTestData();
+        _sqlHelper = new DapperSqlHelper(Configuration);
     }
 
     [Fact]
@@ -47,7 +46,7 @@ public class NpgWordRelevanceRepositoryIntegrationTests
         //Arrange
         NpgWordRelevanceRepository relevanceRepository = new(_connectionFactory, _relevanceLogger);
         NpgWordRatioRepository ratioRepository = new(_connectionFactory, _ratioLogger, _sqlHelper);
-        
+
         //Act
         _ = await relevanceRepository.UpdateWordRelevances();
         WordRatioModel? wordRatio = await ratioRepository.Get(docId, word);

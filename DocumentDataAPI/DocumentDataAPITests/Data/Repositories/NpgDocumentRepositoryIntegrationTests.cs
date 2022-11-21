@@ -8,16 +8,15 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DocumentDataAPITests.Data.Repositories;
 
 [Collection("DocumentDataApiIntegrationTests")]
-public class NpgDocumentRepositoryIntegrationTests
+public class NpgDocumentRepositoryIntegrationTests : IntegrationTestBase
 {
     private readonly NpgDocumentRepository _repository;
 
     public NpgDocumentRepositoryIntegrationTests()
     {
-        NpgDbConnectionFactory connectionFactory = new(TestHelper.DatabaseOptions.ConnectionString);
+        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions.ConnectionString);
         ILogger<NpgDocumentRepository> logger = new Logger<NpgDocumentRepository>(new NullLoggerFactory());
-        _repository = new NpgDocumentRepository(connectionFactory, logger, new DapperSqlHelper(TestHelper.Configuration));
-        TestHelper.DeployDatabaseWithTestData();
+        _repository = new NpgDocumentRepository(connectionFactory, logger, new DapperSqlHelper(Configuration));
     }
 
     private static List<DocumentModel> DocumentData =>
@@ -80,7 +79,8 @@ public class NpgDocumentRepositoryIntegrationTests
         // Arrange
         DocumentSearchParameters parameters = new();
         const string searchAuthor = "Maja Lærke Maach";
-        parameters.AddAuthor(searchAuthor);
+        List<string> searchAuthors = new() { searchAuthor };
+        parameters.AddAuthors(searchAuthors);
 
         // Act
         List<DocumentModel> result = (await _repository.GetAll(parameters)).ToList();
@@ -91,13 +91,68 @@ public class NpgDocumentRepositoryIntegrationTests
     }
 
     [Fact]
+    public async Task GetAll_SearchParametersBySeveralAuthors_ReturnsCorrectRows()
+    {
+        // Arrange
+        DocumentSearchParameters parameters = new();
+        const string searchAuthor1 = "Maja Lærke Maach";
+        const string searchAuthor2 = "Andreas Nygaard Just";
+        List<string> searchAuthors = new() { searchAuthor1, searchAuthor2 };
+        parameters.AddAuthors(searchAuthors);
+
+        // Act
+        List<DocumentModel> result = (await _repository.GetAll(parameters)).ToList();
+
+        // Assert
+        result.Should().AllSatisfy(d => { d.Author.Should().BeOneOf(searchAuthor1, searchAuthor2); },
+            "because the query specifies two authors, therefore all documents returned must be authored by either author.");
+    }
+
+    [Fact]
+    public async Task GetAll_SearchParametersByAllCategories_ReturnsAllRows()
+    {
+        // Arrange
+        DocumentSearchParameters parameters = new();
+        const int searchCategory1 = 1;
+        const int searchCategory2 = 2;
+        List<int> searchCategories = new() { searchCategory1, searchCategory2 };
+        parameters.AddCategories(searchCategories);
+
+        // Act
+        List<DocumentModel> result = (await _repository.GetAll(parameters)).ToList();
+
+        // Assert
+        result.Should().AllSatisfy(d => { d.CategoryId.Should().BeOneOf(searchCategory1, searchCategory2); },
+            "because the query specifies two categories, therefore all documents returned must be either category 1 or 2").And.HaveCount(5, "because there are 5 documents in the database, all with category 2");
+    }
+
+    [Fact]
+    public async Task GetAll_SearchParametersByAllSources_ReturnsAllRows()
+    {
+        // Arrange
+        DocumentSearchParameters parameters = new();
+        const int searchSource1 = 1;
+        const int searchSource2 = 2;
+        List<long> searchSources = new() { searchSource1, searchSource2 };
+        parameters.AddSources(searchSources);
+
+        // Act
+        List<DocumentModel> result = (await _repository.GetAll(parameters)).ToList();
+
+        // Assert
+        result.Should().AllSatisfy(d => { d.SourceId.Should().BeOneOf(searchSource1, searchSource2); },
+            "because the query specifies two sources, therefore all documents returned must be either source 1 or 2").And.HaveCount(5, "because there are 5 documents in the database, 3 with source 1 and 2 with source 2");
+    }
+
+    [Fact]
     public async Task GetAll_SearchParametersByAuthorAndDateReturnsCorrectRows()
     {
         // Arrange
         DocumentSearchParameters parameters = new();
         const string searchAuthor = "Maja Lærke Maach";
+        List<string> searchAuthors = new() { searchAuthor };
         DateTime searchDate = DateTime.Parse("2022-10-07 13:34:00.000");
-        parameters.AddAuthor(searchAuthor)
+        parameters.AddAuthors(searchAuthors)
             .AddAfterDate(searchDate);
 
         // Act
@@ -223,7 +278,7 @@ public class NpgDocumentRepositoryIntegrationTests
         //Assert
         result.Should().Be(totalCount);
     }
-    
+
     [Fact]
     public async Task GetAuthors_GetAllAuthors_ReturnList()
     {
@@ -241,5 +296,20 @@ public class NpgDocumentRepositoryIntegrationTests
 
         //Assert
         result.Should().BeEquivalentTo(authors);
+    }
+
+    [Theory] // The test data contains 5 documents in total.
+    [InlineData(0, null, 0)]
+    [InlineData(null, null, 5)]
+    [InlineData(2, null, 2)]
+    [InlineData(2, 4, 1)]
+    [InlineData(1, 6, 0)]
+    public async Task GetAll_WithVariousLimitAndOffsets_ReturnsExpectedAmounts(int? limit, int? offset, int expected)
+    {
+        //Act
+        IEnumerable<DocumentModel> result = await _repository.GetAll(limit, offset);
+
+        //Assert
+        result.Count().Should().Be(expected);
     }
 }

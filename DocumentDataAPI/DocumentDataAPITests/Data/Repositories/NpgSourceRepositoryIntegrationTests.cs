@@ -1,5 +1,6 @@
 ﻿using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -7,23 +8,24 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DocumentDataAPITests.Data.Repositories;
 
 [Collection("DocumentDataApiIntegrationTests")]
-public class NpgSourceRepositoryIntegrationTests
+public class NpgSourceRepositoryIntegrationTests : IntegrationTestBase
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgSourceRepository> _logger;
+    private readonly ISqlHelper _sqlHelper;
 
     public NpgSourceRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgSourceRepository>(new NullLoggerFactory());
-        TestHelper.DeployDatabaseWithTestData();
+        _sqlHelper = new DapperSqlHelper(Configuration);
     }
 
     [Fact]
     public async Task GetAll_ReturnsAllSources()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger, _sqlHelper);
 
         // Act
         List<SourceModel> result = (await repository.GetAll()).ToList();
@@ -40,7 +42,7 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task Update_UpdatesRow()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         const string expected = "Test Source";
 
         // Act
@@ -56,7 +58,7 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task DeleteWithNoForeignKeyViolation_DeletesRow()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         IEnumerable<SourceModel> expected = new List<SourceModel>() { new(1, "DR"), new(2, "TV2") };
         SourceModel newSource = new(3, "Test");
         await repository.Add(newSource);
@@ -73,7 +75,7 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task Add_AddsNewSource()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         SourceModel expected = new(3, "Test");
         await repository.Add(expected);
 
@@ -89,7 +91,7 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task GetById_ReturnsSourceSpecifiedById()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         SourceModel expected = new(1, "DR");
 
         // Act
@@ -103,7 +105,7 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task GetByName_ReturnsSourcesSpecifiedByName()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         SourceModel source = new(1, "DR");
         IEnumerable<SourceModel> expected = new List<SourceModel>() { source };
 
@@ -119,7 +121,7 @@ public class NpgSourceRepositoryIntegrationTests
     public async Task GetCountFromId_ReturnsCountOfDocumentsFromSource()
     {
         // Arrange
-        NpgSourceRepository repository = new(_connectionFactory, _logger);
+        NpgSourceRepository repository = new(_connectionFactory, _logger, _sqlHelper);
         SourceModel source = new(1, "DR");
         const long expected = 3;
 

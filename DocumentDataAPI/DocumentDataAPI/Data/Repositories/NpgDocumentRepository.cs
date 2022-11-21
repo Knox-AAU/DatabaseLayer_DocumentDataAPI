@@ -36,32 +36,34 @@ public class NpgDocumentRepository : IDocumentRepository
             new { id = documentId });
     }
 
-    public async Task<IEnumerable<DocumentModel>> GetAll()
+    public async Task<IEnumerable<DocumentModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all Documents from database");
+        string sql = _sqlHelper.GetPaginatedQuery("select * from documents", limit, offset, DocumentMap.Id);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<DocumentModel>("select * from documents");
+        return await con.QueryAsync<DocumentModel>(sql);
     }
 
-    public async Task<IEnumerable<DocumentModel>> GetAll(DocumentSearchParameters parameters)
+    public async Task<IEnumerable<DocumentModel>> GetAll(DocumentSearchParameters parameters, int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all Documents that the given search parameters from database");
-        using IDbConnection con = _connectionFactory.CreateConnection();
         StringBuilder query = new("select * from documents");
         DynamicParameters args = new();
         if (parameters.Parameters.Any())
         {
             QueryParameter firstParam = parameters.Parameters.First();
             args.Add(firstParam.Key, firstParam.Value);
-            query.Append($" where {firstParam.Key} {firstParam.ComparisonOperator} @{firstParam.Key}");
+            query.Append(" where " + _sqlHelper.GetParameterString(firstParam));
             foreach (QueryParameter param in parameters.Parameters.Skip(1))
             {
-                query.Append($" and {param.Key} {param.ComparisonOperator} @{param.Key}");
+                query.Append(" and " + _sqlHelper.GetParameterString(param));
                 args.Add(param.Key, param.Value);
             }
         }
+        string sql = _sqlHelper.GetPaginatedQuery(query.ToString(), limit, offset, DocumentMap.Id);
 
-        return await con.QueryAsync<DocumentModel>(query.ToString(), args);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.QueryAsync<DocumentModel>(sql, args);
     }
 
     public async Task<long> Add(DocumentModel entity)

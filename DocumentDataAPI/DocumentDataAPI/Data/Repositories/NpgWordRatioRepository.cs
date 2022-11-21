@@ -92,11 +92,13 @@ public class NpgWordRatioRepository : IWordRatioRepository
             new { DocumentId = documentId, Word = word });
     }
 
-    public async Task<IEnumerable<WordRatioModel>> GetAll()
+    public async Task<IEnumerable<WordRatioModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all WordRatios from database");
+        string sql = _sqlHelper.GetPaginatedQuery("select * from word_ratios", limit, offset,
+            WordRatioMap.DocumentId, WordRatioMap.Word);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<WordRatioModel>("select * from word_ratios");
+        return await con.QueryAsync<WordRatioModel>(sql);
     }
 
     public async Task<IEnumerable<WordRatioModel>> GetByDocumentId(long id)
@@ -113,11 +115,12 @@ public class NpgWordRatioRepository : IWordRatioRepository
             new { Word = word });
     }
 
-    public async Task<IEnumerable<WordRatioModel>> GetByWords(IEnumerable<string> wordlist)
+    public async Task<IEnumerable<WordRatioModel>> GetByWords(IEnumerable<string> wordlist, int? limit = null, int? offset = null)
     {
+        string sql = _sqlHelper.GetPaginatedQuery($"select * from word_ratios where {WordRatioMap.Word} = any(@wordlist)",
+            limit, offset, WordRatioMap.DocumentId, WordRatioMap.Word);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryAsync<WordRatioModel>($"select * from word_ratios where {WordRatioMap.Word} = any(@wordlist)",
-            new { wordlist });
+        return await con.QueryAsync<WordRatioModel>(sql, new { wordlist });
     }
 
     public async Task<int> Update(WordRatioModel entity)

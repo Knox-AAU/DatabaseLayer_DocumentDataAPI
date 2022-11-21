@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DocumentDataAPITests.Data.Repositories;
 
 [Collection("DocumentDataApiIntegrationTests")]
-public class NpgDocumentContentRepositoryIntegrationTests
+public class NpgDocumentContentRepositoryIntegrationTests : IntegrationTestBase
 {
     private readonly NpgDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgDocumentContentRepository> _logger;
@@ -16,10 +16,9 @@ public class NpgDocumentContentRepositoryIntegrationTests
 
     public NpgDocumentContentRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(TestHelper.DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
         _logger = new Logger<NpgDocumentContentRepository>(new NullLoggerFactory());
-        _sqlHelper = Mock.Of<ISqlHelper>();
-        TestHelper.DeployDatabaseWithTestData();
+        _sqlHelper = new DapperSqlHelper(Configuration);
     }
 
     [Fact]
