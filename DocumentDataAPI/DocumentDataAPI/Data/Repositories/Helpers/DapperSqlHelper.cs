@@ -67,7 +67,7 @@ public class DapperSqlHelper : ISqlHelper
     /// <inheritdoc/>
     public string GetPaginatedQuery(string sql, int? limit = null, int? offset = null, params string[] orderByColumns)
     {
-        if (limit == null && offset == null || orderByColumns.Length == 0)
+        if (limit is 0 or null && offset == null || orderByColumns.Length == 0)
         {
             return sql;
         }
@@ -75,11 +75,11 @@ public class DapperSqlHelper : ISqlHelper
 
         stringBuilder.Append(" order by ")
             .AppendJoin(',', orderByColumns);
-        if (limit != null)
+        if (limit is not (0 or null))
         {
             stringBuilder.Append(" limit ").Append(limit);
         }
-        if (offset != null)
+        if (offset is not (0 or null))
         {
             stringBuilder.Append(" offset ").Append(offset);
         }
