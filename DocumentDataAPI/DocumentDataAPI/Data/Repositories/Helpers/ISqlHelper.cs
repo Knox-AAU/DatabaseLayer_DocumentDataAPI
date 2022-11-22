@@ -36,7 +36,8 @@ public interface ISqlHelper
     /// <param name="sql">The SQL query string to extend with pagination.</param>
     /// <param name="limit">The max number of rows to fetch.</param>
     /// <param name="offset">The number of rows to skip.</param>
-    /// <param name="orderByColumns">Columns to order by, usually the columns that constitute the primary key for the relation. The ordering must always be the same to ensure that the "pages" are consistent.</param>
+    /// <param name="orderByColumns">A nonempty list of columns to order by, usually the columns that constitute the primary key for the relation. The ordering must always be the same to ensure that the "pages" are consistent.</param>
     /// <returns>The input query extended with pagination.</returns>
+    /// <exception cref="ArgumentException">If <paramref name="orderByColumns"/> is empty.</exception>
     string GetPaginatedQuery(string sql, int? limit, int? offset = null, params string[] orderByColumns);
 }

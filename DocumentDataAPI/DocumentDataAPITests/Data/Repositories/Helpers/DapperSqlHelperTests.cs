@@ -70,17 +70,17 @@ public sealed class SqlHelperTests
     }
 
     [Fact]
-    public void GetPaginatedQuery_NoOrderByColumns_ReturnsOriginalSql()
+    public void GetPaginatedQuery_NoOrderByColumns_ThrowsArgumentException()
     {
         // Arrange
         DapperSqlHelper helper = new (_configuration);
         const string sql = "select * from test";
 
         // Act
-        string result = helper.GetPaginatedQuery(sql, 10, 2);
+        Action action = () => helper.GetPaginatedQuery(sql, 10, 2);
 
         // Assert
-        result.Should().Be(sql);
+        action.Should().Throw<ArgumentException>();
     }
 
 
