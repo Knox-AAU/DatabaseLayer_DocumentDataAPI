@@ -299,7 +299,7 @@ public class NpgDocumentRepositoryIntegrationTests : IntegrationTestBase
     }
 
     [Theory] // The test data contains 5 documents in total.
-    [InlineData(0, null, 0)]
+    [InlineData(0, null, 5)]
     [InlineData(null, null, 5)]
     [InlineData(2, null, 2)]
     [InlineData(2, 4, 1)]

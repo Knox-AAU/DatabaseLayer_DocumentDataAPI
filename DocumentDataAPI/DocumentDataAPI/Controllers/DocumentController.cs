@@ -59,11 +59,10 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll([FromQuery] List<long> sourceIds, [FromQuery] List<string> authors, [FromQuery] List<int> categoryIds, DateTime? beforeDate, DateTime? afterDate, int? limit, int? offset)
+    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll([FromQuery] List<long> sourceIds, [FromQuery] List<string> authors, [FromQuery] List<int> categoryIds, DateTime? beforeDate, DateTime? afterDate, int? limit = 100, int? offset = null)
     {
         try
         {
-            limit ??= 100;
             DocumentSearchParameters parameters = new DocumentSearchParameters();
             if (sourceIds.Any()) parameters.AddSources(sourceIds);
             if (authors.Any()) parameters.AddAuthors(authors);
