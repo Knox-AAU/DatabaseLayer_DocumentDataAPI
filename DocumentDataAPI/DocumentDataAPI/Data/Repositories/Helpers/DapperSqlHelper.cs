@@ -79,7 +79,7 @@ public class DapperSqlHelper : ISqlHelper
         {
             stringBuilder.Append(" limit ").Append(limit);
         }
-        if (offset != null)
+        if (offset is not (0 or null))
         {
             stringBuilder.Append(" offset ").Append(offset);
         }
