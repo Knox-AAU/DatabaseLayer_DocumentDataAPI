@@ -38,7 +38,7 @@ public sealed class SqlHelperTests
         string result = helper.GetPaginatedQuery(sql, 10, 10, "id");
 
         // Assert
-        result.Should().EndWith("order by id limit 10 offset 10");
+        result.Should().EndWith("order by id fetch first 10 rows only offset 10 rows");
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public sealed class SqlHelperTests
         string result = helper.GetPaginatedQuery(sql, 2, null, "id");
 
         // Assert
-        result.Should().EndWith("order by id limit 2");
+        result.Should().EndWith("order by id fetch first 2 rows only");
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public sealed class SqlHelperTests
         string result = helper.GetPaginatedQuery(sql, null, 2, "id");
 
         // Assert
-        result.Should().EndWith("order by id offset 2");
+        result.Should().EndWith("order by id offset 2 rows");
     }
 
     [Fact]
@@ -95,6 +95,6 @@ public sealed class SqlHelperTests
         string result = helper.GetPaginatedQuery(sql, 1, null, "id", "word");
 
         // Assert
-        result.Should().EndWith("order by id,word limit 1");
+        result.Should().EndWith("order by id,word fetch first 1 rows only");
     }
 }
