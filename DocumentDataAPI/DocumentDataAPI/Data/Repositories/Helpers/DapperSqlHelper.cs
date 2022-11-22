@@ -77,14 +77,13 @@ public class DapperSqlHelper : ISqlHelper
             .AppendJoin(',', orderByColumns);
         if (limit is not (0 or null))
         {
-            stringBuilder.Append(" limit ").Append(limit);
+            stringBuilder.Append(" fetch first ").Append(limit).Append(" rows only");
         }
         if (offset is not (0 or null))
         {
-            stringBuilder.Append(" offset ").Append(offset);
+            stringBuilder.Append(" offset ").Append(offset).Append(" rows");
         }
 
         return stringBuilder.ToString();
-
     }
 }
