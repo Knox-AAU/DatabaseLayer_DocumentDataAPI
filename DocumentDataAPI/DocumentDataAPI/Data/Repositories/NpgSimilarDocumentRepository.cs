@@ -1,6 +1,8 @@
 using Dapper;
+using Dapper.Transaction;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
+using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
 using System.Data;
 
@@ -24,13 +26,39 @@ class NpgSimilarDocumentRepository : ISimilarDocumentRepository
             " similarDocumentId: {similarDocumentId} to database", entity.MainDocumentId, entity.SimilarDocumentId);
         _logger.LogTrace("similarDocument: {similarDocument}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QuerySingleAsync<long>($"insert into similar_documents({SimilarDocumentMap.MainDocumentId}, {SimilarDocumentMap.SimilarDocumentId}) values (@MainDocumentId, @SimilarDocumentId) returning {SimilarDocumentMap.MainDocumentId}",
+        return await con.QuerySingleAsync<long>($"insert into similar_documents({SimilarDocumentMap.MainDocumentId}, {SimilarDocumentMap.SimilarDocumentId}) " +
+            $"values (@MainDocumentId, @SimilarDocumentId) returning {SimilarDocumentMap.MainDocumentId}",
             new { entity.MainDocumentId, entity.SimilarDocumentId });
     }
 
-    public Task<IEnumerable<long>> AddBatch(List<SimilarDocumentModel> models)
+    public async Task<IEnumerable<long>> AddBatch(List<SimilarDocumentModel> models)
     {
-        throw new NotImplementedException();
+        IEnumerable<long> allInsertedIds = new List<long>();
+        _logger.LogDebug("Adding {count} SimilarDocument to database", models.Count);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        con.Open();
+        using IDbTransaction transaction = con.BeginTransaction();
+        try
+        {
+            // Divide the list of models into chunks to keep the INSERT statements from getting too large.
+            foreach (SimilarDocumentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
+            {
+                string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
+                IEnumerable<long> insertedIds = await transaction.QueryAsync<long>(
+                        $"insert into similar_documents({SimilarDocumentMap.MainDocumentId}, {SimilarDocumentMap.SimilarDocumentId}, {SimilarDocumentMap.Similarity}) " +
+                        $"values {parameterString} returning {SimilarDocumentMap.MainDocumentId}",
+                    parameters);
+                allInsertedIds = allInsertedIds.Concat(insertedIds);
+            }
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            _logger.LogError(e, "Failed to insert word ratios, rolling back transaction");
+            throw;
+        }
+        return allInsertedIds;
     }
 
     public Task<int> Delete(long mainDocumentId, long similarDocumentId)
