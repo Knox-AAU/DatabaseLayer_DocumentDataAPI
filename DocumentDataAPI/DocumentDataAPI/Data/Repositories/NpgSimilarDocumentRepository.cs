@@ -20,22 +20,6 @@ class NpgSimilarDocumentRepository : ISimilarDocumentRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<long> Add(SimilarDocumentModel entity)
-    {
-        _logger.LogDebug("Adding mainDocument with id {MainDocumentId} with similarDocument id {SimilarDocumentId} and their similarity: {Similarity} to database", 
-            entity.MainDocumentId, entity.SimilarDocumentId, entity.Similarity);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QuerySingleAsync<long>(
-            $"insert into similar_documents ({SimilarDocumentMap.MainDocumentId}, {SimilarDocumentMap.SimilarDocumentId}, {SimilarDocumentMap.Similarity})" +
-            $"values (@MainDocumentId, @SimilarDocumentId, @Similarity) returning {SimilarDocumentMap.MainDocumentId}",
-            new
-            {
-                entity.MainDocumentId,
-                entity.SimilarDocumentId,
-                entity.Similarity,
-            });
-    }
-
     public async Task<IEnumerable<long>> AddBatch(List<SimilarDocumentModel> models)
     {
         IEnumerable<long> allInsertedIds = new List<long>();
@@ -60,26 +44,17 @@ class NpgSimilarDocumentRepository : ISimilarDocumentRepository
         catch (Exception e)
         {
             transaction.Rollback();
-            _logger.LogError(e, "Failed to insert word ratios, rolling back transaction");
+            _logger.LogError(e, "Failed to insert similar documents, rolling back transaction");
             throw;
         }
         return allInsertedIds;
-    }
-
-    public async Task<int> Delete(long mainDocumentId, long similarDocumentId)
-    {
-        _logger.LogDebug("Deleting similar document with id {similarDocumentId} from document with id: {mainDocumentId} in the database", similarDocumentId, mainDocumentId);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from similar_documents where {SimilarDocumentMap.MainDocumentId} = @mainDocumentId and " +
-            $"{SimilarDocumentMap.SimilarDocumentId} = @similarDocumentId",
-            new { mainDocumentId, similarDocumentId });
     }
 
     public async Task<int> DeleteAll()
     {
         _logger.LogDebug("Deleting all similar document from database");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"truncate table similar_documents");
+        return await con.ExecuteAsync($"delete from similar_documents where 1=1");
     }
 
     public async Task<IEnumerable<SimilarDocumentModel>> Get(long mainDocumentId)
@@ -92,25 +67,9 @@ class NpgSimilarDocumentRepository : ISimilarDocumentRepository
     public async Task<IEnumerable<SimilarDocumentModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all Similar Documents from database");
-        string sql = _sqlHelper.GetPaginatedQuery($"select * from similar_documents", limit, offset, 
+        string sql = _sqlHelper.GetPaginatedQuery($"select * from similar_documents", limit, offset,
             SimilarDocumentMap.MainDocumentId, SimilarDocumentMap.SimilarDocumentId);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<SimilarDocumentModel>(sql);
-    }
-
-    public async Task<int> Update(SimilarDocumentModel entity)
-    {
-        _logger.LogDebug("Updating similar document with mainDocumentId {mainDocumentId} and similarDocumentId {similarDocumentId} in database", 
-            entity.MainDocumentId, entity.SimilarDocumentId);
-        _logger.LogTrace("Document: {Document}", entity);
-        using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync(
-            $"update similar_documents set {SimilarDocumentMap.MainDocumentId} = @mainDocumentId, {SimilarDocumentMap.SimilarDocumentId} = @similarDocumentId " +
-            $"where {SimilarDocumentMap.MainDocumentId} = @mainDocumentId and {SimilarDocumentMap.SimilarDocumentId} = @similarDocumentId",
-                        new
-                        {
-                            entity.MainDocumentId,
-                            entity.SimilarDocumentId,
-                        });
     }
 }

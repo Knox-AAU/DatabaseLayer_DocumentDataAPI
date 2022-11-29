@@ -23,17 +23,17 @@ public class SimilarDocumentController : ControllerBase
     /// <summary>
     /// Adds all provided similar documents entities, returning the ids of the documents they are related to.
     /// </summary>
-    /// <param name="similarDocument">A list of similar documents objects containing: mainDocument id, similarDocument id and their similarity.</param>
+    /// <param name="similarDocuments">A list of similar documents objects containing: mainDocument id, similarDocument id and their similarity.</param>
     /// <response code="200">Success: ID of the MainDocuments.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<List<long>>> InsertSimilarDocuments([FromBody] List<SimilarDocumentModel> similarDocument)
+    public async Task<ActionResult<List<long>>> InsertSimilarDocuments([FromBody] List<SimilarDocumentModel> similarDocuments)
     {
         try
         {
-            IEnumerable<long> insertedMainIds = await _repository.AddBatch(similarDocument);
+            IEnumerable<long> insertedMainIds = await _repository.AddBatch(similarDocuments);
             return Ok(insertedMainIds);
         }
         catch (Exception e)
@@ -96,33 +96,6 @@ public class SimilarDocumentController : ControllerBase
         {
             _logger.LogError(e, "Unable to get similarDocument with mainDocumentId: " +
                 "{mainDocumentId}.", mainDocumentId);
-            return Problem(e.Message);
-        }
-    }
-
-    /// <summary>
-    /// Deletes an existing similar document entities from the database matching the given document id and similar document id.
-    /// </summary>
-    /// <response code="200">Success: Nothing is returned.</response>
-    /// <response code="204">No Content: Nothing is returned.</response>
-    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
-    [HttpDelete]
-    [Route("/{mainDocumentId:long}/{similarDocumentId:long}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteSimilarDocument(long mainDocumentId, long similarDocumentId)
-    {
-        try
-        {
-            return await _repository.Delete(mainDocumentId, similarDocumentId) == 1
-                ? Ok()
-                : NoContent();
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Unable to delete similar document with mainDocumentId: {mainDocumentId} and similarDocumentId: {similarDocumentId}",
-                mainDocumentId, similarDocumentId);
             return Problem(e.Message);
         }
     }
