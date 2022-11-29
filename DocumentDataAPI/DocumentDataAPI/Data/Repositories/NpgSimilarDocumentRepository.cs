@@ -82,7 +82,7 @@ class NpgSimilarDocumentRepository : ISimilarDocumentRepository
         return await con.ExecuteAsync($"truncate table similar_documents");
     }
 
-    public async Task<IEnumerable<SimilarDocumentModel>?> Get(long mainDocumentId)
+    public async Task<IEnumerable<SimilarDocumentModel>> Get(long mainDocumentId)
     {
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<SimilarDocumentModel>($"select * from similar_documents " +
