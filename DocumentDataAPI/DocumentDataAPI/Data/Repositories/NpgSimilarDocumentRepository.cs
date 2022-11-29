@@ -8,7 +8,7 @@ using System.Data;
 
 namespace DocumentDataAPI.Data.Repositories;
 
-class NpgSimilarDocumentRepository : ISimilarDocumentRepository
+public class NpgSimilarDocumentRepository : ISimilarDocumentRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ILogger<NpgSimilarDocumentRepository> _logger;
