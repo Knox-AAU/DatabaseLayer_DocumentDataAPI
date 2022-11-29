@@ -7,7 +7,7 @@ using System.Net.Mime;
 namespace DocumentDataAPI.Controllers;
 
 [ApiController]
-[Route(RoutePrefixHelper.Prefix + "/similarDocument")]
+[Route(RoutePrefixHelper.Prefix + "/similar-documents")]
 [Produces(MediaTypeNames.Application.Json)]
 public class SimilarDocumentController : ControllerBase
 {
@@ -21,29 +21,30 @@ public class SimilarDocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Adds the SimilarDocument to the MainDocument and returns the ID of the MainDocument.
+    /// Adds all provided similar documents entities, returning the ids of the documents they are related to.
     /// </summary>
-    /// <response code="200">Success: ID of the MainDocument.</response>
+    /// <param name="similarDocument">A list of similar documents objects containing: mainDocument id, similarDocument id and their similarity.</param>
+    /// <response code="200">Success: ID of the MainDocuments.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<List<long>>> SetSimilarDocument([FromBody] List<SimilarDocumentModel> mainDocument)
+    public async Task<ActionResult<List<long>>> InsertSimilarDocuments([FromBody] List<SimilarDocumentModel> similarDocument)
     {
         try
         {
-            IEnumerable<long> insertedIds = await _repository.AddBatch(mainDocument);
-            return Ok(insertedIds);
+            IEnumerable<long> insertedMainIds = await _repository.AddBatch(similarDocument);
+            return Ok(insertedMainIds);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to add mainDocument.");
+            _logger.LogError(e, "Unable to add similar documents.");
             return Problem(e.Message);
         }
     }
 
     /// <summary>
-    /// Retrieves a list of all similar documents from the database.
+    /// Retrieves a list of all similar documents entities from the database.
     /// </summary>
     /// <param name="limit">The maximum number of rows to get.</param>
     /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
@@ -65,15 +66,16 @@ public class SimilarDocumentController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get sources");
+            _logger.LogError(e, "Unable to get similar documents");
             return Problem(e.Message);
         }
     }
 
     /// <summary>
-    /// Retrieves a list of similar document based on the mainDocument id.
+    /// Retrieves a list of similar document entities for the given document id.
     /// </summary>
-    /// <response code="200">Success: A list of similar document for the given mainDocument id.</response>
+    /// <param name="mainDocumentId">The id of the mainDocument.</param>
+    /// <response code="200">Success: A list of similar documents for the given document id.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
@@ -81,11 +83,11 @@ public class SimilarDocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<SimilarDocumentModel>>?> GetById(long mainDocumentId)
+    public async Task<ActionResult<IEnumerable<SimilarDocumentModel>>> GetById(long mainDocumentId)
     {
         try
         {
-            IEnumerable<SimilarDocumentModel>? result = await _repository.Get(mainDocumentId);
+            IEnumerable<SimilarDocumentModel> result = await _repository.Get(mainDocumentId);
             return result.Any()
                 ? Ok(result)
                 : NoContent();
@@ -99,7 +101,7 @@ public class SimilarDocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes an existing similarDocument from the database matching the provided mainDocument id and similarDocument id.
+    /// Deletes an existing similar document entities from the database matching the given document id and similar document id.
     /// </summary>
     /// <response code="200">Success: Nothing is returned.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
@@ -119,8 +121,34 @@ public class SimilarDocumentController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable tt delete similarDocument with mainDocumentId: " +
-                "{mainDocumentId} and {similarDocumentId}.", mainDocumentId, similarDocumentId);
+            _logger.LogError(e, "Unable to delete similar document with mainDocumentId: {mainDocumentId} and similarDocumentId: {similarDocumentId}",
+                mainDocumentId, similarDocumentId);
+            return Problem(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Deletes all existing similarDocuments from the database.
+    /// </summary>
+    /// <response code="200">Success: Nothing is returned.</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: A <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpDelete]
+    [Route("/delete-all")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> DeleteAll()
+    {
+        try
+        {
+            return await _repository.DeleteAll() == 1
+                ? Ok()
+                : NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to delete all similarDocument with mainDocumentId");
             return Problem(e.Message);
         }
     }
