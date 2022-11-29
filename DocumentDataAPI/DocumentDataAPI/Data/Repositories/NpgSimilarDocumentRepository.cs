@@ -61,20 +61,26 @@ class NpgSimilarDocumentRepository : ISimilarDocumentRepository
         return allInsertedIds;
     }
 
-    public Task<int> Delete(long mainDocumentId, long similarDocumentId)
+    public async Task<int> Delete(long mainDocumentId, long similarDocumentId)
     {
-        throw new NotImplementedException();
+        _logger.LogDebug("Deleting Document with id {mainDocumentId} {similarDocumentId} from database", mainDocumentId, similarDocumentId);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync($"delete from similar_documents where {SimilarDocumentMap.MainDocumentId} = @mainDocumentId and " +
+            $"{SimilarDocumentMap.SimilarDocumentId} = @similarDocumentId",
+            new { mainDocumentId = mainDocumentId, similarDocumentId = similarDocumentId });
     }
 
-    public Task<SimilarDocumentModel?> Get(long mainDocumentId, long similarDocumentId)
+    public async Task<IEnumerable<SimilarDocumentModel>?> Get(long mainDocumentId)
     {
-        throw new NotImplementedException();
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.QueryAsync<SimilarDocumentModel>($"select * from similar_documents " +
+            $"where {SimilarDocumentMap.MainDocumentId} = @mainId", new { mainId = mainDocumentId });
     }
 
     public async Task<IEnumerable<SimilarDocumentModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all Similar Documents from database");
-        string sql = _sqlHelper.GetPaginatedQuery("select * from similar_documents", limit, offset);
+        string sql = _sqlHelper.GetPaginatedQuery($"select * from similar_documents", limit, offset, SimilarDocumentMap.MainDocumentId);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<SimilarDocumentModel>(sql);
     }
