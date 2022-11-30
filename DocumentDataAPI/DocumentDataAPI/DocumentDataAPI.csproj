@@ -5,8 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>ef22c319-df7d-44e3-9d95-e57c8109ef4b</UserSecretsId>
-        <GenerateDocumentationFile>false</GenerateDocumentationFile>
-        <OpenApiGeneratorDocumentsOnBuild>false</OpenApiGeneratorDocumentsOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>1591</NoWarn>
     </PropertyGroup>
 
@@ -14,6 +13,10 @@
         <PackageReference Include="Dapper" Version="2.0.123" />
         <PackageReference Include="Dapper.Transaction" Version="2.0.35.2" />
         <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />
+        <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="6.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0-rc.2.22472.3" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0-rc.2.22472.3" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0-rc.1.22426.10" />
