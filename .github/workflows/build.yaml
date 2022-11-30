@@ -13,12 +13,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3.0.2
+      uses: actions/setup-dotnet@v3.0.3
       with:
         dotnet-version: 6.0
     - name: Install dependencies
       run: dotnet restore
       working-directory: DocumentDataAPI/
+    - name: List dotnet SDKs
+      run: dotnet --list-sdks
     - name: Build
       run: dotnet build --configuration Release --no-restore
       working-directory: DocumentDataAPI/
