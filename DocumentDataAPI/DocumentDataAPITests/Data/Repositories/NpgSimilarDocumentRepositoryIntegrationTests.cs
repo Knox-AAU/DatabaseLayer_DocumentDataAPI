@@ -56,10 +56,10 @@ public class NpgSimilarDocumentRepositoryIntegrationTests : IntegrationTestBase
 
         //Act
         IEnumerable<int> result = await _repository.AddBatch(similarDocuments);
-        IEnumerable<SimilarDocumentModel> expected = await _repository.Get(mainDocumentId);
+        IEnumerable<SimilarDocumentModel> actual = await _repository.Get(mainDocumentId);
 
         // Assert
-        expected.Any(item => item.MainDocumentId == similarDocument.MainDocumentId 
+        actual.Any(item => item.MainDocumentId == similarDocument.MainDocumentId 
             && item.SimilarDocumentId == similarDocument.SimilarDocumentId).Should()
             .BeTrue("because id is a list of main document ids that had similar docs added");
     }
@@ -69,19 +69,21 @@ public class NpgSimilarDocumentRepositoryIntegrationTests : IntegrationTestBase
     {
         //Arrange
         const long mainDocumentId = 1;
-        List<SimilarDocumentModel> similarDocuments = new();
-        similarDocuments.Add(new SimilarDocumentModel(mainDocumentId, 4, 69));
-        similarDocuments.Add(new SimilarDocumentModel(mainDocumentId, 5, 69));
+        List<SimilarDocumentModel> expected = new();
+        expected.Add(new SimilarDocumentModel(mainDocumentId, 4, 69));
+        expected.Add(new SimilarDocumentModel(mainDocumentId, 5, 69));
 
         //Act
-        IEnumerable<int> result = await _repository.AddBatch(similarDocuments);
-        IEnumerable<SimilarDocumentModel> expected = await _repository.Get(mainDocumentId);
+        IEnumerable<int> result = await _repository.AddBatch(expected);
+        IEnumerable<SimilarDocumentModel> actual = await _repository.Get(mainDocumentId);
 
         // Assert
-        expected.Any(item => item.MainDocumentId == similarDocuments[0].MainDocumentId
-            && item.SimilarDocumentId == similarDocuments[0].SimilarDocumentId 
-            || item.MainDocumentId == similarDocuments[1].MainDocumentId
-            && item.SimilarDocumentId == similarDocuments[1].SimilarDocumentId).Should()
+        actual.Any(item => item.MainDocumentId == expected[0].MainDocumentId
+            && item.SimilarDocumentId == expected[0].SimilarDocumentId).Should()
+            .BeTrue("because id is a list of main document ids that had similar docs added");
+
+        actual.Any(item => item.MainDocumentId == expected[1].MainDocumentId
+            && item.SimilarDocumentId == expected[1].SimilarDocumentId).Should()
             .BeTrue("because id is a list of main document ids that had similar docs added");
     }
 
