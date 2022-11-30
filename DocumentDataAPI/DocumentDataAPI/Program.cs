@@ -8,13 +8,16 @@ using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Data.Services;
 using DocumentDataAPI.Options;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
+const string apiVersion = "v1.2.0";
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
 }
+
 var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
 
 // Add services to the container.
@@ -38,6 +41,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(config =>
 {
+    config.SwaggerDoc("v1", new OpenApiInfo()
+    {
+        Title = "DocumentDataAPI",
+        Version = apiVersion,
+        Description =
+            "The DocumentDataAPI is the main interface to the document_data database schema, " +
+            "and provides endpoints to retrieve, insert, update, and delete its contents."
+    });
     string xmlDocFilePath =
         Path.Combine(AppContext.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml");
     config.IncludeXmlComments(xmlDocFilePath);
