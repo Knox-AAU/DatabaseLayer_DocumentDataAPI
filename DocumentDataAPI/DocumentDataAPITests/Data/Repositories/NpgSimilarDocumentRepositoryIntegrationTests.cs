@@ -51,7 +51,7 @@ public class NpgSimilarDocumentRepositoryIntegrationTests : IntegrationTestBase
         //Arrange
         const long mainDocumentId = 1;
         List<SimilarDocumentModel> similarDocuments = new();
-        SimilarDocumentModel similarDocument =  new SimilarDocumentModel(mainDocumentId, 4, 69);
+        SimilarDocumentModel similarDocument =  new(mainDocumentId, 4, 69);
         similarDocuments.Add(similarDocument);
 
         //Act
@@ -93,7 +93,7 @@ public class NpgSimilarDocumentRepositoryIntegrationTests : IntegrationTestBase
         //Arrange
 
         //Act
-        int id = await _repository.DeleteAll();
+        await _repository.DeleteAll();
         List<SimilarDocumentModel> result = (await _repository.GetAll()).ToList();
 
         //Assert
