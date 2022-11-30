@@ -42,6 +42,24 @@ builder.Services.AddSwaggerGen(config =>
         Path.Combine(AppContext.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml");
     config.IncludeXmlComments(xmlDocFilePath);
 });
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(name: "UnsafeMode",
+            policy =>
+            {
+                policy.AllowAnyOrigin();
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+            });
+        options.AddPolicy(name: "KnoxAllowedOrigins",
+            policy =>
+            {
+                policy.WithOrigins("localhost", "http://knox-master01.srv.aau.dk/")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+    }
+);
 builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
 
 var app = builder.Build();
@@ -89,6 +107,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("UnsafeMode");
 
 app.UseAuthorization();
 
