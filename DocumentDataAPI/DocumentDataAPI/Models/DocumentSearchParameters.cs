@@ -40,13 +40,13 @@ public class DocumentSearchParameters : ISearchParameters
 
     public DocumentSearchParameters AddBeforeDate(DateTime date)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.Date, date, "<="));
+        Parameters.Add(new QueryParameter(DocumentMap.Date, date, "<=", "beforeDate"));
         return this;
     }
 
     public DocumentSearchParameters AddAfterDate(DateTime date)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.Date, date, ">="));
+        Parameters.Add(new QueryParameter(DocumentMap.Date, date, ">=", "afterDate"));
         return this;
     }
 }

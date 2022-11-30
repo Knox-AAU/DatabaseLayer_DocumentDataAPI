@@ -34,7 +34,7 @@ public class NpgSearchRepository : ISearchRepository
             foreach (QueryParameter param in parameters.Parameters)
             {
                 query.Append(" and " + _sqlHelper.GetParameterString(param));
-                args.Add(param.Key, param.Value);
+                args.Add(param.ParameterName, param.Value);
             }
         }
 
