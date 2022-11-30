@@ -19,6 +19,8 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
       working-directory: DocumentDataAPI/
+    - name: List dotnet SDKs
+      run: dotnet --list-sdks
     - name: Build
       run: dotnet build --configuration Release --no-restore
       working-directory: DocumentDataAPI/
