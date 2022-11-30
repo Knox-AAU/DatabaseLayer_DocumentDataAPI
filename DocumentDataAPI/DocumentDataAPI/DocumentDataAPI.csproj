@@ -5,8 +5,6 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>ef22c319-df7d-44e3-9d95-e57c8109ef4b</UserSecretsId>
-        <GenerateDocumentationFile>false</GenerateDocumentationFile>
-        <OpenApiGeneratorDocumentsOnBuild>false</OpenApiGeneratorDocumentsOnBuild>
         <NoWarn>1591</NoWarn>
     </PropertyGroup>
 
