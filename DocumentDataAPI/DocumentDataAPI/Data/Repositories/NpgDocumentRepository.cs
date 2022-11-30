@@ -52,12 +52,12 @@ public class NpgDocumentRepository : IDocumentRepository
         if (parameters.Parameters.Any())
         {
             QueryParameter firstParam = parameters.Parameters.First();
-            args.Add(firstParam.Key, firstParam.Value);
+            args.Add(firstParam.ValueName, firstParam.Value);
             query.Append(" where " + _sqlHelper.GetParameterString(firstParam));
             foreach (QueryParameter param in parameters.Parameters.Skip(1))
             {
                 query.Append(" and " + _sqlHelper.GetParameterString(param));
-                args.Add(param.Key, param.Value);
+                args.Add(param.ValueName, param.Value);
             }
         }
         string sql = _sqlHelper.GetPaginatedQuery(query.ToString(), limit, offset, DocumentMap.Id);

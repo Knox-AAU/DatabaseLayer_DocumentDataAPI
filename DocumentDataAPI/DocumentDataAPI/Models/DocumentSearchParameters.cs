@@ -22,31 +22,31 @@ public class DocumentSearchParameters : ISearchParameters
 
     public DocumentSearchParameters AddSources(List<long> sourceIds)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.SourceId, sourceIds));
+        Parameters.Add(new QueryParameter(DocumentMap.SourceId, "sourceid", sourceIds));
         return this;
     }
 
     public DocumentSearchParameters AddAuthors(List<string> authorName)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.Author, authorName));
+        Parameters.Add(new QueryParameter(DocumentMap.Author, "authorname", authorName));
         return this;
     }
 
     public DocumentSearchParameters AddCategories(List<int> categoryIds)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.CategoryId, categoryIds));
+        Parameters.Add(new QueryParameter(DocumentMap.CategoryId, "categoryid", categoryIds));
         return this;
     }
 
-    public DocumentSearchParameters AddBeforeDate(DateTime date)
+    public DocumentSearchParameters AddBeforeDate(DateTime beforeDate)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.Date, date, "<="));
+        Parameters.Add(new QueryParameter(DocumentMap.Date, "beforedate", beforeDate, "<="));
         return this;
     }
 
-    public DocumentSearchParameters AddAfterDate(DateTime date)
+    public DocumentSearchParameters AddAfterDate(DateTime afterDate)
     {
-        Parameters.Add(new QueryParameter(DocumentMap.Date, date, ">="));
+        Parameters.Add(new QueryParameter(DocumentMap.Date, "afterdate", afterDate, ">="));
         return this;
     }
 }
