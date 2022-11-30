@@ -58,9 +58,9 @@ public class DapperSqlHelper : ISqlHelper
     /// <inheritdoc/>
     public string GetParameterString(QueryParameter param)
     {
-        string paramString = $"{param.Key} {param.ComparisonOperator} ";
-        if (param.Value is IEnumerable) paramString += $"any(@{param.Key})";
-        else paramString += $"@{param.Key}";
+        string paramString = $"{param.AttributeName} {param.ComparisonOperator} ";
+        if (param.Value is IEnumerable) paramString += $"any(@{param.ValueName})";
+        else paramString += $"@{param.ValueName}";
         return paramString;
     }
 
