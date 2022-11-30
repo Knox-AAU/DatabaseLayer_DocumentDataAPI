@@ -118,7 +118,7 @@ public class SimilarDocumentController : ControllerBase
     {
         try
         {
-            return await _repository.DeleteAll() == 1
+            return await _repository.DeleteAll() > 0
                 ? Ok()
                 : NoContent();
         }
