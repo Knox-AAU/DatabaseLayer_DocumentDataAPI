@@ -20,9 +20,9 @@ public class NpgSimilarDocumentRepository : ISimilarDocumentRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<IEnumerable<long>> AddBatch(List<SimilarDocumentModel> models)
+    public async Task<IEnumerable<int>> AddBatch(List<SimilarDocumentModel> models)
     {
-        IEnumerable<long> allInsertedIds = new List<long>();
+        IEnumerable<int> results = new List<int>();
         _logger.LogDebug("Adding {count} SimilarDocument to database", models.Count);
         using IDbConnection con = _connectionFactory.CreateConnection();
         con.Open();
@@ -33,11 +33,10 @@ public class NpgSimilarDocumentRepository : ISimilarDocumentRepository
             foreach (SimilarDocumentModel[] chunk in models.Chunk(_sqlHelper.InsertStatementChunkSize))
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
-                IEnumerable<long> insertedIds = await transaction.QueryAsync<long>(
+                results.Append(await con.ExecuteAsync(
                         $"insert into similar_documents({SimilarDocumentMap.MainDocumentId}, {SimilarDocumentMap.SimilarDocumentId}, {SimilarDocumentMap.Similarity}) " +
-                        $"values {parameterString} returning {SimilarDocumentMap.MainDocumentId}",
-                    parameters);
-                allInsertedIds = allInsertedIds.Concat(insertedIds);
+                        $"values {parameterString}",
+                    parameters));
             }
             transaction.Commit();
         }
@@ -47,7 +46,7 @@ public class NpgSimilarDocumentRepository : ISimilarDocumentRepository
             _logger.LogError(e, "Failed to insert similar documents, rolling back transaction");
             throw;
         }
-        return allInsertedIds;
+        return results;
     }
 
     public async Task<int> DeleteAll()

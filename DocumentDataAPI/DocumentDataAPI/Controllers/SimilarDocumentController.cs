@@ -33,8 +33,11 @@ public class SimilarDocumentController : ControllerBase
     {
         try
         {
-            IEnumerable<long> insertedMainIds = await _repository.AddBatch(similarDocuments);
-            return Ok(insertedMainIds);
+            IEnumerable<int> result = await _repository.AddBatch(similarDocuments);
+            return result.Any()
+                 ? Ok(result)
+                 : NoContent();
+
         }
         catch (Exception e)
         {

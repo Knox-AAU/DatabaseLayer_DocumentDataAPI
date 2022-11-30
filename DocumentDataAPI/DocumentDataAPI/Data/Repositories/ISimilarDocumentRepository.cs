@@ -6,5 +6,5 @@ public interface ISimilarDocumentRepository : IRepository<SimilarDocumentModel>
 {
     Task<IEnumerable<SimilarDocumentModel>> Get(long mainDocumentId);
     Task<int> DeleteAll();
-    Task<IEnumerable<long>> AddBatch(List<SimilarDocumentModel> models);
+    Task<IEnumerable<int>> AddBatch(List<SimilarDocumentModel> models);
 }
