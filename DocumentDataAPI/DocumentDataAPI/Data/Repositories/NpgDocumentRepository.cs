@@ -146,6 +146,16 @@ public class NpgDocumentRepository : IDocumentRepository
                         });
     }
 
+    public async Task<int> UpdateCategory(DocumentCategoryModel entity)
+    {
+        _logger.LogDebug("Updating category for the document with id {Id} in database", entity.DocumentId);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync(
+            $"update documents set {DocumentMap.CategoryId} = @CategoryId " +
+            $"where {DocumentMap.Id} = @DocumentId",
+                        new { entity.CategoryId, entity.DocumentId });
+    }
+
     public async Task<int> GetTotalDocumentCount()
     {
         _logger.LogDebug("Retrieving Document count from database");

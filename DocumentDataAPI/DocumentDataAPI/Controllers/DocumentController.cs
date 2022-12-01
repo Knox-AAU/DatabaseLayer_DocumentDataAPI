@@ -186,6 +186,30 @@ public class DocumentController : ControllerBase
     }
 
     /// <summary>
+    /// Persists the changes to the given <paramref name="documentCategoryModel"/> in the database.
+    /// </summary>
+    /// <response code="200">Success: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpPut]
+    [Route("category")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<int>> UpdateCategoryDocument([FromBody] DocumentCategoryModel documentCategoryModel)
+    {
+        try
+        {
+            return await _repository.UpdateCategory(documentCategoryModel) == 1
+                ? Ok()
+                : NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to update document with id: {id}", documentCategoryModel.DocumentId);
+            return Problem(e.Message);
+        }
+    }
+
+    /// <summary>
     /// Deletes an existing document from the database matching the provided id.
     /// </summary>
     /// <response code="200">Success: Nothing is returned.</response>
