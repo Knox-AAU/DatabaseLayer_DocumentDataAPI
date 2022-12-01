@@ -46,6 +46,14 @@ Det er blandt andet i Frederikshavn, at der har været timelange ventekøer, men
 Regionen har sendt vaccineinvitationer gennem digital post til omkring 250.000 nordjyder.
 ', 0);
 
+insert into ${schema}.similar_documents (main_document_id, similar_document_id, similarity) values
+        (1, 2, 6),
+        (2, 1, 6),
+        (3, 1, 69),
+        (3, 2, 6),
+        (2, 3, 6),
+        (1, 3, 69);
+
 insert into ${schema}.word_ratios (documents_id, word, amount, percent, rank, clustering_score, tf_idf) values
         (1, 'den', 1, 1.03, 0, 0, 0.22983785146944788),
         (1, 'unge', 1, 1.03, 0, 0, 0.9437794276150916),

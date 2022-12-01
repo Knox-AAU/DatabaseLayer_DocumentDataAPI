@@ -11,8 +11,10 @@ public class LemmatizerService : ILemmatizerService
 
     public LemmatizerService(HttpClient httpClient, IConfiguration configuration, ILogger<LemmatizerService> logger)
     {
-        _defaultLanguage = configuration.GetValue<string>("Lemmatizer:DefaultLanguage", defaultValue: "da");
-        _lemmatizerApiUrl = configuration.GetValue<string>("Lemmatizer:ApiUrl");
+        _defaultLanguage = configuration.GetValue<string>("Lemmatizer:DefaultLanguage", defaultValue: "da") ??
+                           throw new ArgumentNullException(nameof(configuration));
+        _lemmatizerApiUrl = configuration.GetValue<string>("Lemmatizer:ApiUrl") ??
+                            throw new ArgumentNullException(nameof(configuration));
         _httpClient = httpClient;
         _logger = logger;
     }

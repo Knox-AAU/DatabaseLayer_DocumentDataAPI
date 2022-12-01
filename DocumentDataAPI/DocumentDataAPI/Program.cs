@@ -27,6 +27,7 @@ builder.Services
     .AddSingleton<IRelevanceFunction, CosineSimilarityCalculator>()
     .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
     .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
+    .AddScoped<ISimilarDocumentRepository, NpgSimilarDocumentRepository>()
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
     .AddScoped<ISourceRepository, NpgSourceRepository>()
     .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
