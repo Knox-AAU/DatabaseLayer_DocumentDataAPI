@@ -18,8 +18,7 @@ public class DatabaseDeployHelper
     {
         _logger = logger;
         _connectionFactory = connectionFactory;
-        _databaseOptions = configuration.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>() ??
-                           throw new ArgumentNullException(nameof(configuration));
+        _databaseOptions = configuration.GetRequiredSection(DatabaseOptions.Key).Get<DatabaseOptions>();
     }
 
     /// <summary>
