@@ -6,7 +6,7 @@
         <UserSecretsId>ef22c319-df7d-44e3-9d95-e57c8109ef4b</UserSecretsId>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>1591</NoWarn>
-        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
