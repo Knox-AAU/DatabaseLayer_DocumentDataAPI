@@ -56,19 +56,22 @@ builder.Services.AddSwaggerGen(config =>
 });
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy(name: "UnsafeMode",
+        options.AddPolicy("UnsafeMode",
             policy =>
             {
-                policy.AllowAnyOrigin();
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
+                policy
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
         options.AddPolicy(name: "KnoxAllowedOrigins",
             policy =>
             {
                 policy.WithOrigins("localhost", "http://knox-master01.srv.aau.dk/")
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
     }
 );
@@ -118,9 +121,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors("UnsafeMode");
+
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
