@@ -63,7 +63,6 @@ builder.Services.AddCors(options =>
                     .AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials();
             });
         options.AddPolicy(name: "KnoxAllowedOrigins",
             policy =>
@@ -71,7 +70,6 @@ builder.Services.AddCors(options =>
                 policy.WithOrigins("localhost", "http://knox-master01.srv.aau.dk/")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials();
             });
     }
 );
