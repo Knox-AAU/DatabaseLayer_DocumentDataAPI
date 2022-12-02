@@ -11,5 +11,6 @@ public interface IDocumentRepository : IRepository<DocumentModel>
     Task<IEnumerable<long>> AddBatch(List<DocumentModel> models);
     Task<IEnumerable<string>> GetAuthors();
     Task<int> Update(DocumentModel entity);
+    Task<int> UpdateCategory(DocumentCategoryModel entity);
     Task<long> Add(DocumentModel entity);
 }
