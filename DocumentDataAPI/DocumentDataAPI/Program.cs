@@ -11,7 +11,7 @@ using DocumentDataAPI.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
-const string apiVersion = "v1.3.2";
+const string apiVersion = "v1.3.3";
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
@@ -119,7 +119,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("UnsafeMode");
+app.UseCors("KnoxAllowedOrigins");
 
 app.UseHttpsRedirection();
 
