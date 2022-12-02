@@ -3,6 +3,7 @@ using DocumentDataAPI.Models;
 
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using Microsoft.AspNetCore.Cors;
 
 namespace DocumentDataAPI.Controllers;
 

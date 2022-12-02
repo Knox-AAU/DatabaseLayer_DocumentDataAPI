@@ -11,7 +11,7 @@ using DocumentDataAPI.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
-const string apiVersion = "v1.3.0";
+const string apiVersion = "v1.3.1";
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
@@ -56,19 +56,22 @@ builder.Services.AddSwaggerGen(config =>
 });
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy(name: "UnsafeMode",
+        options.AddPolicy("UnsafeMode",
             policy =>
             {
-                policy.AllowAnyOrigin();
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
+                policy
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
         options.AddPolicy(name: "KnoxAllowedOrigins",
             policy =>
             {
                 policy.WithOrigins("localhost", "http://knox-master01.srv.aau.dk/")
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
     }
 );
@@ -118,9 +121,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors("UnsafeMode");
+
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
