@@ -11,7 +11,7 @@ using DocumentDataAPI.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
-const string apiVersion = "v1.3.1";
+const string apiVersion = "v1.3.2";
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
