@@ -62,14 +62,14 @@ builder.Services.AddCors(options =>
                 policy
                     .AllowAnyOrigin()
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
+                    .AllowAnyMethod();
             });
         options.AddPolicy(name: "KnoxAllowedOrigins",
             policy =>
             {
                 policy.WithOrigins("localhost", "http://knox-master01.srv.aau.dk/")
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
+                    .AllowAnyMethod();
             });
     }
 );
