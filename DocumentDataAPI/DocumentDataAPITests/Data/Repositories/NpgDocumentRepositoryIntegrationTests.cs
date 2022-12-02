@@ -2,6 +2,7 @@ using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -167,6 +168,21 @@ public class NpgDocumentRepositoryIntegrationTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task Update_UpdatesRow()
+    {
+        // Arrange
+        DocumentCategoryModel model = new(1, 1);
+
+        // Act
+        await _repository.UpdateCategory(model);
+        DocumentModel? result = await _repository.Get(model.DocumentId);
+
+        // Assert
+        result.Should().NotBeNull().And.Match<DocumentModel>(x => x.CategoryId == model.CategoryId,
+            "because the category was updated");
+    }
+
+    [Fact]
     public async Task Add_AddsRowsCorrect_ReturnInsertedId()
     {
         //Arrange
@@ -299,7 +315,7 @@ public class NpgDocumentRepositoryIntegrationTests : IntegrationTestBase
     }
 
     [Theory] // The test data contains 5 documents in total.
-    [InlineData(0, null, 0)]
+    [InlineData(0, null, 5)]
     [InlineData(null, null, 5)]
     [InlineData(2, null, 2)]
     [InlineData(2, 4, 1)]

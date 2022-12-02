@@ -180,7 +180,7 @@ public class NpgWordRatioRepositoryIntegrationTests : IntegrationTestBase
     }
 
     [Theory] // The test data contains 410 word_ratios in total.
-    [InlineData(0, null, 0)]
+    [InlineData(0, null, 410)]
     [InlineData(null, null, 410)]
     [InlineData(100, null, 100)]
     [InlineData(500, null, 410)]

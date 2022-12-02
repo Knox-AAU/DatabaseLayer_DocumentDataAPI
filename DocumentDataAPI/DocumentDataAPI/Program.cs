@@ -8,13 +8,16 @@ using DocumentDataAPI.Data.Repositories;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Data.Services;
 using DocumentDataAPI.Options;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
+const string apiVersion = "v1.3.0";
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.local.json"), true, true);
 }
+
 var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<DatabaseOptions>();
 
 // Add services to the container.
@@ -24,6 +27,7 @@ builder.Services
     .AddSingleton<IRelevanceFunction, CosineSimilarityCalculator>()
     .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
     .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
+    .AddScoped<ISimilarDocumentRepository, NpgSimilarDocumentRepository>()
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
     .AddScoped<ISourceRepository, NpgSourceRepository>()
     .AddScoped<IWordRatioRepository, NpgWordRatioRepository>()
@@ -38,10 +42,36 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(config =>
 {
+    config.SwaggerDoc("v1", new OpenApiInfo()
+    {
+        Title = "DocumentDataAPI",
+        Version = apiVersion,
+        Description =
+            "The DocumentDataAPI is the main interface to the document_data database schema, " +
+            "and provides endpoints to retrieve, insert, update, and delete its contents."
+    });
     string xmlDocFilePath =
         Path.Combine(AppContext.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml");
     config.IncludeXmlComments(xmlDocFilePath);
 });
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(name: "UnsafeMode",
+            policy =>
+            {
+                policy.AllowAnyOrigin();
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+            });
+        options.AddPolicy(name: "KnoxAllowedOrigins",
+            policy =>
+            {
+                policy.WithOrigins("localhost", "http://knox-master01.srv.aau.dk/")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+    }
+);
 builder.Host.UseSerilog((context, config) => { config.WriteTo.Console(); });
 
 var app = builder.Build();
@@ -89,6 +119,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("UnsafeMode");
 
 app.UseAuthorization();
 

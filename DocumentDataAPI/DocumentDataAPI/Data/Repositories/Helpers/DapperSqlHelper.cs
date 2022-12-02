@@ -58,33 +58,37 @@ public class DapperSqlHelper : ISqlHelper
     /// <inheritdoc/>
     public string GetParameterString(QueryParameter param)
     {
-        string paramString = $"{param.Key} {param.ComparisonOperator} ";
-        if (param.Value is IEnumerable) paramString += $"any(@{param.Key})";
-        else paramString += $"@{param.Key}";
+        string paramString = $"{param.AttributeName} {param.ComparisonOperator} ";
+        if (param.Value is IEnumerable) paramString += $"any(@{param.ValueName})";
+        else paramString += $"@{param.ValueName}";
         return paramString;
     }
 
     /// <inheritdoc/>
     public string GetPaginatedQuery(string sql, int? limit = null, int? offset = null, params string[] orderByColumns)
     {
-        if (limit == null && offset == null || orderByColumns.Length == 0)
+        if (limit is 0 or null && offset == null)
         {
             return sql;
         }
-        StringBuilder stringBuilder = new(sql);
 
+        if (orderByColumns.Length == 0)
+        {
+            throw new ArgumentException("Must have at least one column to order by", nameof(orderByColumns));
+        }
+
+        StringBuilder stringBuilder = new(sql);
         stringBuilder.Append(" order by ")
             .AppendJoin(',', orderByColumns);
-        if (limit != null)
+        if (limit is not (0 or null))
         {
-            stringBuilder.Append(" limit ").Append(limit);
+            stringBuilder.Append(" fetch first ").Append(limit).Append(" rows only");
         }
-        if (offset != null)
+        if (offset is not (0 or null))
         {
-            stringBuilder.Append(" offset ").Append(offset);
+            stringBuilder.Append(" offset ").Append(offset).Append(" rows");
         }
 
         return stringBuilder.ToString();
-
     }
 }

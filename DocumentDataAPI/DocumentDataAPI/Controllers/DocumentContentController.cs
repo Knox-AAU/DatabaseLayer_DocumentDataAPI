@@ -31,7 +31,7 @@ public class DocumentContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DocumentContentModel>>> GetAll(int? limit, int? offset)
+    public async Task<ActionResult<IEnumerable<DocumentContentModel>>> GetAll(int? limit = 100, int? offset = null)
     {
         try
         {

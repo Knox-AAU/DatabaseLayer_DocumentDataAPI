@@ -59,11 +59,10 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll([FromQuery] List<long> sourceIds, [FromQuery] List<string> authors, [FromQuery] List<int> categoryIds, DateTime? beforeDate, DateTime? afterDate, int? limit, int? offset)
+    public async Task<ActionResult<IEnumerable<DocumentModel>>> GetAll([FromQuery] List<long> sourceIds, [FromQuery] List<string> authors, [FromQuery] List<int> categoryIds, DateTime? beforeDate, DateTime? afterDate, int? limit = 100, int? offset = null)
     {
         try
         {
-            limit ??= 100;
             DocumentSearchParameters parameters = new DocumentSearchParameters();
             if (sourceIds.Any()) parameters.AddSources(sourceIds);
             if (authors.Any()) parameters.AddAuthors(authors);
@@ -182,6 +181,30 @@ public class DocumentController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Unable to update document with id: {id}", documentModel.Id);
+            return Problem(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Persists the changes to the given <paramref name="documentCategoryModel"/> in the database.
+    /// </summary>
+    /// <response code="200">Success: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpPut]
+    [Route("category")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<int>> UpdateCategoryDocument([FromBody] DocumentCategoryModel documentCategoryModel)
+    {
+        try
+        {
+            return await _repository.UpdateCategory(documentCategoryModel) == 1
+                ? Ok()
+                : NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to update document with id: {id}", documentCategoryModel.DocumentId);
             return Problem(e.Message);
         }
     }

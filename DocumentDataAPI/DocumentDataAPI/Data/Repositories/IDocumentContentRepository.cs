@@ -7,4 +7,6 @@ public interface IDocumentContentRepository : IRepository<DocumentContentModel>
     Task<DocumentContentModel?> Get(long documentId, int index);
     Task<int> Delete(long documentId, int index);
     Task<int> AddBatch(List<DocumentContentModel> models);
+    Task<int> Update(DocumentContentModel entity);
+    Task<long> Add(DocumentContentModel entity);
 }

@@ -52,12 +52,12 @@ public class NpgDocumentRepository : IDocumentRepository
         if (parameters.Parameters.Any())
         {
             QueryParameter firstParam = parameters.Parameters.First();
-            args.Add(firstParam.Key, firstParam.Value);
+            args.Add(firstParam.ValueName, firstParam.Value);
             query.Append(" where " + _sqlHelper.GetParameterString(firstParam));
             foreach (QueryParameter param in parameters.Parameters.Skip(1))
             {
                 query.Append(" and " + _sqlHelper.GetParameterString(param));
-                args.Add(param.Key, param.Value);
+                args.Add(param.ValueName, param.Value);
             }
         }
         string sql = _sqlHelper.GetPaginatedQuery(query.ToString(), limit, offset, DocumentMap.Id);
@@ -144,6 +144,16 @@ public class NpgDocumentRepository : IDocumentRepository
                             entity.Publication,
                             entity.UniqueWords
                         });
+    }
+
+    public async Task<int> UpdateCategory(DocumentCategoryModel entity)
+    {
+        _logger.LogDebug("Updating category for the document with id {Id} in database", entity.DocumentId);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.ExecuteAsync(
+            $"update documents set {DocumentMap.CategoryId} = @CategoryId " +
+            $"where {DocumentMap.Id} = @DocumentId",
+                        new { entity.CategoryId, entity.DocumentId });
     }
 
     public async Task<int> GetTotalDocumentCount()

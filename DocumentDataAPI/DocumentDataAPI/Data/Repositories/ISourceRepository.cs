@@ -8,4 +8,6 @@ public interface ISourceRepository : IRepository<SourceModel>
     Task<int> Delete(long sourceId);
     Task<long> GetCountFromId(long id);
     Task<IEnumerable<SourceModel>> GetByName(string name);
+    Task<int> Update(SourceModel entity);
+    Task<long> Add(SourceModel entity);
 }

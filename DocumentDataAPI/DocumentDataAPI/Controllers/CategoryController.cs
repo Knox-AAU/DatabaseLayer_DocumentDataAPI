@@ -32,7 +32,7 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<CategoryModel>>> GetAll(int? limit, int? offset)
+    public async Task<ActionResult<IEnumerable<CategoryModel>>> GetAll(int? limit = 100, int? offset = null)
     {
         try
         {
