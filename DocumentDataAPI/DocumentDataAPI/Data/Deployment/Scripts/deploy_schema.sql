@@ -88,3 +88,50 @@ grant select on all tables in schema ${schema} to readonly, read_write;
 grant temporary on database ${database} to readonly, read_write;
 
 grant insert, update, delete on all tables in schema ${schema} to read_write;
+
+-- Deploy schema for BiasDB
+
+drop schema if exists 'BiasDB' CASCADE;
+
+create schema 'BiasDB';
+
+create table BiasDB.political_parties (
+    id          int generated always as identity primary key,
+    partyName   varchar(100) not null,
+    partyBias   numeric[],
+);
+
+create index political_parties_partyName_idx on BiasDB.political_parties (partyName);
+
+create table BiasDB.documents (
+    id                      bigint generated always as identity primary key,
+    party_id                int not null references BiasDB.political_parties(party_id),
+    document                text,
+    document_lemmatized     text
+)
+
+create index documents_party_id_idx on BiasDB.documents (party_id);
+
+create table BiasDB.word_count (
+    id                      bigint generated always as identity primary key,
+    word                    VARCHAR(50) not NULL,
+    count                   bigint not NULL
+)
+
+-- Uses the same readonly role and has a dedicated read/write role.
+do $do$
+    begin
+        if not exists (select from pg_catalog.pg_roles where rolname = 'bias_read_write') then
+            create role read_write NOINHERIT LOGIN password 'bias_read_write';
+        end if;
+    end $do$;
+
+-- Grant privileges to these users, but first ensure that all privileges are revoked in case they already exist.
+revoke all privileges on all tables in schema BiasDB from readonly, bias_read_write;
+grant usage on schema BiasDB to readonly, bias_read_write;
+grant usage on all sequences in schema BiasDB to readonly, bias_read_write;
+grant execute on all functions in schema BiasDB to readonly, bias_read_write;
+grant select on all tables in schema BiasDB to readonly, bias_read_write;
+grant temporary on database ${database} to readonly, bias_read_write;
+
+grant insert, update, delete on all tables in schema BiasDB to bias_read_write;

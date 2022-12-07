@@ -34,6 +34,9 @@ builder.Services
     .AddScoped<IWordRelevanceRepository, NpgWordRelevanceRepository>()
     .AddScoped<ISearchRepository, NpgSearchRepository>()
     .AddScoped<ICategoryRepository, NpgCategoryRepository>()
+    .AddScoped<IBiasDocumentRepository, NpgBiasDocumentRepository>()
+    .AddScoped<IBiasPoliticalPartiesRepository, NpgBiasPoliticalPartiesRepository>()
+    .AddScoped<IBiasWordCountRepository, NpgBiasWordCountRepository>()
     .AddHttpClient<ILemmatizerService, LemmatizerService>()
     ;
 
@@ -86,6 +89,9 @@ FluentMapper.Initialize(config =>
     config.AddMap(new SourceMap());
     config.AddMap(new CategoryMap());
     config.AddMap(new SimilarDocumentMap());
+    config.AddMap(new BiasDocumentMap());
+    config.AddMap(new BiasPoliticalPartiesMap());
+    config.AddMap(new BiasWordCountMap());
 });
 
 // Check for "deploy=true" command-line argument

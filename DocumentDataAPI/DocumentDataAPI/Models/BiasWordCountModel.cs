@@ -6,7 +6,6 @@ namespace DocumentDataAPI.Models;
 public class BiasWordCountModel{
     public BiasWordCountModel()
     {
-
     }
 
     public BiasWordCountModel(long id, string word, long count, float wordFrequency)

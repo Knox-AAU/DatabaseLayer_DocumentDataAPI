@@ -27,8 +27,8 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QuerySingleAsync<long>(
-            $"insert into documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized})" +
-            $"values (@PartyId, @Document, @DocumentLemmatized) returning {BiasDocumentMap.Id}",
+            $"insert into documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized}, {BiasDocumentMap.Url})" +
+            $"values (@PartyId, @Document, @DocumentLemmatized, @Url) returning {BiasDocumentMap.Id}",
             new
             {
                 entity.PartyId,
@@ -51,7 +51,7 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 IEnumerable<long> insertedIds = await transaction.QueryAsync<long>(
-                    $"insert into documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized}) " +
+                    $"insert into documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized}, {BiasDocumentMap.Url}) " +
                     $"values {parameterString} returning {BiasDocumentMap.Id}",
                     parameters);
                 allInsertedIds = allInsertedIds.Concat(insertedIds);
@@ -90,14 +90,14 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"update documents set {BiasDocumentMap.Id} = @Id, {BiasDocumentMap.PartyId} = @PartyId, {BiasDocumentMap.Document} = @Document, {BiasDocumentMap.DocumentLemmatized} = @DocumentLemmatized, " +
+            $"update documents set {BiasDocumentMap.PartyId} = @PartyId, {BiasDocumentMap.Document} = @Document, {BiasDocumentMap.DocumentLemmatized} = @DocumentLemmatized, {BiasDocumentMap.Url} = @Url " +
             $"where {BiasDocumentMap.Id} = @Id",
                         new
                         {
-                            entity.Id,
                             entity.PartyId,
                             entity.Document,
-                            entity.DocumentLemmatized
+                            entity.DocumentLemmatized,
+                            entity.Url
                         });
     }
 

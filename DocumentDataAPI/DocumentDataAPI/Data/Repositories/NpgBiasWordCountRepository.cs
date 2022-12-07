@@ -57,7 +57,7 @@ public class NpgBiasWordCountRepository : IBiasWordCountRepository
 
     public async Task<IEnumerable<BiasWordCountModel>> GetAll(int? limit = null, int? offset = null)
     {
-        _logger.LogDebug("Retrieving all WordCount from database");
+        _logger.LogDebug("Retrieving all word_count entries from database");
         string sql = _sqlHelper.GetPaginatedQuery("select * from word_count", limit, offset,
             BiasWordCountMap.Word);
         using IDbConnection con = _connectionFactory.CreateConnection();

@@ -21,17 +21,17 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<DocumentModel?> Get(int partyId)
+    public async Task<BiasPoliticalPartiesModel?> Get(int partyId)
     {
-        _logger.LogDebug("Retrieving Document with id {id} from database", partyId);
+        _logger.LogDebug("Retrieving political party with id {id} from database", partyId);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<DocumentModel>($"select * from documents where {BiasPoliticalPartiesMap.Id} = @Id", new { id = partyId });
+        return await con.QueryFirstOrDefaultAsync<BiasPoliticalPartiesModel>($"select * from political_parties where {BiasPoliticalPartiesMap.Id} = @Id", new { id = partyId });
     }
 
     public async Task<IEnumerable<long>> AddBatch(List<BiasPoliticalPartiesModel> models)
     {
         IEnumerable<long> allInsertedIds = new List<long>();
-        _logger.LogDebug("Adding {count} documents to database", models.Count);
+        _logger.LogDebug("Adding {count} political parties to database", models.Count);
         using IDbConnection con = _connectionFactory.CreateConnection();
         con.Open();
         using IDbTransaction transaction = con.BeginTransaction();
@@ -42,7 +42,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 IEnumerable<long> insertedIds = await transaction.QueryAsync<long>(
-                    $"insert into documents ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
+                    $"insert into political_parties ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
                     $"values {parameterString} returning {BiasPoliticalPartiesMap.Id}",
                     parameters);
                 allInsertedIds = allInsertedIds.Concat(insertedIds);
@@ -53,7 +53,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
         catch (Exception e)
         {
             transaction.Rollback();
-            _logger.LogError(e, "Failed to insert documents");
+            _logger.LogError(e, "Failed to insert political parties");
             throw;
         }
         return allInsertedIds;
@@ -61,8 +61,8 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
 
     public async Task<int> Add(BiasPoliticalPartiesModel entity)
     {
-        _logger.LogDebug("Adding Political Party with id {Id} to database", entity.Id);
-        _logger.LogTrace("Political Party: {Party}", entity);
+        _logger.LogDebug("Adding political party with id {partyId} to database", entity.Id);
+        _logger.LogTrace("Political Party: {party}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
             $"instert into political_parties ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
@@ -86,7 +86,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
 
     public async Task<IEnumerable<BiasPoliticalPartiesModel>> GetAll(int? limit = null, int? offset = null)
     {
-        _logger.LogDebug("Retrieving all PoliticalParties from database");
+        _logger.LogDebug("Retrieving all political parties from database");
         string sql = _sqlHelper.GetPaginatedQuery("select * from political_parties", limit, offset,
             BiasPoliticalPartiesMap.Id);
         using IDbConnection con = _connectionFactory.CreateConnection();
@@ -95,15 +95,14 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
 
     public async Task<int> Update(BiasPoliticalPartiesModel entity)
     {
-        _logger.LogDebug("Updating Political Party with id {Id} in database", entity.Id);
+        _logger.LogDebug("Updating political party with id {Id} in database", entity.Id);
         _logger.LogTrace("PoliticalParty: {PoliticalParty}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"update political_parties set {BiasPoliticalPartiesMap.PartyBias} = @PartyBias " +
+            $"update political_parties set {BiasPoliticalPartiesMap.PartyName} = @PartyName, {BiasPoliticalPartiesMap.PartyBias} = @PartyBias " +
             $"where {BiasPoliticalPartiesMap.Id} = @Id",
             new
             {
-                entity.Id,
                 entity.PartyName,
                 entity.PartyBias
             });

@@ -22,9 +22,9 @@ public class BiasWordCountController : ControllerBase
     }
 
     /// <summary>
-    /// Adds the documents from the content body to the database and returns a sequential list of IDs for the inserted documents.
+    /// Adds the word count entries from the content body to the database and returns a sequential list of IDs for the inserted entries.
     /// </summary>
-    /// <response code="200">Success: A list of IDs for the added document (i.e., the last inserted ID is last in the list).</response>
+    /// <response code="200">Success: A list of IDs for the added entries (i.e., the last inserted ID is last in the list).</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -38,17 +38,17 @@ public class BiasWordCountController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to add document.");
+            _logger.LogError(e, "Unable to add entry.");
             return Problem(e.Message);
         }
     }
 
     /// <summary>
-    /// Retrieves a list of all documents from the database.
+    /// Retrieves a list of all word count entries from the database.
     /// </summary>
     /// <param name="limit">The maximum number of rows to get.</param>
     /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
-    /// <response code="200">Success: A list of all documents</response>
+    /// <response code="200">Success: A list of all word count entries</response>
     /// <response code="204">No Content: Nothing is returned.</response>
     /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
     [HttpGet]
@@ -66,14 +66,14 @@ public class BiasWordCountController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get documents.");
+            _logger.LogError(e, "Unable to get entries.");
             return Problem(e.Message);
         }
 
     }
 
     /// <summary>
-    /// Deletes all existing similarDocuments from the database.
+    /// Deletes all existing word count entries from the database.
     /// </summary>
     /// <response code="200">Success: Nothing is returned.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
@@ -93,7 +93,7 @@ public class BiasWordCountController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete all similarDocument with mainDocumentId");
+            _logger.LogError(e, "Unable to delete all word count entries");
             return Problem(e.Message);
         }
     }

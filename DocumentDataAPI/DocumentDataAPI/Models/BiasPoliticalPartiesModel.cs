@@ -6,7 +6,6 @@ namespace DocumentDataAPI.Models;
 public class BiasPoliticalPartiesModel{
     public BiasPoliticalPartiesModel()
     {
-
     }
 
     public BiasPoliticalPartiesModel(int id, string partyName, float partyBias)
