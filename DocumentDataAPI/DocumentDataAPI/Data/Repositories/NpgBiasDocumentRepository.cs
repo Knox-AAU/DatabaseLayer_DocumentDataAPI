@@ -28,7 +28,7 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QuerySingleAsync<long>(
             $"insert into documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized})" +
-            $"values @PartyId, @Document, @DocumentLemmatized) returning {DocumentMap.Id}",
+            $"values (@PartyId, @Document, @DocumentLemmatized) returning {BiasDocumentMap.Id}",
             new
             {
                 entity.PartyId,

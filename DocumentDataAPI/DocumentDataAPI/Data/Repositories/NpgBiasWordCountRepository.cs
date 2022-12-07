@@ -19,9 +19,9 @@ public class NpgBiasWordCountRepository : IBiasWordCountRepository
         _sqlHelper = sqlHelper;
     }
 
-    public async Task<IEnumerable<int>> AddBatch(List<BiasWordCountModel> models)
+    public async Task<IEnumerable<long>> AddBatch(List<BiasWordCountModel> models)
     {
-        IEnumerable<int> results = new List<int>();
+        IEnumerable<long> results = new List<long>();
         _logger.LogDebug("Adding {count} entries to word_count table", models.Count);
         using IDbConnection con = _connectionFactory.CreateConnection();
         con.Open();
@@ -48,7 +48,7 @@ public class NpgBiasWordCountRepository : IBiasWordCountRepository
         return results;
     }
 
-    public async Task<int> DeleteAll()
+    public async Task<long> DeleteAll()
     {
         _logger.LogDebug("Deleting all rows in word_count table");
         using IDbConnection con = _connectionFactory.CreateConnection();

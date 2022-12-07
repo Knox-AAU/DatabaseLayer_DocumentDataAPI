@@ -9,7 +9,7 @@ public class BiasPoliticalPartiesModel{
 
     }
 
-    public BiasPoliticalPartiesModel(long id, string partyName, float partyBias)
+    public BiasPoliticalPartiesModel(int id, string partyName, float partyBias)
     {
         Id = id;
         PartyName = partyName;
@@ -18,7 +18,7 @@ public class BiasPoliticalPartiesModel{
 
     [Required]
     [ExcludeFromGeneratedInsertStatement]
-    public long Id { get; init; }
+    public int Id { get; init; }
     [Required]
     public string PartyName { get; init; } = null!;
     [Required]
