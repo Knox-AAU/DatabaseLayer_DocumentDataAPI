@@ -9,7 +9,7 @@ public class BiasDocumentModel
     {
     }
 
-    public BiasDocumentModel(long id, int partyId, string document, string documentLemmatized, string url)
+    public BiasDocumentModel(long id, int partyId, string document, string? documentLemmatized, string? url)
     {
         Id = id;
         PartyId = partyId;

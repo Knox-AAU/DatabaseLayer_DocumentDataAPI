@@ -92,4 +92,32 @@ public class BiasDocumentController : ControllerBase
             return Problem(e.Message);
         }
     }
+
+    /// <summary>
+    /// Retrieves a list of all documents from the database.
+    /// </summary>
+    /// <param name="limit">The maximum number of rows to get.</param>
+    /// <param name="offset">The number of rows to skip (previous offset + previous limit).</param>
+    /// <response code="200">Success: A list of all documents</response>
+    /// <response code="204">No Content: Nothing is returned.</response>
+    /// <response code="500">Internal Server Error: a <see cref="ProblemDetails"/> describing the error.</response>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<BiasDocumentModel>>> GetAll(int? limit = null, int? offset = null)
+    {
+        try
+        {
+            IEnumerable<BiasDocumentModel> result = await _repository.GetAll(limit, offset);
+            return result.Any()
+                ? Ok(result)
+                : NoContent();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to get documents.");
+            return Problem(e.Message);
+        }
+    }
 }

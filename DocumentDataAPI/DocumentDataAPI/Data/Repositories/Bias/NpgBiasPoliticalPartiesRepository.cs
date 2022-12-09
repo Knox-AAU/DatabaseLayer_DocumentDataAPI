@@ -25,7 +25,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
     {
         _logger.LogDebug("Retrieving political party with id {id} from database", partyId);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<BiasPoliticalPartiesModel>($"select * from political_parties where {BiasPoliticalPartiesMap.Id} = @Id", new { id = partyId });
+        return await con.QueryFirstOrDefaultAsync<BiasPoliticalPartiesModel>($"select * from bias.political_parties where {BiasPoliticalPartiesMap.Id} = @Id", new { id = partyId });
     }
 
     public async Task<IEnumerable<long>> AddBatch(List<BiasPoliticalPartiesModel> models)
@@ -42,7 +42,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 IEnumerable<long> insertedIds = await transaction.QueryAsync<long>(
-                    $"insert into political_parties ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
+                    $"insert into bias.political_parties ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
                     $"values {parameterString} returning {BiasPoliticalPartiesMap.Id}",
                     parameters);
                 allInsertedIds = allInsertedIds.Concat(insertedIds);
@@ -65,7 +65,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
         _logger.LogTrace("Political Party: {party}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"instert into political_parties ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
+            $"instert into bias.political_parties ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
             $"values (@PartyName, @PartyBias) returning {BiasPoliticalPartiesMap.Id}",
                 new
                 {
@@ -80,14 +80,14 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
         _logger.LogDebug("Deleting PoliticalParty with id {Id} from database", Id);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"delete from political_parties where {BiasPoliticalPartiesMap.Id} = @Id",
+            $"delete from bias.political_parties where {BiasPoliticalPartiesMap.Id} = @Id",
             new { Id });
     }
 
     public async Task<IEnumerable<BiasPoliticalPartiesModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all political parties from database");
-        string sql = _sqlHelper.GetPaginatedQuery("select * from political_parties", limit, offset,
+        string sql = _sqlHelper.GetPaginatedQuery("select * from bias.political_parties", limit, offset,
             BiasPoliticalPartiesMap.Id);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<BiasPoliticalPartiesModel>(sql);
@@ -99,7 +99,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
         _logger.LogTrace("PoliticalParty: {PoliticalParty}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"update political_parties set {BiasPoliticalPartiesMap.PartyName} = @PartyName, {BiasPoliticalPartiesMap.PartyBias} = @PartyBias " +
+            $"update bias.political_parties set {BiasPoliticalPartiesMap.PartyName} = @PartyName, {BiasPoliticalPartiesMap.PartyBias} = @PartyBias " +
             $"where {BiasPoliticalPartiesMap.Id} = @Id",
             new
             {
