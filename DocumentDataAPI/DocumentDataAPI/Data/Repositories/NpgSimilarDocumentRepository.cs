@@ -5,6 +5,7 @@ using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
 using System.Data;
+using DocumentDataAPI.Options;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -15,7 +16,7 @@ public class NpgSimilarDocumentRepository : ISimilarDocumentRepository
     private readonly ISqlHelper _sqlHelper;
     public NpgSimilarDocumentRepository(IDbConnectionFactory connectionFactory, ILogger<NpgSimilarDocumentRepository> logger, ISqlHelper sqlHelper)
     {
-        _connectionFactory = connectionFactory;
+        _connectionFactory = connectionFactory.WithSchema(DatabaseOptions.Schema.DocumentData);
         _logger = logger;
         _sqlHelper = sqlHelper;
     }

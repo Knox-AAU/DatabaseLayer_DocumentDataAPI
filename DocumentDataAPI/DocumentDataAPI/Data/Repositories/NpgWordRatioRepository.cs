@@ -5,6 +5,7 @@ using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Exceptions;
 using DocumentDataAPI.Models;
+using DocumentDataAPI.Options;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -16,7 +17,7 @@ public class NpgWordRatioRepository : IWordRatioRepository
 
     public NpgWordRatioRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRatioRepository> logger, ISqlHelper sqlHelper)
     {
-        _connectionFactory = connectionFactory;
+        _connectionFactory = connectionFactory.WithSchema(DatabaseOptions.Schema.DocumentData);
         _logger = logger;
         _sqlHelper = sqlHelper;
     }
