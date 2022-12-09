@@ -14,7 +14,7 @@ public class NpgSimilarDocumentRepositoryIntegrationTests : IntegrationTestBase
 
     public NpgSimilarDocumentRepositoryIntegrationTests()
     {
-        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions.ConnectionString);
+        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions);
         ILogger<NpgSimilarDocumentRepository> logger = new Logger<NpgSimilarDocumentRepository>(new NullLoggerFactory());
         _repository = new NpgSimilarDocumentRepository(connectionFactory, logger, new DapperSqlHelper(Configuration));
     }
@@ -59,7 +59,7 @@ public class NpgSimilarDocumentRepositoryIntegrationTests : IntegrationTestBase
         IEnumerable<SimilarDocumentModel> actual = await _repository.Get(mainDocumentId);
 
         // Assert
-        actual.Any(item => item.MainDocumentId == similarDocument.MainDocumentId 
+        actual.Any(item => item.MainDocumentId == similarDocument.MainDocumentId
             && item.SimilarDocumentId == similarDocument.SimilarDocumentId).Should()
             .BeTrue("because id is a list of main document ids that had similar docs added");
     }

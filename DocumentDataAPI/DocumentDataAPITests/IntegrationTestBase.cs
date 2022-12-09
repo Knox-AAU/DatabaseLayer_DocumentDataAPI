@@ -34,11 +34,11 @@ public abstract class IntegrationTestBase : IDisposable
 
     private void DeployDatabaseWithTestData()
     {
-        IDbConnectionFactory connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
+        IDbConnectionFactory connectionFactory = new NpgDbConnectionFactory(DatabaseOptions);
         DatabaseDeployHelper deployHelper =
             new(Mock.Of<ILogger<DatabaseDeployHelper>>(), Configuration, connectionFactory);
-        deployHelper.ExecuteSqlFromFile("deploy_schema.sql");
-        deployHelper.ExecuteSqlFromFile("populate_tables.sql");
+        deployHelper.ExecuteSqlFromFile("deploy_schema.sql", DatabaseOptions.Schema.DocumentData);
+        deployHelper.ExecuteSqlFromFile("populate_tables.sql", DatabaseOptions.Schema.DocumentData);
     }
 
     public void Dispose()

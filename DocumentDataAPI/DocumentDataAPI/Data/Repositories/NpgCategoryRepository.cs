@@ -3,6 +3,7 @@ using Dapper;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
+using DocumentDataAPI.Options;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -14,7 +15,7 @@ public class NpgCategoryRepository : ICategoryRepository
 
     public NpgCategoryRepository(IDbConnectionFactory connectionFactory, ILogger<NpgCategoryRepository> logger, ISqlHelper sqlHelper)
     {
-        _connectionFactory = connectionFactory;
+        _connectionFactory = connectionFactory.WithSchema(DatabaseOptions.Schema.DocumentData);
         _logger = logger;
         _sqlHelper = sqlHelper;
     }

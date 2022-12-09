@@ -16,7 +16,7 @@ public class NpgWordRatioRepositoryIntegrationTests : IntegrationTestBase
 
     public NpgWordRatioRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions);
         _logger = new Logger<NpgWordRatioRepository>(new NullLoggerFactory());
         _sqlHelper = new DapperSqlHelper(Configuration);
     }

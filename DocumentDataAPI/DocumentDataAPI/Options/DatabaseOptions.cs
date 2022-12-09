@@ -6,11 +6,16 @@ namespace DocumentDataAPI.Options;
 /// </summary>
 public class DatabaseOptions
 {
+    public enum Schema
+    {
+        DocumentData
+    }
+
     public const string Key = "Database";
     public string Host { get; set; } = string.Empty;
     public int Port { get; set; }
     public string Database { get; set; } = string.Empty;
-    public string Schema { get; set; } = string.Empty;
+    public string DocumentDataSchema { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 
@@ -28,6 +33,14 @@ public class DatabaseOptions
         "Password=" + Password + ";" +
         "Host=" + Host + ";" +
         "Port=" + Port + ";" +
-        "Database=" + Database + ";" +
-        "SearchPath=" + Schema + ";";
+        "Database=" + Database + ";";
+
+    public string SchemaToString(Schema schema)
+    {
+        return schema switch
+        {
+            Schema.DocumentData => DocumentDataSchema,
+            _ => string.Empty
+        };
+    }
 }

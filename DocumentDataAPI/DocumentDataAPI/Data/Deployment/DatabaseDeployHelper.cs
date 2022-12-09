@@ -25,15 +25,21 @@ public class DatabaseDeployHelper
     /// Reads and executes a SQL script file and replaces the schema placeholder with the schema provided in the application settings.
     /// </summary>
     /// <param name="fileName">File path to SQL script.</param>
-    /// <example>deployHelper.ExecuteSqlFromFile("deploy_schema.sql")</example>
-    public void ExecuteSqlFromFile(string fileName)
+    /// <param name="schema">The (optional) schema to execute the SQL script on.</param>
+    /// <example>deployHelper.ExecuteSqlFromFile("deploy_schema.sql", DatabaseOptions.Schema.DocumentData)</example>
+    public void ExecuteSqlFromFile(string fileName, DatabaseOptions.Schema? schema = null)
     {
         string path = Path.Join(Environment.CurrentDirectory, "Data", "Deployment", "Scripts", fileName);
         try
         {
             string script = File.ReadAllText(path)
-                .Replace("${schema}", _databaseOptions.Schema)
                 .Replace("${database}", _databaseOptions.Database);
+
+            if (schema.HasValue)
+            {
+                script = script.Replace("${schema}", _databaseOptions.SchemaToString(schema.Value));
+            }
+            _logger.LogInformation(script);
 
             _logger.LogInformation("Executing script: {Path}", path);
             using IDbConnection connection = _connectionFactory.CreateConnection();

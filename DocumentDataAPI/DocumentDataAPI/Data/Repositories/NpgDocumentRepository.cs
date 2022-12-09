@@ -5,6 +5,7 @@ using Dapper.Transaction;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
+using DocumentDataAPI.Options;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -16,7 +17,7 @@ public class NpgDocumentRepository : IDocumentRepository
 
     public NpgDocumentRepository(IDbConnectionFactory connectionFactory, ILogger<NpgDocumentRepository> logger, ISqlHelper sqlHelper)
     {
-        _connectionFactory = connectionFactory;
+        _connectionFactory = connectionFactory.WithSchema(DatabaseOptions.Schema.DocumentData);
         _logger = logger;
         _sqlHelper = sqlHelper;
     }

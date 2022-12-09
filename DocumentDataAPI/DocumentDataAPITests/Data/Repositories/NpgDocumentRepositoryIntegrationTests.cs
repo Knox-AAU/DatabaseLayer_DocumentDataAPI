@@ -15,7 +15,7 @@ public class NpgDocumentRepositoryIntegrationTests : IntegrationTestBase
 
     public NpgDocumentRepositoryIntegrationTests()
     {
-        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions.ConnectionString);
+        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions);
         ILogger<NpgDocumentRepository> logger = new Logger<NpgDocumentRepository>(new NullLoggerFactory());
         _repository = new NpgDocumentRepository(connectionFactory, logger, new DapperSqlHelper(Configuration));
     }

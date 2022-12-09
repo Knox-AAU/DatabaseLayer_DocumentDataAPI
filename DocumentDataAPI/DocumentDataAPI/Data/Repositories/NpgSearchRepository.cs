@@ -6,6 +6,7 @@ using DocumentDataAPI.Data.Algorithms;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Models;
+using DocumentDataAPI.Options;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -18,7 +19,7 @@ public class NpgSearchRepository : ISearchRepository
 
     public NpgSearchRepository(IDbConnectionFactory connectionFactory, ILogger<NpgSearchRepository> logger, IRelevanceFunction relevanceFunction, ISqlHelper sqlHelper)
     {
-        _connectionFactory = connectionFactory;
+        _connectionFactory = connectionFactory.WithSchema(DatabaseOptions.Schema.DocumentData);
         _logger = logger;
         _relevanceFunction = relevanceFunction;
         _sqlHelper = sqlHelper;
