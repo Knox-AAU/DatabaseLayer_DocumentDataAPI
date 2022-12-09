@@ -16,7 +16,7 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
 
     public NpgBiasDocumentRepository(IDbConnectionFactory connectionFactory, ILogger<NpgBiasDocumentRepository> logger, ISqlHelper sqlHelper)
     {
-        _connectionFactory = connectionFactory;
+        _connectionFactory = connectionFactory.WithSchema(Options.DatabaseOptions.Schema.Bias);
         _logger = logger;
         _sqlHelper = sqlHelper;
     }
@@ -27,7 +27,7 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QuerySingleAsync<long>(
-            $"insert into bias.documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized}, {BiasDocumentMap.Url})" +
+            $"insert into documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized}, {BiasDocumentMap.Url})" +
             $"values (@PartyId, @Document, @DocumentLemmatized, @Url) returning {BiasDocumentMap.Id}",
             new
             {
@@ -51,7 +51,7 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 IEnumerable<long> insertedIds = await transaction.QueryAsync<long>(
-                    $"insert into bias.documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized}, {BiasDocumentMap.Url}) " +
+                    $"insert into documents ({BiasDocumentMap.PartyId}, {BiasDocumentMap.Document}, {BiasDocumentMap.DocumentLemmatized}, {BiasDocumentMap.Url}) " +
                     $"values {parameterString} returning {BiasDocumentMap.Id}",
                     parameters);
                 allInsertedIds = allInsertedIds.Concat(insertedIds);
@@ -72,14 +72,14 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
     {
         _logger.LogDebug("Deleting Document with id {Id} from database", documentId);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from bias.documents where {BiasDocumentMap.Id} = @Id",
+        return await con.ExecuteAsync($"delete from documents where {BiasDocumentMap.Id} = @Id",
             new { id = documentId });
     }
 
     public async Task<IEnumerable<BiasDocumentModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all Documents from database");
-        string sql = _sqlHelper.GetPaginatedQuery("select * from bias.documents", limit, offset, BiasDocumentMap.Id);
+        string sql = _sqlHelper.GetPaginatedQuery("select * from documents", limit, offset, BiasDocumentMap.Id);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<BiasDocumentModel>(sql);
     }
@@ -90,7 +90,7 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
         _logger.LogTrace("Document: {Document}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"update bias.documents set {BiasDocumentMap.PartyId} = @PartyId, {BiasDocumentMap.Document} = @Document, {BiasDocumentMap.DocumentLemmatized} = @DocumentLemmatized, {BiasDocumentMap.Url} = @Url " +
+            $"update documents set {BiasDocumentMap.PartyId} = @PartyId, {BiasDocumentMap.Document} = @Document, {BiasDocumentMap.DocumentLemmatized} = @DocumentLemmatized, {BiasDocumentMap.Url} = @Url " +
             $"where {BiasDocumentMap.Id} = @Id",
                         new
                         {
@@ -105,6 +105,6 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
     {
         _logger.LogDebug("Retrieving Document with id {id} from database", documentId);
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.QueryFirstOrDefaultAsync<BiasDocumentModel>($"select * from bias.documents where {BiasDocumentMap.Id} = @Id", new { id = documentId });
+        return await con.QueryFirstOrDefaultAsync<BiasDocumentModel>($"select * from documents where {BiasDocumentMap.Id} = @Id", new { id = documentId });
     }
 }

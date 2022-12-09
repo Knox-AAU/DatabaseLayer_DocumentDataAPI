@@ -14,7 +14,7 @@ public class NpgBiasWordCountRepository : IBiasWordCountRepository
 
     public NpgBiasWordCountRepository(IDbConnectionFactory connectionFactory, ILogger<NpgBiasDocumentRepository> logger, ISqlHelper sqlHelper)
     {
-        _connectionFactory = connectionFactory;
+        _connectionFactory = connectionFactory.WithSchema(Options.DatabaseOptions.Schema.Bias);
         _logger = logger;
         _sqlHelper = sqlHelper;
     }
@@ -33,7 +33,7 @@ public class NpgBiasWordCountRepository : IBiasWordCountRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 results.Append(await con.ExecuteAsync(
-                        $"insert into bias.word_count({BiasWordCountMap.Id}, {BiasWordCountMap.Word}, {BiasWordCountMap.Count}, {BiasWordCountMap.WordFrequency}) " +
+                        $"insert into word_count({BiasWordCountMap.Id}, {BiasWordCountMap.Word}, {BiasWordCountMap.Count}, {BiasWordCountMap.WordFrequency}) " +
                         $"values {parameterString}",
                     parameters));
             }
@@ -52,13 +52,13 @@ public class NpgBiasWordCountRepository : IBiasWordCountRepository
     {
         _logger.LogDebug("Deleting all rows in word_count table");
         using IDbConnection con = _connectionFactory.CreateConnection();
-        return await con.ExecuteAsync($"delete from bias.word_count where 1=1");
+        return await con.ExecuteAsync($"delete from word_count where 1=1");
     }
 
     public async Task<IEnumerable<BiasWordCountModel>> GetAll(int? limit = null, int? offset = null)
     {
         _logger.LogDebug("Retrieving all word_count entries from database");
-        string sql = _sqlHelper.GetPaginatedQuery("select * from bias.word_count", limit, offset,
+        string sql = _sqlHelper.GetPaginatedQuery("select * from word_count", limit, offset,
             BiasWordCountMap.Word);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.QueryAsync<BiasWordCountModel>(sql);

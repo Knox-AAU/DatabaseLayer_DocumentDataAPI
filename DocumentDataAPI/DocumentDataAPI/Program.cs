@@ -99,6 +99,8 @@ if (app.Configuration.GetValue<bool>("deploy"))
 {
     app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database,
         databaseOptions.DocumentDataSchema);
+    app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database,
+        databaseOptions.BiasSchema);
     using IServiceScope scope = app.Services.CreateScope();
     var deployHelper = scope.ServiceProvider.GetRequiredService<DatabaseDeployHelper>();
     try
@@ -108,6 +110,8 @@ if (app.Configuration.GetValue<bool>("deploy"))
         {
             deployHelper.ExecuteSqlFromFile("populate_tables.sql", DatabaseOptions.Schema.DocumentData);
         }
+
+        //deployHelper.ExecuteSqlFromFile("deploy_schema_bias.sql", DatabaseOptions.Schema.Bias);
 
         app.Logger.LogInformation("Finished!");
     }
