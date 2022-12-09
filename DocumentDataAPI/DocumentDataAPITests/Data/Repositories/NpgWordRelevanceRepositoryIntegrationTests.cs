@@ -17,7 +17,7 @@ public class NpgWordRelevanceRepositoryIntegrationTests : IntegrationTestBase
 
     public NpgWordRelevanceRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions);
         _relevanceLogger = new Logger<NpgWordRelevanceRepository>(new NullLoggerFactory());
         _ratioLogger = new Logger<NpgWordRatioRepository>(new NullLoggerFactory());
         _sqlHelper = new DapperSqlHelper(Configuration);

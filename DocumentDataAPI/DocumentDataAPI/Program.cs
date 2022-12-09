@@ -11,7 +11,7 @@ using DocumentDataAPI.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
-const string apiVersion = "v1.3.5";
+const string apiVersion = "v1.3.6";
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
@@ -22,10 +22,10 @@ var databaseOptions = builder.Configuration.GetSection(DatabaseOptions.Key).Get<
 
 // Add services to the container.
 builder.Services
-    .AddSingleton<DatabaseDeployHelper>()
     .AddSingleton<ISqlHelper, DapperSqlHelper>()
     .AddSingleton<IRelevanceFunction, CosineSimilarityCalculator>()
-    .AddSingleton<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions.ConnectionString))
+    .AddScoped<IDbConnectionFactory>(_ => new NpgDbConnectionFactory(databaseOptions))
+    .AddScoped<DatabaseDeployHelper>()
     .AddScoped<IDocumentContentRepository, NpgDocumentContentRepository>()
     .AddScoped<ISimilarDocumentRepository, NpgSimilarDocumentRepository>()
     .AddScoped<IDocumentRepository, NpgDocumentRepository>()
@@ -92,14 +92,15 @@ FluentMapper.Initialize(config =>
 if (app.Configuration.GetValue<bool>("deploy"))
 {
     app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database,
-        databaseOptions.Schema);
-    var deployHelper = app.Services.GetRequiredService<DatabaseDeployHelper>();
+        databaseOptions.DocumentDataSchema);
+    using IServiceScope scope = app.Services.CreateScope();
+    var deployHelper = scope.ServiceProvider.GetRequiredService<DatabaseDeployHelper>();
     try
     {
-        deployHelper.ExecuteSqlFromFile("deploy_schema.sql");
+        deployHelper.ExecuteSqlFromFile("deploy_schema.sql", DatabaseOptions.Schema.DocumentData);
         if (app.Configuration.GetValue<bool>("populate"))
         {
-            deployHelper.ExecuteSqlFromFile("populate_tables.sql");
+            deployHelper.ExecuteSqlFromFile("populate_tables.sql", DatabaseOptions.Schema.DocumentData);
         }
 
         app.Logger.LogInformation("Finished!");
