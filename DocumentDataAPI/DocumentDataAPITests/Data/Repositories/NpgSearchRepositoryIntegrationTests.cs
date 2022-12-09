@@ -15,7 +15,7 @@ public class NpgSearchRepositoryIntegrationTests : IntegrationTestBase
 
     public NpgSearchRepositoryIntegrationTests()
     {
-        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions.ConnectionString);
+        NpgDbConnectionFactory connectionFactory = new(DatabaseOptions);
         ILogger<NpgSearchRepository> logger = new Logger<NpgSearchRepository>(new NullLoggerFactory());
         IRelevanceFunction relevanceFunction = new CosineSimilarityCalculator();
         _repository = new NpgSearchRepository(connectionFactory, logger, relevanceFunction, new DapperSqlHelper(Configuration));

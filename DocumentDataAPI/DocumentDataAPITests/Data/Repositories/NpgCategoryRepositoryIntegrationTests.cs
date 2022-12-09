@@ -16,7 +16,7 @@ public class NpgCategoryRepositoryIntegrationTests : IntegrationTestBase
 
     public NpgCategoryRepositoryIntegrationTests()
     {
-        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions.ConnectionString);
+        _connectionFactory = new NpgDbConnectionFactory(DatabaseOptions);
         _logger = new Logger<NpgCategoryRepository>(new NullLoggerFactory());
         _sqlHelper = new DapperSqlHelper(Configuration);
     }

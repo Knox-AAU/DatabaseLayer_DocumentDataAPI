@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using DocumentDataAPI.Options;
 
 namespace DocumentDataAPI.Data;
 
@@ -19,4 +20,10 @@ public interface IDbConnectionFactory
     /// <param name="connectionString">A connection string to the database.</param>
     /// <returns>The connection.</returns>
     IDbConnection CreateConnection(string connectionString);
+
+    /// <summary>
+    /// Adds a search path to the connections, which removes the need to specify a schema in queries.
+    /// </summary>
+    /// <param name="schema">The schema to use for all connections provided by this factory.</param>
+    IDbConnectionFactory WithSchema(DatabaseOptions.Schema schema);
 }

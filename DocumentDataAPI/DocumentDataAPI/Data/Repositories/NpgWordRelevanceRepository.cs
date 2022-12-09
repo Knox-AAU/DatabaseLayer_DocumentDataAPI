@@ -2,6 +2,7 @@ using System.Data;
 using Dapper;
 using DocumentDataAPI.Data.Mappers;
 using DocumentDataAPI.Data.Repositories.Helpers;
+using DocumentDataAPI.Options;
 
 namespace DocumentDataAPI.Data.Repositories;
 
@@ -12,7 +13,7 @@ public class NpgWordRelevanceRepository : IWordRelevanceRepository
 
     public NpgWordRelevanceRepository(IDbConnectionFactory connectionFactory, ILogger<NpgWordRelevanceRepository> logger)
     {
-        _connectionFactory = connectionFactory;
+        _connectionFactory = connectionFactory.WithSchema(DatabaseOptions.Schema.DocumentData);
         _logger = logger;
     }
 
