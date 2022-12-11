@@ -1,10 +1,9 @@
-using DocumentDataAPI.Data.Repositories;
-using DocumentDataAPI.Models;
-
+using DocumentDataAPI.Data.Repositories.BiasSchema;
+using DocumentDataAPI.Models.BiasSchema;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
-namespace DocumentDataAPI.Controllers;
+namespace DocumentDataAPI.Controllers.BiasSchema;
 
 [ApiController]
 [Route(RoutePrefixHelper.Prefix + "/bias_documents")]

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using DocumentDataAPI.Models.Attributes;
 
-namespace DocumentDataAPI.Models;
+namespace DocumentDataAPI.Models.BiasSchema;
 
 public class BiasDocumentModel
 {

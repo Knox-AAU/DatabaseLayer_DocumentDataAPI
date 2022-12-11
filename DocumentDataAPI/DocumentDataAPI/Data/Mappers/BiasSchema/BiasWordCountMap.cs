@@ -1,7 +1,7 @@
 using Dapper.FluentMap.Mapping;
-using DocumentDataAPI.Models;
+using DocumentDataAPI.Models.BiasSchema;
 
-namespace DocumentDataAPI.Data.Mappers;
+namespace DocumentDataAPI.Data.Mappers.BiasSchema;
 
 public class BiasWordCountMap : EntityMap<BiasWordCountModel>
 {

@@ -1,11 +1,9 @@
-using System.Data.Common;
 using System.Net.Mime;
-using DocumentDataAPI.Data.Repositories;
-using DocumentDataAPI.Exceptions;
-using DocumentDataAPI.Models;
+using DocumentDataAPI.Data.Repositories.BiasSchema;
+using DocumentDataAPI.Models.BiasSchema;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DocumentDataAPI.Controllers;
+namespace DocumentDataAPI.Controllers.BiasSchema;
 
 [ApiController]
 [Route(RoutePrefixHelper.Prefix + "/bias_word_count")]

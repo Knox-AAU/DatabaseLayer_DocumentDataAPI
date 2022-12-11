@@ -1,12 +1,11 @@
 using System.Data;
-using System.Text;
 using Dapper;
 using Dapper.Transaction;
-using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Mappers.BiasSchema;
 using DocumentDataAPI.Data.Repositories.Helpers;
-using DocumentDataAPI.Models;
+using DocumentDataAPI.Models.BiasSchema;
 
-namespace DocumentDataAPI.Data.Repositories;
+namespace DocumentDataAPI.Data.Repositories.BiasSchema;
 
 public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
 {

@@ -4,7 +4,9 @@ using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Algorithms;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Mappers.BiasSchema;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Data.Repositories.BiasSchema;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Data.Services;
 using DocumentDataAPI.Options;
@@ -111,7 +113,7 @@ if (app.Configuration.GetValue<bool>("deploy"))
             deployHelper.ExecuteSqlFromFile("populate_tables.sql", DatabaseOptions.Schema.DocumentData);
         }
 
-        //deployHelper.ExecuteSqlFromFile("deploy_schema_bias.sql", DatabaseOptions.Schema.Bias);
+        deployHelper.ExecuteSqlFromFile("deploy_schema_bias.sql", DatabaseOptions.Schema.Bias);
 
         app.Logger.LogInformation("Finished!");
     }

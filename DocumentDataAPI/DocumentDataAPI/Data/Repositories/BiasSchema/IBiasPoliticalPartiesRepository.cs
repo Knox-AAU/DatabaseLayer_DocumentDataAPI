@@ -1,6 +1,6 @@
-using DocumentDataAPI.Models;
+using DocumentDataAPI.Models.BiasSchema;
 
-namespace DocumentDataAPI.Data.Repositories;
+namespace DocumentDataAPI.Data.Repositories.BiasSchema;
 
 public interface IBiasPoliticalPartiesRepository : IRepository<BiasPoliticalPartiesModel>
 {
