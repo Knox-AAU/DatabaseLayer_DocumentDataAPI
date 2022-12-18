@@ -2,6 +2,7 @@
 using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Mappers.BiasSchema;
 using DocumentDataAPI.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,7 @@ public abstract class IntegrationTestBase : IDisposable
             .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appsettings.Tests.local.json"), true)
             .AddEnvironmentVariables()
             .Build();
+
         FluentMapper.Initialize(config =>
         {
             config.AddMap(new DocumentContentMap());
@@ -28,6 +30,9 @@ public abstract class IntegrationTestBase : IDisposable
             config.AddMap(new SourceMap());
             config.AddMap(new CategoryMap());
             config.AddMap(new SimilarDocumentMap());
+            config.AddMap(new BiasPoliticalPartiesMap());
+            config.AddMap(new BiasDocumentMap());
+            config.AddMap(new BiasWordCountMap());
         });
         DeployDatabaseWithTestData();
     }
@@ -39,6 +44,8 @@ public abstract class IntegrationTestBase : IDisposable
             new(Mock.Of<ILogger<DatabaseDeployHelper>>(), Configuration, connectionFactory);
         deployHelper.ExecuteSqlFromFile("deploy_schema.sql", DatabaseOptions.Schema.DocumentData);
         deployHelper.ExecuteSqlFromFile("populate_tables.sql", DatabaseOptions.Schema.DocumentData);
+        deployHelper.ExecuteSqlFromFile("deploy_schema_bias.sql", DatabaseOptions.Schema.Bias);
+        deployHelper.ExecuteSqlFromFile("populate_tables_bias.sql", DatabaseOptions.Schema.Bias);
     }
 
     public void Dispose()

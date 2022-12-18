@@ -41,7 +41,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 IEnumerable<long> insertedIds = await transaction.QueryAsync<long>(
-                    $"insert into political_parties ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
+                    $"insert into political_parties ({BiasPoliticalPartiesMap.Name}, {BiasPoliticalPartiesMap.Bias}) " +
                     $"values {parameterString} returning {BiasPoliticalPartiesMap.Id}",
                     parameters);
                 allInsertedIds = allInsertedIds.Concat(insertedIds);
@@ -64,13 +64,12 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
         _logger.LogTrace("Political Party: {party}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"instert into political_parties ({BiasPoliticalPartiesMap.PartyName}, {BiasPoliticalPartiesMap.PartyBias}) " +
-            $"values (@PartyName, @PartyBias) returning {BiasPoliticalPartiesMap.Id}",
+            $"instert into political_parties ({BiasPoliticalPartiesMap.Name}, {BiasPoliticalPartiesMap.Bias}) " +
+            $"values (@Name, @Bias) returning {BiasPoliticalPartiesMap.Id}",
                 new
                 {
-                    entity.Id,
-                    entity.PartyName,
-                    entity.PartyBias
+                    entity.Name,
+                    entity.Bias
                 });
     }
 
@@ -98,12 +97,13 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
         _logger.LogTrace("PoliticalParty: {PoliticalParty}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"update political_parties set {BiasPoliticalPartiesMap.PartyName} = @PartyName, {BiasPoliticalPartiesMap.PartyBias} = @PartyBias " +
+            $"update political_parties set {BiasPoliticalPartiesMap.Name} = @Name, {BiasPoliticalPartiesMap.Bias} = @Bias " +
             $"where {BiasPoliticalPartiesMap.Id} = @Id",
             new
             {
-                entity.PartyName,
-                entity.PartyBias
+                entity.Id,
+                entity.Name,
+                entity.Bias
             });
     }
 }

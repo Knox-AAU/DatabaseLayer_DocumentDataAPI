@@ -90,9 +90,10 @@ public class NpgBiasDocumentRepository : IBiasDocumentRepository
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
             $"update documents set {BiasDocumentMap.PartyId} = @PartyId, {BiasDocumentMap.Document} = @Document, {BiasDocumentMap.DocumentLemmatized} = @DocumentLemmatized, {BiasDocumentMap.Url} = @Url " +
-            $"where {BiasDocumentMap.Id} = @Id",
+            $"where {BiasDocumentMap.Id} = @Id and {BiasDocumentMap.PartyId} = @PartyId",
                         new
                         {
+                            entity.Id,
                             entity.PartyId,
                             entity.Document,
                             entity.DocumentLemmatized,

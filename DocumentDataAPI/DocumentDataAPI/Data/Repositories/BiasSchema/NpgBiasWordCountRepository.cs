@@ -9,10 +9,10 @@ namespace DocumentDataAPI.Data.Repositories.BiasSchema;
 public class NpgBiasWordCountRepository : IBiasWordCountRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
-    private readonly ILogger<NpgBiasDocumentRepository> _logger;
+    private readonly ILogger<NpgBiasWordCountRepository> _logger;
     private readonly ISqlHelper _sqlHelper;
 
-    public NpgBiasWordCountRepository(IDbConnectionFactory connectionFactory, ILogger<NpgBiasDocumentRepository> logger, ISqlHelper sqlHelper)
+    public NpgBiasWordCountRepository(IDbConnectionFactory connectionFactory, ILogger<NpgBiasWordCountRepository> logger, ISqlHelper sqlHelper)
     {
         _connectionFactory = connectionFactory.WithSchema(Options.DatabaseOptions.Schema.Bias);
         _logger = logger;
@@ -33,8 +33,8 @@ public class NpgBiasWordCountRepository : IBiasWordCountRepository
             {
                 string parameterString = _sqlHelper.GetBatchInsertParameters(chunk, out Dictionary<string, dynamic> parameters);
                 results.Append(await con.ExecuteAsync(
-                        $"insert into word_count({BiasWordCountMap.Id}, {BiasWordCountMap.Word}, {BiasWordCountMap.Count}, {BiasWordCountMap.WordFrequency}) " +
-                        $"values {parameterString}",
+                        $"insert into word_count({BiasWordCountMap.Word}, {BiasWordCountMap.Count}, {BiasWordCountMap.WordFrequency}) " +
+                        $"values {parameterString} returning {BiasPoliticalPartiesMap.Id}",
                     parameters));
             }
             transaction.Commit();
@@ -46,6 +46,22 @@ public class NpgBiasWordCountRepository : IBiasWordCountRepository
             throw;
         }
         return results;
+    }
+
+    public async Task<long> Add(BiasWordCountModel entity)
+    {
+        _logger.LogDebug("Adding Document with id {Id} to database", entity.Id);
+        _logger.LogTrace("Document: {Document}", entity);
+        using IDbConnection con = _connectionFactory.CreateConnection();
+        return await con.QuerySingleAsync<long>(
+            $"insert into documents ({BiasWordCountMap.Word}, {BiasWordCountMap.Count}, {BiasWordCountMap.WordFrequency})" +
+            $"values (@Word, @Count, @Word_Frequency) returning {BiasWordCountMap.Id}",
+            new
+            {
+                entity.Word,
+                entity.Count,
+                entity.WordFrequency
+            });
     }
 
     public async Task<long> DeleteAll()

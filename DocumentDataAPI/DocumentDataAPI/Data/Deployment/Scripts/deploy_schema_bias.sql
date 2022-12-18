@@ -6,11 +6,11 @@ create schema ${schema};
 
 create table ${schema}.political_parties (
     id          int generated always as identity primary key,
-    partyName   varchar(100) not null,
-    partyBias   numeric[]
+    name   varchar(100) not null,
+    bias   numeric[]
 );
 
-create index political_parties_partyName_idx on ${schema}.political_parties (partyName);
+create index political_parties_name_idx on ${schema}.political_parties (name);
 
 create table ${schema}.documents (
     id                      bigint generated always as identity primary key,
@@ -25,7 +25,8 @@ create index documents_party_id_idx on ${schema}.documents (party_id);
 create table ${schema}.word_count (
     id                      bigint generated always as identity primary key,
     word                    VARCHAR(50) not NULL,
-    count                   bigint not NULL
+    count                   bigint not NULL,
+    word_frequency          NUMERIC not NULL
 );
 
 create index word_count_word_idx on ${schema}.word_count (word);

@@ -42,7 +42,7 @@ public class BiasDocumentController : ControllerBase
     }
 
     /// <summary>
-    /// Persists the changes to the given <paramref name="documentModel"/> in the database.
+    /// Persists the changes to the given <paramref name="biasDocumentModel"/> in the database.
     /// </summary>
     /// <response code="200">Success: The updated document.</response>
     /// <response code="204">No Content: Nothing is returned.</response>
@@ -51,17 +51,17 @@ public class BiasDocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<BiasDocumentModel>> UpdateDocument([FromBody] BiasDocumentModel documentModel)
+    public async Task<ActionResult<BiasDocumentModel>> UpdateDocument([FromBody] BiasDocumentModel biasDocumentModel)
     {
         try
         {
-            return await _repository.Update(documentModel) == 1
-                ? Ok(_repository.Get(documentModel.Id))
+            return await _repository.Update(biasDocumentModel) == 1
+                ? Ok(_repository.Get(biasDocumentModel.Id).Result)
                 : NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to update document with id: {id}", documentModel.Id);
+            _logger.LogError(e, "Unable to update document with id: {id}", biasDocumentModel.Id);
             return Problem(e.Message);
         }
     }

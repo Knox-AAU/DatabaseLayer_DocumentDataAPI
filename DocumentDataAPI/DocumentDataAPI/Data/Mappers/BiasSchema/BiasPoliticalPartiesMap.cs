@@ -6,13 +6,13 @@ namespace DocumentDataAPI.Data.Mappers.BiasSchema;
 public class BiasPoliticalPartiesMap : EntityMap<BiasPoliticalPartiesModel>
 {
     public const string Id = "id";
-    public const string PartyName = "party_name";
-    public const string PartyBias = "party_bias";
+    public const string Name = "name";
+    public const string Bias = "bias";
 
     public BiasPoliticalPartiesMap()
     {
         Map(x => x.Id).ToColumn(Id);
-        Map(x => x.PartyName).ToColumn(PartyName);
-        Map(x => x.PartyBias).ToColumn(PartyBias);
+        Map(x => x.Name).ToColumn(Name);
+        Map(x => x.Bias).ToColumn(Bias);
     }
 }

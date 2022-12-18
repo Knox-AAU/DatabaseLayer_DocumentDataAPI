@@ -9,18 +9,18 @@ public class BiasPoliticalPartiesModel
     {
     }
 
-    public BiasPoliticalPartiesModel(int id, string partyName, float partyBias)
+    public BiasPoliticalPartiesModel(int id, string name, decimal[] bias)
     {
         Id = id;
-        PartyName = partyName;
-        PartyBias = partyBias;
+        Name = name;
+        Bias = bias;
     }
 
     [Required]
     [ExcludeFromGeneratedInsertStatement]
     public int Id { get; init; }
     [Required]
-    public string PartyName { get; init; } = null!;
+    public string Name { get; init; } = null!;
     [Required]
-    public float PartyBias { get; init; }
+    public decimal[] Bias { get; init; } = null!;
 }
