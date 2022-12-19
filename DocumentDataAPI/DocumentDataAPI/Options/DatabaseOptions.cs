@@ -8,7 +8,8 @@ public class DatabaseOptions
 {
     public enum Schema
     {
-        DocumentData
+        DocumentData,
+        Bias
     }
 
     public const string Key = "Database";
@@ -16,6 +17,7 @@ public class DatabaseOptions
     public int Port { get; set; }
     public string Database { get; set; } = string.Empty;
     public string DocumentDataSchema { get; set; } = string.Empty;
+    public string BiasSchema { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 
@@ -40,6 +42,7 @@ public class DatabaseOptions
         return schema switch
         {
             Schema.DocumentData => DocumentDataSchema,
+            Schema.Bias => BiasSchema,
             _ => string.Empty
         };
     }

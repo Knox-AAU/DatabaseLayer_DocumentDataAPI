@@ -4,7 +4,9 @@ using DocumentDataAPI.Data;
 using DocumentDataAPI.Data.Algorithms;
 using DocumentDataAPI.Data.Deployment;
 using DocumentDataAPI.Data.Mappers;
+using DocumentDataAPI.Data.Mappers.BiasSchema;
 using DocumentDataAPI.Data.Repositories;
+using DocumentDataAPI.Data.Repositories.BiasSchema;
 using DocumentDataAPI.Data.Repositories.Helpers;
 using DocumentDataAPI.Data.Services;
 using DocumentDataAPI.Options;
@@ -34,6 +36,9 @@ builder.Services
     .AddScoped<IWordRelevanceRepository, NpgWordRelevanceRepository>()
     .AddScoped<ISearchRepository, NpgSearchRepository>()
     .AddScoped<ICategoryRepository, NpgCategoryRepository>()
+    .AddScoped<IBiasDocumentRepository, NpgBiasDocumentRepository>()
+    .AddScoped<IBiasPoliticalPartiesRepository, NpgBiasPoliticalPartiesRepository>()
+    .AddScoped<IBiasWordCountRepository, NpgBiasWordCountRepository>()
     .AddHttpClient<ILemmatizerService, LemmatizerService>()
     ;
 
@@ -86,6 +91,9 @@ FluentMapper.Initialize(config =>
     config.AddMap(new SourceMap());
     config.AddMap(new CategoryMap());
     config.AddMap(new SimilarDocumentMap());
+    config.AddMap(new BiasDocumentMap());
+    config.AddMap(new BiasPoliticalPartiesMap());
+    config.AddMap(new BiasWordCountMap());
 });
 
 // Check for "deploy=true" command-line argument
@@ -93,6 +101,8 @@ if (app.Configuration.GetValue<bool>("deploy"))
 {
     app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database,
         databaseOptions.DocumentDataSchema);
+    app.Logger.LogInformation("Deploying to schema: {Database}.{Schema}", databaseOptions.Database,
+        databaseOptions.BiasSchema);
     using IServiceScope scope = app.Services.CreateScope();
     var deployHelper = scope.ServiceProvider.GetRequiredService<DatabaseDeployHelper>();
     try
@@ -102,6 +112,8 @@ if (app.Configuration.GetValue<bool>("deploy"))
         {
             deployHelper.ExecuteSqlFromFile("populate_tables.sql", DatabaseOptions.Schema.DocumentData);
         }
+
+        deployHelper.ExecuteSqlFromFile("deploy_schema_bias.sql", DatabaseOptions.Schema.Bias);
 
         app.Logger.LogInformation("Finished!");
     }
