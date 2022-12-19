@@ -64,7 +64,7 @@ public class NpgBiasPoliticalPartiesRepository : IBiasPoliticalPartiesRepository
         _logger.LogTrace("Political Party: {party}", entity);
         using IDbConnection con = _connectionFactory.CreateConnection();
         return await con.ExecuteAsync(
-            $"instert into political_parties ({BiasPoliticalPartiesMap.Name}, {BiasPoliticalPartiesMap.Bias}) " +
+            $"insert into political_parties ({BiasPoliticalPartiesMap.Name}, {BiasPoliticalPartiesMap.Bias}) " +
             $"values (@Name, @Bias) returning {BiasPoliticalPartiesMap.Id}",
                 new
                 {

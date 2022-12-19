@@ -56,7 +56,7 @@ public class BiasDocumentController : ControllerBase
         try
         {
             return await _repository.Update(biasDocumentModel) == 1
-                ? Ok(_repository.Get(biasDocumentModel.Id).Result)
+                ? Ok(await _repository.Get(biasDocumentModel.Id))
                 : NoContent();
         }
         catch (Exception e)

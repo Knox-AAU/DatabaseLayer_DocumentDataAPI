@@ -88,7 +88,7 @@ public class BiasPoliticalPartiesController : ControllerBase
         try
         {
             return await _repository.Update(partyModel) == 1
-                ? Ok(_repository.Get(partyModel.Id).Result)
+                ? Ok(await _repository.Get(partyModel.Id))
                 : NoContent();
         }
         catch (Exception e)
